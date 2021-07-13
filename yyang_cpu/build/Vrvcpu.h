@@ -32,18 +32,14 @@ VL_MODULE(Vrvcpu) {
 
     // LOCAL SIGNALS
     // Internals; generally not touched by application code
-    CData/*4:0*/ rvcpu__DOT__rd_w_addr;
-    CData/*4:0*/ rvcpu__DOT__inst_type;
-    CData/*7:0*/ rvcpu__DOT__inst_opcode;
-    CData/*0:0*/ rvcpu__DOT__Id_stage__DOT__inst_addi;
     QData/*63:0*/ rvcpu__DOT__rd_data;
-    QData/*63:0*/ rvcpu__DOT__If_stage__DOT__pc;
-    VlUnpacked<QData/*63:0*/, 32> rvcpu__DOT__Regfile__DOT__regs;
+    QData/*63:0*/ rvcpu__DOT__my_if_top__DOT__my_if_pc__DOT__cur_inst_addr_r;
+    VlUnpacked<QData/*63:0*/, 31> rvcpu__DOT__my_regfile__DOT__regfile_r;
 
     // LOCAL VARIABLES
     // Internals; generally not touched by application code
     CData/*0:0*/ __Vclklast__TOP__clk;
-    VlUnpacked<CData/*0:0*/, 3> __Vm_traceActivity;
+    VlUnpacked<CData/*0:0*/, 2> __Vm_traceActivity;
 
     // INTERNAL VARIABLES
     // Internals; generally not touched by application code
@@ -86,7 +82,6 @@ VL_MODULE(Vrvcpu) {
     static QData _change_request(Vrvcpu__Syms* __restrict vlSymsp);
     static QData _change_request_1(Vrvcpu__Syms* __restrict vlSymsp);
   public:
-    static void _combo__TOP__2(Vrvcpu__Syms* __restrict vlSymsp);
     static void _combo__TOP__4(Vrvcpu__Syms* __restrict vlSymsp);
   private:
     static void _ctor_var_reset(Vrvcpu* self) VL_ATTR_COLD;
@@ -99,8 +94,9 @@ VL_MODULE(Vrvcpu) {
   public:
     static void _eval_initial(Vrvcpu__Syms* __restrict vlSymsp) VL_ATTR_COLD;
     static void _eval_settle(Vrvcpu__Syms* __restrict vlSymsp) VL_ATTR_COLD;
-    static void _sequent__TOP__3(Vrvcpu__Syms* __restrict vlSymsp);
-    static void _settle__TOP__1(Vrvcpu__Syms* __restrict vlSymsp) VL_ATTR_COLD;
+    static void _initial__TOP__1(Vrvcpu__Syms* __restrict vlSymsp) VL_ATTR_COLD;
+    static void _sequent__TOP__2(Vrvcpu__Syms* __restrict vlSymsp);
+    static void _settle__TOP__3(Vrvcpu__Syms* __restrict vlSymsp) VL_ATTR_COLD;
   private:
     static void traceChgSub0(void* userp, VerilatedVcd* tracep);
     static void traceChgTop0(void* userp, VerilatedVcd* tracep);
