@@ -20,7 +20,7 @@ help() {
 SHELL_PATH=$(dirname $(readlink -f "$0"))
 MYINFO_FILE=$SHELL_PATH"/myinfo.txt"
 EMU_FILE="emu"
-CPU_SRC_FOLDER="cpu"
+CPU_SRC_FOLDER="yyang_cpu"
 EXAMPLES_SRC_FOLDER="examples"
 BUILD_FOLDER="build"
 BUILD="false"
