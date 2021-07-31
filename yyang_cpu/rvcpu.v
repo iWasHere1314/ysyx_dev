@@ -19,7 +19,7 @@ module rvcpu(
     wire                  rs2_ena;
     wire  [`REG_INDEX]    rd_index;
     wire                  rd_ena;
-    wire  [`DATA_BUS]     imm_data;
+    wire  [`DATA_BUS]     /* verilator lint_off UNUSED */;
     wire                  alu_src;
     wire  [`DATA_BUS]     rd_data;
     wire  [`REG_BUS]      rs1_data;
