@@ -88,18 +88,12 @@ build_proj() {
 OSCPU_PATH=$(dirname $(readlink -f "$0"))
 MYINFO_FILE=$OSCPU_PATH"/myinfo.txt"
 EMU_FILE="emu"
-<<<<<<< HEAD
-CPU_SRC_FOLDER="yyang_cpu"
-EXAMPLES_SRC_FOLDER="examples"
-BUILD_FOLDER="build"
-=======
 PROJECT_FOLDER="cpu"
 BUILD_FOLDER="build_test"
 DIFF_BUILD_FOLDER="build"
 VSRC_FOLDER="vsrc"
 CSRC_FOLDER="csrc"
 BIN_FOLDER="bin"
->>>>>>> 8df7e86170a2802036fcf465de4e653458fa838a
 BUILD="false"
 V_TOP_FILE="top.v"
 SIMULATE="false"
