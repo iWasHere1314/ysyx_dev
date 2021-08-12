@@ -13,7 +13,7 @@ module id_top (
     output                      rd_en,
 
     /* instruction type */
-    output                      inst_slt,
+    output                      inst_sltxx,
     output                      inst_shift,
     output                      inst_lui,
     output                      inst_load,

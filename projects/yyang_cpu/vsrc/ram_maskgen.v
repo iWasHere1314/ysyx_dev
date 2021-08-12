@@ -19,7 +19,7 @@ module ram_maskgen (
     assign store_sb         =   store_eff & ( store_type[1:0] == 2'b00 );
     assign store_sh         =   store_eff & ( store_type[1:0] == 2'b01 );
     assign store_sw         =   store_eff & ( store_type[1:0] == 2'b10 );
-    assign store_wd         =   store_eff & ( store_type[1:0] == 2'b11 );
+    assign store_sd         =   store_eff & ( store_type[1:0] == 2'b11 );
 
     assign orgmask_sb       =   64'hff;
     assign orgmask_sh       =   64'hffff;

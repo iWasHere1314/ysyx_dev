@@ -13,6 +13,7 @@ module ex_top (
     input   [`COMP_TYPE_BUS]    comp_type,
     // shift          
     input                       inst_shift,
+    input   [`SHIFT_TYPE_BUS]   shift_type,
     input                       shift_num_src,
     
 
@@ -24,7 +25,7 @@ module ex_top (
     input   [`IMM_SHIFT_BUS]    imm_shift,
 
     /* output */
-    output  [`INST_ADDR_BUS]    jump_addr,
+    output  [`DATA_BUS]         raw_alu_res,
     output  [`DATA_BUS]         ex_odata,
     output                      branchjudge_res
 );
@@ -46,7 +47,7 @@ module ex_top (
     assign alu_branchjudge_res_data =   inst_sltxx? branchjudge_res_data: alu_res_data[`DATA_BUS];
     assign ex_odata_pre             =   inst_shift? shifter_res: alu_branchjudge_res_data;
     assign ex_odata                 =   inst_word? ex_odata_wordgen: ex_odata_pre;
-    assign jump_addr                =   alu_res_data[`DATA_BUS];
+    assign raw_alu_res              =   alu_res_data[`DATA_BUS];
     assign branchjudge_res          =   branchjudge_res_data[0];
 
     ex_alu my_ex_alu(
@@ -94,7 +95,7 @@ module ex_top (
         .imm_shift( imm_shift ),
 
         /* output */
-        .shifter_res( shift_res )
+        .shifter_res( shifter_res )
     );
     
     ex_wordgen rs1_wordgen(

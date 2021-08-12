@@ -16,8 +16,8 @@ module ram_top(
     output  [`DATA_BUS]         read_data
 );
 
-    wire [`DATA_BUS] write_mask;
-
+    wire [`DATA_BUS]            write_mask;
+    wire [`DATA_BUS]            read_data_pre;
     ram_mem my_ram_mem(
         .clk( clk ),
 
@@ -37,7 +37,7 @@ module ram_top(
     ram_maskgen my_ram_maskgen(
         .addr_low( data_addr[2:0] ),
         .store_type( store_type ),
-        .write_mask( wrire_mask )
+        .write_mask( write_mask )
     );
     
     ram_signedextend my_ram_signedextend(

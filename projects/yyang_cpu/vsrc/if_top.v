@@ -17,5 +17,4 @@ module if_top (
         .cur_inst_addr ( inst_addr )
     );
 
-    assign inst_ena = 1'b1;
 endmodule

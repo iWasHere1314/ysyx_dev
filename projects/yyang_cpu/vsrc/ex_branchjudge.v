@@ -28,12 +28,12 @@ module ex_branchjudge (
     assign branchjudge_eq_res   =   alu_res_data == `DATA_EXTEND_SIZE'b0;
     assign branchjudge_neq_res  =   alu_res_data != `DATA_EXTEND_SIZE'b0;
     assign branchjudge_ge_res   =   alu_res_data[64] == 1'b0;
-    assign branchjudge_le_res   =   alu_res_data[64] == 1'b1;
+    assign branchjudge_lt_res   =   alu_res_data[64] == 1'b1;
 
     assign branchjudge_res_pre  =   0 | branchjudge_eq & branchjudge_eq_res
                                       | branchjudge_neq & branchjudge_neq_res
                                       | branchjudge_ge & branchjudge_ge_res
-                                      | branchjudge_lt & branchjudge_le_res;
+                                      | branchjudge_lt & branchjudge_lt_res;
                                       
     assign branchjudge_res_data = { 63'b0, branchjudge_res_pre };
 

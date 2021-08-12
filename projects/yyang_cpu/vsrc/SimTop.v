@@ -31,7 +31,7 @@ module SimTop(
     wire                        rd_en;
     
     /* instruction type */
-    wire                        inst_slt;
+    wire                        inst_sltxx;
     wire                        inst_shift;
     wire                        inst_lui;
     wire                        inst_load;
@@ -68,7 +68,7 @@ module SimTop(
     wire                        inst_en;
 
     // ex
-    wire    [`INST_ADDR_BUS]    jump_addr;
+    wire    [`DATA_BUS]         raw_alu_res;
     wire    [`DATA_BUS]         ex_odata;
     wire                        branchjudge_res;
 
@@ -94,7 +94,7 @@ module SimTop(
         .rst( reset ),
         .branchjudge_ok( branchjudge_ok ),
         .inst_jump( inst_jump ),
-        .jump_addr( jump_addr ),
+        .jump_addr( raw_alu_res ),
         .imm_offset( imm_data ),
         .inst_addr( inst_addr )
     );
@@ -111,7 +111,7 @@ module SimTop(
         .rd_en( rd_en ),
     
         /* instruction type */
-        .inst_slt( inst_slt ),
+        .inst_sltxx( inst_sltxx ),
         .inst_shift( inst_shift ),
         .inst_lui( inst_lui ),
         .inst_load( inst_load ),
@@ -167,14 +167,14 @@ module SimTop(
 
 
         /* data */
-        .pc( pc ),
+        .pc( inst_addr ),
         .rs1_data( rs1_data ),
         .rs2_data( rs2_data ),
         .imm_data( imm_data ),
-        .mm_shift( imm_shift ),
-
+        .imm_shift( imm_shift ),
+        .shift_type( shift_type ),
         /* output */
-        .jump_addr( jump_addr ),
+        .raw_alu_res( raw_alu_res ),
         .ex_odata( ex_odata ),
         .branchjudge_res( branchjudge_res )
     );
@@ -187,12 +187,12 @@ module SimTop(
         .inst( inst ),
     
         // DATA PORT
-        .store_type( store ),
+        .store_type( store_type ),
         .load_type( load_type ),
         .mem_write( mem_write ),
         .mem_read( mem_read ),
-        .data_addr( data_addr ),
-        .write_data( write_data ),
+        .data_addr( raw_alu_res ),
+        .write_data( rs2_data ),
         .read_data( read_data )
     );
 
@@ -226,7 +226,7 @@ module SimTop(
     reg [63:0] instrCnt;
     reg [`REG_BUS] regs_diff [ 31:0 ];
     
-    wire inst_valid = (pc != `PC_START) | (inst != 0);
+    wire inst_valid = ( inst_addr != `PC_START) | (inst != 0);
     always @(negedge clock) begin
         if (reset) begin
             {cmt_wen, cmt_wdest, cmt_wdata, cmt_pc, cmt_inst, cmt_valid, trap, trap_code, cycleCnt, instrCnt} <= 0;
@@ -235,7 +235,7 @@ module SimTop(
             cmt_wen <= rd_en;
             cmt_wdest <= {3'd0, rd_index};
             cmt_wdata <= rd_data;
-            cmt_pc <= pc;
+            cmt_pc <= inst_addr;
             cmt_inst <= inst;
             cmt_valid <= inst_valid;
 
