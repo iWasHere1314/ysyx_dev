@@ -198,6 +198,7 @@ extern "C" uint64_t ram_read_helper(uint8_t en, uint64_t rIdx) {
   pthread_mutex_lock(&ram_mutex);
   uint64_t rdata = (en) ? ram[rIdx] : 0;
   pthread_mutex_unlock(&ram_mutex);
+  printf(" rIdx=%lx, rdata=%lx\n", rIdx, rdata );
   return rdata;
 }
 

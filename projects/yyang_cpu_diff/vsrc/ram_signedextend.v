@@ -24,7 +24,7 @@ module ram_signedextend (
     assign load_lhx                 =   load_type[1:0] == 2'b10;
     assign load_lwx                 =   load_type[1:0] == 2'b11;
     assign load_ld                  =   load_type[2:0] == 3'b100;
-    assign load_signed              =   ~ ( ( load_type[2] == 1'b1 ) & ~load_ld );
+    assign load_signed              =   ( load_type[2] == 1'b0 ) && ( load_type[1:0] != 2'b0 ); 
 
     assign signed_bit               =  load_signed & 
                                         ( 1'b0 | load_lbx & signedextend_data_pre[07]
