@@ -259,7 +259,7 @@ module SimTop(
       .scFailed           (0),
       .wen                (cmt_wen),
       .wdest              (cmt_wdest),
-      .wdata              (cmt_wdata)
+      .wdata              (rd_data)
     );
 
     DifftestArchIntRegState DifftestArchIntRegState (
