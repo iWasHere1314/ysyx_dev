@@ -61,27 +61,26 @@ import "DPI-C" function longint ram_read_helper
   input  longint    rIdx
 );
 
-`include "defines.v"
 
 module ram_mem(
     input                       clk,
     
-    input   [`INST_ADDR_BUS]    inst_addr,
+    input   [63:0]    inst_addr,
     input                       inst_en,
-    output  [`INST_BUS]         inst,
+    output  [63:0]         inst,
 
     // DATA PORT
     input                       mem_write,
     input                       mem_read,
-    input   [`DATA_BUS]         write_mask,
-    input   [`DATA_ADDR_BUS]    data_addr,
-    input   [`DATA_BUS]         write_data,
-    output  [`DATA_BUS]         read_data
+    input   [63:0]         write_mask,
+    input   [63:0]    data_addr,
+    input   [63:0]         write_data,
+    output  [63:0]         read_data
 );
 
     // INST PORT
 
-    wire [`DATA_BUS] inst_pre= ram_read_helper(inst_en,{3'b000,(inst_addr-64'h0000_0000_8000_0000)>>3});
+    wire [63:0] inst_pre= ram_read_helper(inst_en,{3'b000,(inst_addr-64'h0000_0000_8000_0000)>>3});
 
     assign inst = inst_addr[2] ? inst_pre[63:32] : inst_pre[31:0];
 
