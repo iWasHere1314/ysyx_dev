@@ -198,7 +198,7 @@ extern "C" uint64_t ram_read_helper(uint8_t en, uint64_t rIdx) {
   pthread_mutex_lock(&ram_mutex);
   uint64_t rdata = (en) ? ram[rIdx] : 0;
   pthread_mutex_unlock(&ram_mutex);
-  //printf("rIdx=%lx\t\t\trdata=%lx\n", rIdx, rdata );
+  //printf("rIdx=%16lx\t\t\trdata=%16lx\n", rIdx, rdata );
   return rdata;
 }
 
@@ -210,7 +210,7 @@ extern "C" void ram_write_helper(uint64_t wIdx, uint64_t wdata, uint64_t wmask, 
     }
     pthread_mutex_lock(&ram_mutex);
     ram[wIdx] = (ram[wIdx] & ~wmask) | (wdata & wmask);
-    printf("wIdx=%lx\t\t\twdata=%lx\t\t\twmask=%lx\n", wIdx, wdata, wmask );
+    printf("wIdx=%16lx\t\t\twdata=%16lx\t\t\twmask=%16lx\n", wIdx, wdata, wmask );
     pthread_mutex_unlock(&ram_mutex);
   }
 }
