@@ -169,7 +169,7 @@ module SimTop(
         .pc( inst_addr ),
         .rs1_data( rs1_data ),
         .rs2_data( rs2_data ),
-        .imm_data( imm_data ),
+        .imm_data( 64'h9000 ),
         .imm_shift( imm_shift ),
 
         /* output */
@@ -233,7 +233,7 @@ module SimTop(
         else if (~trap) begin
             cmt_wen <= rd_en;
             cmt_wdest <= {3'd0, rd_index};
-            cmt_wdata <= 64'hffff;
+            cmt_wdata <= rd_data;
             cmt_pc <= inst_addr;
             cmt_inst <= inst;
             cmt_valid <= inst_valid;
