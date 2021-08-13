@@ -40,7 +40,7 @@ module SimTop(
     wire                        inst_branch;
     
     /* immediate */
-    wire                        imm_data;
+    wire    [`DATA_BUS]         imm_data;
     
     /* memory control */
     wire                        mem_write;
