@@ -58,7 +58,8 @@ import "DPI-C" function void ram_write_helper
 import "DPI-C" function longint ram_read_helper
 (
   input  bit        en,
-  input  longint    rIdx
+  input  longint    rIdx,
+  input  bit        ignore
 );
 
 
@@ -80,12 +81,12 @@ module ram_mem(
 
     // INST PORT
 
-    wire [63:0] inst_pre= ram_read_helper(inst_en,{3'b000,(inst_addr-64'h0000_0000_8000_0000)>>3});
+    wire [63:0] inst_pre= ram_read_helper(inst_en,{3'b000,(inst_addr-64'h0000_0000_8000_0000)>>3}, 1'b1);
 
     assign inst = inst_addr[2] ? inst_pre[63:32] : inst_pre[31:0];
 
     // DATA PORT 
-    assign read_data = ram_read_helper(mem_read, {3'b000,(data_addr-64'h0000_0000_8000_0000)>>3});
+    assign read_data = ram_read_helper(mem_read, {3'b000,(data_addr-64'h0000_0000_8000_0000)>>3},1'b0);
 
     always @(posedge clk) begin
         ram_write_helper((data_addr-64'h0000_0000_8000_0000)>>3, write_data, write_mask, mem_write);

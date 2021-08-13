@@ -189,7 +189,7 @@ void ram_finish() {
 }
 
 
-extern "C" uint64_t ram_read_helper(uint8_t en, uint64_t rIdx) {
+extern "C" uint64_t ram_read_helper(uint8_t en, uint64_t rIdx, uint8_t ignore) {
   if (!ram)
     return 0;
   if (en && rIdx >= EMU_RAM_SIZE / sizeof(uint64_t)) {
@@ -198,7 +198,7 @@ extern "C" uint64_t ram_read_helper(uint8_t en, uint64_t rIdx) {
   pthread_mutex_lock(&ram_mutex);
   uint64_t rdata = (en) ? ram[rIdx] : 0;
   pthread_mutex_unlock(&ram_mutex);
-  printf("rIdx=%16lx\t\t\trdata=%16lx\n", rIdx, rdata );
+  if( !ignore ) printf("rIdx=%16lx\t\t\trdata=%16lx\n", rIdx, rdata );
   return rdata;
 }
 
@@ -220,7 +220,7 @@ uint64_t pmem_read(uint64_t raddr) {
     printf("Warning: pmem_read only supports 64-bit aligned memory access\n");
   }
   raddr -= 0x80000000;
-  return ram_read_helper(1, raddr / sizeof(uint64_t));
+  return ram_read_helper(1, raddr / sizeof(uint64_t), 1);
 }
 
 void pmem_write(uint64_t waddr, uint64_t wdata) {
