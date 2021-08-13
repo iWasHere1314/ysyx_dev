@@ -233,7 +233,7 @@ module SimTop(
         else if (~trap) begin
             cmt_wen <= rd_en;
             cmt_wdest <= {3'd0, rd_index};
-            cmt_wdata <= imm_data;
+            cmt_wdata <= rd_data;
             cmt_pc <= inst_addr;
             cmt_inst <= inst;
             cmt_valid <= inst_valid;
