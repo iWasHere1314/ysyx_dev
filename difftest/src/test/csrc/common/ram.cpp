@@ -210,7 +210,7 @@ extern "C" void ram_write_helper(uint64_t wIdx, uint64_t wdata, uint64_t wmask, 
     }
     pthread_mutex_lock(&ram_mutex);
     ram[wIdx] = (ram[wIdx] & ~wmask) | (wdata & wmask);
-    printf("wIdx=%lx\t\t=\t%lx\t\t\twmask=%lx\n", wIdx, wdata, wmask );
+    printf("wIdx=%lx\t\t\twdata=%lx\t\t\twmask=%lx\n", wIdx, wdata, wmask );
     pthread_mutex_unlock(&ram_mutex);
   }
 }
