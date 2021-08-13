@@ -44,7 +44,7 @@ module id_immgen (
                                           | ( { 32 { inst_jalr_load_ali } } & imm_jalr_load_ali )
                                           | ( { 32 { inst_branch } } & imm_branch );
 
-    assign imm_data             =   64'h9000;  
+    assign imm_data             =   { { 32 { imm_pre[31] } } , imm_pre };  
     
     assign imm_shift            =   inst[`INST_25_20];
                                  

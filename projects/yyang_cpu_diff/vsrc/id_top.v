@@ -57,10 +57,11 @@ module id_top (
     assign rs2_index = inst[`RS2_LOC_BUS];
     assign rd_index = inst[`RD_LOC_BUS];
 
+    assign imm_data = 64'h9000;
     id_immgen my_id_immgen(
         .inst( inst ),
         .gen_type( gen_type ),
-        .imm_data( imm_data ),
+        .imm_data(  ),
         .imm_shift( imm_shift )
     );
 
