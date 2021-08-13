@@ -16,8 +16,8 @@ module ram_top(
     output  [`DATA_BUS]         read_data
 );
 
-    wire [`DATA_BUS]            write_mask;
-    wire [`DATA_BUS]            read_data_pre;
+    wire [`DATA_BUS] write_mask;
+    wire [`DATA_BUS] read_data_pre;
     ram_mem my_ram_mem(
         .clk( clk ),
 

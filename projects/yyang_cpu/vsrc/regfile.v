@@ -12,9 +12,9 @@ module regfile (
     input   [`REG_BUS]          rd_data,
     output  [`REG_BUS]          rs1_data,
     output  [`REG_BUS]          rs2_data
-    /* difftest interface */
-                                        ,
-    output  [`REG_BUS]          regs_o  [31:0] 
+    // /* difftest interface */
+    //                                     ,
+    // output  [`REG_BUS]          regs_o  [31:0] 
 );
     
     reg [`REG_BUS] regfile_r [`REG_NUM-1:1];
@@ -37,13 +37,13 @@ module regfile (
         end
     endgenerate
 
-    generate
-        assign regs_o[0] = `DATA_BUS_SIZE'b0;
-		for (i = 1; i < `REG_NUM; i = i + 1) begin
-			:reg_o_op
-            assign regs_o[i] = ( rd_en & ( rd_index == i ) ) ? rd_data : regfile_r[i];
-		end
-	endgenerate
+    // generate
+    //     assign regs_o[0] = `DATA_BUS_SIZE'b0;
+	// 	for (i = 1; i < `REG_NUM; i = i + 1) begin
+	// 		:reg_o_op
+    //         assign regs_o[i] = ( rd_en & ( rd_index == i ) ) ? rd_data : regfile_r[i];
+	// 	end
+	// endgenerate
 
     wire [`REG_BUS] rs1_data_pre = rs1_index == `REG_ZERO ? `REG_BUS_SIZE'b0 : regfile_r[rs1_index];
     wire [`REG_BUS] rs2_data_pre = rs2_index == `REG_ZERO ? `REG_BUS_SIZE'b0 : regfile_r[rs2_index];

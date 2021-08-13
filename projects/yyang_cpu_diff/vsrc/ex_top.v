@@ -8,7 +8,6 @@ module ex_top (
     // word instruction
     input                       inst_word,
     // branch or sltxx
-    input                       inst_branch,
     input                       inst_sltxx,
     input   [`COMP_TYPE_BUS]    comp_type,
     // shift          
