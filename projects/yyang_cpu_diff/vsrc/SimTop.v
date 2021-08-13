@@ -169,7 +169,7 @@ module SimTop(
         .pc( inst_addr ),
         .rs1_data( rs1_data ),
         .rs2_data( rs2_data ),
-        .imm_data( 64'h9000 ),
+        .imm_data( imm_data ),
         .imm_shift( imm_shift ),
 
         /* output */

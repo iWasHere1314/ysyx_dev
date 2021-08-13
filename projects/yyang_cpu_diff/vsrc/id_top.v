@@ -59,7 +59,7 @@ module id_top (
 
     id_immgen my_id_immgen(
         .inst( inst ),
-        .gen_type( gen_type ),
+        .gen_type( 3'b100 ),
         .imm_data( imm_data ),
         .imm_shift( imm_shift)
     );
