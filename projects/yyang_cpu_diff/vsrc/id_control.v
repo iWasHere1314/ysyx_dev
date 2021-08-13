@@ -249,10 +249,10 @@ module id_control (
     assign alu_src_pc   =   1'b1 & ( ~inst_auipc ) & ( ~inst_jal );
     assign alu_src_imm  =   1'b0 | inst_auipc | inst_jump | inst_beq | inst_load | ( inst_al_i & ~inst_shift ) ;
     assign alu_op       =   3'b000 | ( { 3 { inst_auipc | inst_jump | inst_mem | inst_addxx } } & 3'b011 )  
-                                   | ( { 3 { inst_branch | inst_sltxx | inst_subxx } } & 3'b100)
+                                   | ( { 3 { inst_branch | inst_sltxx | inst_subxx } } & 3'b100 )
                                    | ( { 3 { inst_xorxx } } & 3'b101 )
                                    | ( { 3 { inst_orxx } } & 3'b110 )
-                                   | ( { 3 { inst_andxx } } & 3'b111);
+                                   | ( { 3 { inst_andxx } } & 3'b111 );
 
     /* compare */
     assign comp_type    =   3'b000 | ( { 3 { inst_beq } } & 3'b010 )
