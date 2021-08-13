@@ -65,17 +65,17 @@ import "DPI-C" function longint ram_read_helper
 module ram_mem(
     input                       clk,
     
-    input   [63:0]    inst_addr,
+    input   [63:0]              inst_addr,
     input                       inst_en,
-    output  [63:0]         inst,
+    output  [63:0]              inst,
 
     // DATA PORT
     input                       mem_write,
     input                       mem_read,
-    input   [63:0]         write_mask,
-    input   [63:0]    data_addr,
-    input   [63:0]         write_data,
-    output  [63:0]         read_data
+    input   [63:0]              write_mask,
+    input   [63:0]              data_addr,
+    input   [63:0]              write_data,
+    output  [63:0]              read_data
 );
 
     // INST PORT
