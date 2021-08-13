@@ -162,7 +162,7 @@ module id_control (
     assign inst_subxx   =   inst_sub | inst_subw;
     assign inst_xorxx   =   inst_xor | inst_xori;
     assign inst_orxx    =   inst_or | inst_ori;
-    assign inst_andxx   =   inst_and | inst_addi;
+    assign inst_andxx   =   inst_and | inst_andi;
     assign inst_xuix    =   inst_lui | inst_auipc;
     assign inst_slt_nu  =   inst_slt | inst_slti;
     assign inst_slt_u   =   inst_sltu | inst_sltiu;
