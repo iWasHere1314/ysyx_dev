@@ -163,6 +163,7 @@ module id_control (
     assign inst_xorxx   =   inst_xor | inst_xori;
     assign inst_orxx    =   inst_or | inst_ori;
     assign inst_andxx   =   inst_and | inst_addi;
+    assign inst_xuix    =   inst_lui | inst_auipc;
     assign inst_slt_nu  =   inst_slt | inst_slti;
     assign inst_slt_u   =   inst_sltu | inst_sltiu;
   
@@ -239,10 +240,10 @@ module id_control (
 
     /* immediate number */
     assign gen_type     =   3'b000 | ( { 3 { inst_store } } & 3'b011) 
-                                 | ( { 3 { inst_xuix } } & 3'b100 )
-                                 | ( { 3 { inst_jal } } & 3'b101 )
-                                 | ( { 3 { inst_jalr | inst_load | ( inst_al_i & ~inst_shift ) } } & 3'b110 )
-                                 | ( { 3 { inst_branch } } & 3'b111 );
+                                   | ( { 3 { inst_xuix } } & 3'b100 )
+                                   | ( { 3 { inst_jal } } & 3'b101 )
+                                   | ( { 3 { inst_jalr | inst_load | ( inst_al_i & ~inst_shift ) } } & 3'b110 )
+                                   | ( { 3 { inst_branch } } & 3'b111 );
 
     /* alu control */
     assign alu_src_pc   =   1'b1 & ( ~inst_auipc ) & ( ~inst_jal );

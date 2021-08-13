@@ -85,9 +85,9 @@ module SimTop(
 
 
     assign branchjudge_ok       =   branchjudge_res & inst_branch;
-    //assign rd_data              =   inst_jump? ( inst_addr + `INST_ADDR_SIZE'h4 )
-    //                                    : ( inst_load? read_data:( inst_lui? imm_data: ex_odata ) );
-    assign rd_data = 64'h0;
+    assign rd_data              =   inst_jump? ( inst_addr + `INST_ADDR_SIZE'h4 )
+                                        : ( inst_load? read_data:( inst_lui? imm_data: ex_odata ) );
+
 
     if_top my_if_top(
         .clk( clock ),
