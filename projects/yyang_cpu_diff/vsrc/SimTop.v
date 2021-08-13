@@ -182,7 +182,7 @@ module SimTop(
         .clk( clock ),
 
         .inst_addr( inst_addr ),
-        .inst_en( 1'b1 ),
+        .inst_en( inst_en ),
         .inst( inst ),
     
         // DATA PORT
