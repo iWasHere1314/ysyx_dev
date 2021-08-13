@@ -30,6 +30,6 @@ module ram_maskgen (
                                       | ( { 64 { store_sh } } & orgmask_sh )
                                       | ( { 64 { store_sw } } & orgmask_sw )
                                       | ( { 64 { store_sd } } & orgmask_sd );   
-    assign write_mask       =   write_mask_pre << ( addr_low << 2'd3 );
+    assign write_mask       =   write_mask_pre << ( { 3'b000, addr_low } << 2'd3 );
 
 endmodule
