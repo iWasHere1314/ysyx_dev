@@ -176,8 +176,8 @@ module id_control (
     assign inst_beq     =   inst_branch & ( funct3 == 3'b000 );
     assign inst_bne     =   inst_branch & ( funct3 == 3'b001 );
     assign inst_blt     =   inst_branch & ( funct3 == 3'b100 );
-    assign inst_bltu    =   inst_branch & ( funct3 == 3'b101 );
-    assign inst_bge     =   inst_branch & ( funct3 == 3'b110 );
+    assign inst_bltu    =   inst_branch & ( funct3 == 3'b110 );
+    assign inst_bge     =   inst_branch & ( funct3 == 3'b101 );
     assign inst_bgeu    =   inst_branch & ( funct3 == 3'b111 );
     assign inst_lb      =   inst_load & ( funct3 == 3'b000 ) ;
     assign inst_lh      =   inst_load & ( funct3 == 3'b001 ) ;
