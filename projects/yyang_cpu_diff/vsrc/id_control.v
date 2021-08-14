@@ -198,11 +198,11 @@ module id_control (
     assign inst_ori     =   inst_ali & ( funct3 == 3'b110 );
     assign inst_andi    =   inst_ali & ( funct3 == 3'b111 );
     assign inst_slliw   =   inst_aliw & ( funct3 == 3'b001 ) & ( funct7 == 7'b0000000 );
-    assign inst_slli    =   inst_ali & ( funct3 == 3'b001 ) & ( funct7 == 7'b0000000 ) ;
+    assign inst_slli    =   inst_ali & ( funct3 == 3'b001 ) & ( funct7[6:1] == 6'b000000 ) ;
     assign inst_srliw   =   inst_aliw & ( funct3 == 3'b101 ) & ( funct7 == 7'b0000000 );
-    assign inst_srli    =   inst_ali & ( funct3 == 3'b101 ) & ( funct7 == 7'b0000000 );
+    assign inst_srli    =   inst_ali & ( funct3 == 3'b101 ) & ( funct7[6:1] == 6'b000000 );
     assign inst_sraiw   =   inst_aliw & ( funct3 == 3'b101 ) & ( funct7 == 7'b0100000 );
-    assign inst_srai    =   inst_ali & ( funct3 == 3'b101 ) & ( funct7 == 7'b0100000 );
+    assign inst_srai    =   inst_ali & ( funct3 == 3'b101 ) & ( funct7[6:1] == 6'b010000 );
     assign inst_addw    =   inst_alw & ( funct3 == 3'b000 ) & ( funct7 == 7'b0000000 );
     assign inst_add     =   inst_al & ( funct3 == 3'b000 ) & ( funct7 == 7'b0000000 );
     assign inst_subw    =   inst_alw & ( funct3 == 3'b000 ) & ( funct7 == 7'b0100000 );
@@ -263,11 +263,11 @@ module id_control (
                                    | ( { 3 { inst_bgeu } } & 3'b111 );          
 
     /* shift */
-    assign shift_type   =   3'b000 | ( { 3 { inst_sll | inst_slli | inst_sllw | inst_slliw } } & 3'b011 )
-                                   | ( { 3 { inst_srlw | inst_srliw } } & 3'b111 )
+    assign shift_type   =   /* 3'b000 | */ ( { 3 { inst_sll | inst_slli | inst_sllw | inst_slliw } } & 3'b011 )
+                                   /* | ( { 3 { inst_srlw | inst_srliw } } & 3'b111 )
                                    | ( { 3 { inst_srl | inst_srli } } & 3'b101 )         
                                    | ( { 3 { inst_sraw | inst_sraiw} } & 3'b110 )
-                                   | ( { 3 { inst_sra | inst_srai } } & 3'b100 );
+                                   | ( { 3 { inst_sra | inst_srai } } & 3'b100 ) */;
     assign shift_num_src=   1'b0 | ( inst_shift & inst_al_i );
 
     /* store */
