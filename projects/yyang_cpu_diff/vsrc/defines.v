@@ -13,7 +13,7 @@
 `define REG_NUM                 (1<<`REG_INDEX_SIZE)
 `define REG_BUS                 63:0
 `define REG_BUS_SIZE            64
-`define REG_ZERO                0
+`define REG_ZERO                64'b0
 
 /* id marco */
 
