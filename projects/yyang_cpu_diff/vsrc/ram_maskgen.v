@@ -2,6 +2,8 @@
 module ram_maskgen (
     input   [`ADDR_LOW_BUS]     addr_low,
     input   [`STORE_TYPE_BUS]   store_type,
+    input   [`DATA_BUS]         rs2_data,
+    output  [`DATA_BUS]         write_data,
     output  [`DATA_BUS]         write_mask
 );
     wire                        store_eff;
@@ -14,6 +16,7 @@ module ram_maskgen (
     wire    [`DATA_BUS]         orgmask_sw;
     wire    [`DATA_BUS]         orgmask_sd;
     wire    [`DATA_BUS]         write_mask_pre;
+    wire    [`IMM_SHIFT_BUS]    maskgen_shiftnum;
 
     assign store_eff        =   store_type[2] == 1'b1;
     assign store_sb         =   store_eff & ( store_type[1:0] == 2'b00 );
@@ -30,6 +33,9 @@ module ram_maskgen (
                                       | ( { 64 { store_sh } } & orgmask_sh )
                                       | ( { 64 { store_sw } } & orgmask_sw )
                                       | ( { 64 { store_sd } } & orgmask_sd );   
-    assign write_mask       =   write_mask_pre << ( { 3'b000, addr_low } << 2'd3 );
+    assign write_mask       =   write_mask_pre << maskgen_shiftnum;
+    assign write_data       =   rs2_data << maskgen_shiftnum;
+    
+    assign maskgen_shiftnum =   { 3'b000, addr_low } << 2'd3;
 
 endmodule
