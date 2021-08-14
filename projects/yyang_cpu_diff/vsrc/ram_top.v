@@ -31,7 +31,7 @@ module ram_top(
         .mem_read( mem_read ),
         .write_mask( write_mask ),
         .data_addr( data_addr ),
-        .write_data( write_data ),
+        .write_data( write_data_final ),
         .read_data( read_data_pre )
     );
 
