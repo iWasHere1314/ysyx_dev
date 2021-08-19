@@ -84,7 +84,7 @@ module ex_shifter (
                                   shift_res[56], shift_res[57], shift_res[58], shift_res[59],
                                   shift_res[60], shift_res[61], shift_res[62], shift_res[63]
                                 };
-    assign shift_srax_res   = shift_word? shift_srlx_res: ( ( shift_srlx_res & shift_eff_mask ) | ( { `DATA_BUS_SIZE { shift_srlx_res[63] } } & ~shift_eff_mask ) );
+    assign shift_srax_res   = shift_word? shift_srlx_res: ( ( shift_srlx_res & shift_eff_mask ) | ( { `DATA_BUS_SIZE { shift_res[62] } } & ~shift_eff_mask ) );
     assign shift_eff_mask   = ( ~( `DATA_BUS_SIZE'b0) ) >> shift_num_eff;
 
     assign shifter_res      = `ZERO_DWORD | ( { 64 { shift_sllx } } & shift_sllx_res ) 
