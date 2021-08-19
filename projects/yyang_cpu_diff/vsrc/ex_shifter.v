@@ -32,9 +32,9 @@ module ex_shifter (
     wire [`DATA_BUS]        shift_srlx_res;
     wire [`DATA_BUS]        shift_eff_mask;
 
-    assign shift_word       =   shift_type[2:1] == 2'b11;
-    assign shift_sllx       =   shift_type      == 3'b011;
-    assign shift_srxx       =   shift_type[2]   == 1'b1;
+    assign shift_word       =   ( shift_type[2:1] == 2'b11 ) | ( shift_sllx & ( shift_type[1] == 1'b1) );
+    assign shift_sllx       =   ~shift_type[2] & shift_type[0]; //( shift_type[2]  == 1'b0 ) && ( shift_type[0] == 1'b1 );
+    assign shift_srxx       =   shift_type[2]  == 1'b1;
     assign shift_srax       =   shift_srxx & ( shift_type[0] == 1'b0 ); 
     assign shift_srlx       =   shift_srxx & ( shift_type[0] == 1'b1 );
     assign shift_srl        =   shift_srlx & ~shift_word;
@@ -43,7 +43,7 @@ module ex_shifter (
     assign shift_num_pre    =   shift_num_src? imm_shift: rs2_data[`IMM_SHIFT_BUS];
     assign shift_num_eff    =   shift_word? { 1'b0, shift_num_pre[4:0] }: shift_num_pre;
     
-    assign shift_src_pre    =   shift_srlw && ( shift_num_eff != 1'b0 )? { 32'b0, rs1_data[31:0] }: rs1_data;
+    assign shift_src_pre    =   ( shift_srlw && ( shift_num_eff != 6'b0 ) )? { 32'b0, rs1_data[31:0] }: rs1_data;
         // shifter的输入已经进行了字扩展， 只有进行srlw操作且位数不为0时才会出现扩展位一定是0的情况。
         // 其他情况下符号位一定与扩展出的高位一致，而最高位的问题将由后续的字扩展解决。
     // 此处实现参考了E203
