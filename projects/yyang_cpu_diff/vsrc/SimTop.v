@@ -177,13 +177,13 @@ module SimTop(
         .ex_odata( ex_odata ),
         .branchjudge_res( branchjudge_res )
     );
-    assign inst = 64'hffffffff00000000;
+    
     ram_top my_ram_top(
         .clk( clock ),
 
         .inst_addr( inst_addr ),
         .inst_en( inst_en ),
-        .inst(  ),
+        .inst( inst ),
     
         // DATA PORT
         .store_type( store_type ),
