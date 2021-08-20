@@ -1,6 +1,10 @@
 `include "defines.v"
 
 module id_control (
+    `ifdef DEFINE_PUTCH
+    input   [`INST_BUS]         inst,
+    `endif 
+
     input   [`OPCODE_BUS]       opcode,
     input   [`FUNCT3_BUS]       funct3,
     input   [`FUNCT7_BUS]       funct7,
@@ -131,6 +135,10 @@ module id_control (
     wire inst_sra;
     wire inst_or;
     wire inst_and;
+    
+    `ifdef DEFINE_PUTCH
+    wire inst_selfdefine = inst == 32'h7b;
+    `endif
     
     wire [`EFF_OPCODE_BUS] eff_opcode = opcode[`EFF_OPCODE_LOC_BUS];
 
@@ -286,5 +294,8 @@ module id_control (
                                    | ( { 3 { inst_lwu } } & 3'b111 )
                                    | ( { 3 { inst_ld } } & 3'b100 );
 
-    assign inst_en      =   1'b1;
+    assign inst_en      =   `ifdef DEFINE_PUTCH
+                            inst_selfdefine? 1'b0:
+                            `endif 
+                            1'b1;
 endmodule

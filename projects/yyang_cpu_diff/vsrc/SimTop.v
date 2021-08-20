@@ -225,6 +225,10 @@ module SimTop(
     reg [63:0] instrCnt;
     reg [`REG_BUS] regs_diff [ 31:0 ];
     
+    `ifdef DEFINE_PUTCH
+    reg cmt_skip;
+    `endif
+
     wire inst_valid = ( inst_addr != `PC_START) | (inst != 0);
     always @(negedge clock) begin
         if (reset) begin
