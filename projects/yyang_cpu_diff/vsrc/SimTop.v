@@ -254,13 +254,13 @@ module SimTop(
       .valid              (cmt_valid),
       .pc                 (cmt_pc),
       .instr              (cmt_inst),
-      
-      `ifdef PUTCH
-      .skip               ( cmt_skip ),
-      `else
-      .skip               ( 0 ),
-      `endif 
-
+      .skip               (
+                            `ifdef DEFINE_PUTCH
+                                cmt_skip
+                            `else 
+                                0
+                            `endif
+                            ),
       .isRVC              (0),
       .scFailed           (0),
       .wen                (cmt_wen),
