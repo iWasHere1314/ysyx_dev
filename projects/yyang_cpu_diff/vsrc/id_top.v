@@ -66,6 +66,9 @@ module id_top (
 
     id_control my_id_control(
         /* input */
+        `ifdef DEFINE_PUTCH
+        .inst( inst ),
+        `endif 
         .opcode( inst[`OPCODE_LOC_BUS] ),
         .funct3( inst[`FUNCT3_LOC_BUS] ),
         .funct7( inst[`FUNCT7_LOC_BUS] ),
