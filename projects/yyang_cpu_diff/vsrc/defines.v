@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 /* self-defined marco */
-//`define DEFINE_PUTCH
+`define DEFINE_PUTCH
 
 /* if marco */
 `define INST_ADDR_BUS           63:0

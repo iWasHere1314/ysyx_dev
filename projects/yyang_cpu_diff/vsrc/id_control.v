@@ -50,6 +50,10 @@ module id_control (
 
     /* instruction */
     output                      inst_en
+    `ifdef DEFINE_PUTCH
+    ,
+    output                      inst_selfdefine
+    `endif
 );
     
     /* all instruction types */
@@ -137,7 +141,7 @@ module id_control (
     wire inst_and;
     
     `ifdef DEFINE_PUTCH
-    wire inst_selfdefine = inst == 32'h7b;
+    assign inst_selfdefine = inst == 32'h7b;
     `endif
     
     wire [`EFF_OPCODE_BUS] eff_opcode = opcode[`EFF_OPCODE_LOC_BUS];
@@ -294,8 +298,5 @@ module id_control (
                                    | ( { 3 { inst_lwu } } & 3'b111 )
                                    | ( { 3 { inst_ld } } & 3'b100 );
 
-    assign inst_en      =   `ifdef DEFINE_PUTCH
-                            inst_selfdefine? 1'b0:
-                            `endif 
-                            1'b1;
+    assign inst_en      =   1'b1;
 endmodule

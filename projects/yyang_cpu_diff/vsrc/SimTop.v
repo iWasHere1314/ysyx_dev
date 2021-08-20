@@ -19,6 +19,11 @@ module SimTop(
     wire                        branchjudge_ok;
     wire    [`DATA_BUS]         rd_data;
 
+    /* self-defined */
+    `ifdef DEFINE_PUTCH
+    wire    inst_selfdefine;
+    `endif 
+
     // if
     wire    [`INST_ADDR_BUS]    inst_addr;
     // id
@@ -147,6 +152,10 @@ module SimTop(
     
         /* instruction */
         .inst_en( inst_en )
+        `ifdef DEFINE_PUTCH
+        ,
+        .inst_selfdefine( inst_selfdefine )
+        `endif
     );
     
     ex_top my_ex_top(
@@ -241,13 +250,16 @@ module SimTop(
             cmt_pc <= inst_addr;
             cmt_inst <= inst;
             cmt_valid <= inst_valid;
-
+        
         	    regs_diff <= regs_o;
 
             trap <= inst[6:0] == 7'h6b;
             trap_code <= regs_o[10][7:0];
             cycleCnt <= cycleCnt + 1;
             instrCnt <= instrCnt + inst_valid;
+            `ifdef DEFINE_PUTCH
+            cmt_skip <= inst_selfdefine;
+            `endif
         end
     end
 

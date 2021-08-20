@@ -46,11 +46,13 @@ module id_top (
 
     /* load */
     output [`LOAD_TYPE_BUS]     load_type,
-
     /* instruction */
     output                      inst_en
+    `ifdef DEFINE_PUTCH
+    ,
+    output                      inst_selfdefine
+    `endif
 );
-    
     wire [`GEN_TYPE_BUS] gen_type;
 
     assign rs1_index = inst[`RS1_LOC_BUS];
@@ -66,9 +68,11 @@ module id_top (
 
     id_control my_id_control(
         /* input */
+
         `ifdef DEFINE_PUTCH
         .inst( inst ),
         `endif 
+
         .opcode( inst[`OPCODE_LOC_BUS] ),
         .funct3( inst[`FUNCT3_LOC_BUS] ),
         .funct7( inst[`FUNCT7_LOC_BUS] ),
@@ -113,6 +117,12 @@ module id_top (
         .load_type( load_type ),
         /* instruction */
         .inst_en( inst_en )
+
+        `ifdef DEFINE_PUTCH
+        ,
+        .inst_selfdefine( inst_selfdefine )
+        `endif
+
     );
 
 endmodule
