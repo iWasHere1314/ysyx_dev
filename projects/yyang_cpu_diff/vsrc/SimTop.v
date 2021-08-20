@@ -103,7 +103,6 @@ module SimTop(
         .imm_offset( imm_data ),
         .inst_addr( inst_addr )
     );
-    
     id_top my_id_top(
         .inst( inst ),
         
@@ -263,6 +262,11 @@ module SimTop(
         end
     end
 
+    `ifdef DEFINE_PUTCH
+    always @( inst_selfdefine ) begin
+        $write("%c", regs_o[10][7:0]);
+    end
+    `endif 
     DifftestInstrCommit DifftestInstrCommit(
       .clock              (clock),
       .coreid             (0),
