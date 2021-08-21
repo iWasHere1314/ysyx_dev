@@ -263,7 +263,7 @@ module SimTop(
     end
 
     `ifdef DEFINE_PUTCH
-    always @( /* posedge  */inst_selfdefine ) begin
+    always @( posedge inst_selfdefine ) begin
         $write("%c", regs_o[10][7:0]);
     end
     `endif 
