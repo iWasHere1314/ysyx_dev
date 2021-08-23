@@ -22,7 +22,8 @@ module id_control (
     output                      inst_jump,
     output                      inst_word,
     output                      inst_branch,
-
+    output                      inst_csr,
+    
     /* memory control */
     output                      mem_write,
     output                      mem_read,
@@ -48,6 +49,10 @@ module id_control (
     /* load */
     output [`LOAD_TYPE_BUS]     load_type,
 
+    /* csr */
+    output [`CSR_CTRL_BUS]      csr_ctrl,
+    output                      csr_src,  
+
     /* instruction */
     output                      inst_en
     `ifdef DEFINE_PUTCH
@@ -65,6 +70,7 @@ module id_control (
     // wire inst_jump;    
     // wire inst_word;   
     // wire inst_branch;
+    // wire inst_csr;
     wire inst_store;
     wire inst_ali;
     wire inst_aliw;
@@ -139,7 +145,13 @@ module id_control (
     wire inst_sra;
     wire inst_or;
     wire inst_and;
-    
+    // wire inst_csrrw;
+    // wire inst_csrrs;
+    // wire inst_csrrc;
+    // wire inst_csrrwi;
+    // wire inst_csrrsi;
+    // wire inst_csrrci; //不使用，因为控制信号直接用funct3
+
     `ifdef DEFINE_PUTCH
     assign inst_selfdefine = inst == 32'h7b;
     `endif
@@ -155,7 +167,8 @@ module id_control (
     assign inst_jump    =   inst_jal | inst_jalr;
     assign inst_word    =   inst_aliw | inst_alw;
     assign inst_branch  =   eff_opcode == `EFF_OPCODE_BRANCH;
-
+    assign inst_csr     =   eff_opcode == `EFF_OPCODE_CSR;
+    
     assign inst_store   =   eff_opcode == `EFF_OPCODE_STORE;
     assign inst_ali     =   eff_opcode == `EFF_OPCODE_ALI;
     assign inst_aliw    =   eff_opcode == `EFF_OPCODE_ALIW;
@@ -297,6 +310,9 @@ module id_control (
                                    | ( { 3 { inst_lw } } & 3'b011 )
                                    | ( { 3 { inst_lwu } } & 3'b111 )
                                    | ( { 3 { inst_ld } } & 3'b100 );
-
+    
+    assign csr_ctrl     =   inst_csr? funct3: 3'b100;
+    assign csr_src      =   funct3[2];
+    
     assign inst_en      =   1'b1;
 endmodule

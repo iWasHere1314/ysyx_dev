@@ -43,6 +43,7 @@ module SimTop(
     wire                        inst_jump;
     wire                        inst_word;
     wire                        inst_branch;
+    wire                        inst_csr;
     
     /* immediate */
     wire    [`DATA_BUS]         imm_data;
@@ -50,7 +51,8 @@ module SimTop(
     /* memory control */
     wire                        mem_write;
     wire                        mem_read;
-        /* alu control */
+    
+    /* alu control */
     wire                        alu_src_pc;
     wire                        alu_src_imm;
     wire    [`ALU_OP_BUS]       alu_op;
@@ -69,6 +71,13 @@ module SimTop(
     /* load */
     wire    [`LOAD_TYPE_BUS]    load_type;
     
+    /* csr */
+    wire    [`CSR_INDEX_BUS]    csr_index;
+    wire    [`CSR_CTRL_BUS]     csr_ctrl;
+    wire                        csr_src;                  
+    wire    [`DATA_BUS]         imm_csr;
+    wire    [`DATA_BUS]         csr_read;
+
     /* instruction */
     wire                        inst_en;
 
@@ -91,7 +100,8 @@ module SimTop(
 
     assign branchjudge_ok       =   branchjudge_res & inst_branch;
     assign rd_data              =   inst_jump? ( inst_addr + `INST_ADDR_SIZE'h4 )
-                                        : ( inst_load? read_data:( inst_lui? imm_data: ex_odata ) );
+                                        : ( inst_csr? csr_read 
+                                        : ( inst_load? read_data:( inst_lui? imm_data: ex_odata ) ) );
 
 
     if_top my_if_top(
@@ -122,6 +132,7 @@ module SimTop(
         .inst_jump( inst_jump ),
         .inst_word( inst_word ),
         .inst_branch( inst_branch ),
+        .inst_csr( inst_csr ),
     
         /* immediate */
         .imm_data( imm_data ),
@@ -148,7 +159,13 @@ module SimTop(
     
         /* load */
         .load_type( load_type ),
-    
+
+        /* csr */
+        .csr_index( csr_index ),
+        .csr_ctrl( csr_ctrl ),
+        .csr_src( csr_src ),                   
+        .imm_csr( imm_csr ),
+
         /* instruction */
         .inst_en( inst_en )
         `ifdef DEFINE_PUTCH
@@ -218,6 +235,18 @@ module SimTop(
         /* difftest interface */
 
         .regs_o( regs_o ) 
+    );
+
+    csr_top my_csr_top(
+        .clk( clock ),
+        .rst( reset ),
+
+        .csr_index( csr_index ),
+        .rs1_data( rs1_data ),
+        .imm_csr( imm_csr ),
+        .csr_ctrl( csr_ctrl ),
+        .csr_src( csr_src ),
+        .csr_read( csr_read )
     );
 
     // Difftest
