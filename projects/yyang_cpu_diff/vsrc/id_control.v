@@ -94,6 +94,8 @@ module id_control (
     wire inst_xuix;
     wire inst_slt_nu;
     wire inst_slt_u;
+    wire inst_csr_ni;
+    wire inst_csr_i;
     /* all instructions */
 
     // wire inst_lui;
@@ -191,7 +193,8 @@ module id_control (
     assign inst_xuix    =   inst_lui | inst_auipc;
     assign inst_slt_nu  =   inst_slt | inst_slti;
     assign inst_slt_u   =   inst_sltu | inst_sltiu;
-  
+    assign inst_csr_ni  =   inst_csr & ( funct3[2] == 1'b0 ) & funct3[1:0] != 2'b00;
+    assign inst_csr_i  =   inst_csr & ( funct3[2] == 1'b1 ) & funct3[1:0] != 2'b00;
     /* all instructions' assignments */
 
     // assign inst_lui     = eff_opcode == `EFF_OPCODE_LUI;
@@ -246,9 +249,9 @@ module id_control (
 
     /* all control signals' assignments */
     /* register control */
-    assign rs1_en       =   1'b0 | inst_jalr | inst_branch | inst_mem | inst_alxx ;
+    assign rs1_en       =   1'b0 | inst_jalr | inst_branch | inst_mem | inst_alxx | inst_csr_ni;
     assign rs2_en       =   1'b0 | inst_branch | inst_store | inst_al_ni ;
-    assign rd_en        =   1'b0 | inst_xuix | inst_jump | inst_load | inst_alxx ;
+    assign rd_en        =   1'b0 | inst_xuix | inst_jump | inst_load | inst_alxx | inst_csr;
 
     /* instruction type */
     // assign inst_sltxx   =   inst_slt | inst_sltu |inst_slti | inst_sltiu ;
