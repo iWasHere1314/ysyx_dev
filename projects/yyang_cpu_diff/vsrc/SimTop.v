@@ -286,7 +286,7 @@ module SimTop(
             cycleCnt <= cycleCnt + 1;
             instrCnt <= instrCnt + inst_valid;
             `ifdef DEFINE_PUTCH
-            cmt_skip <= inst_selfdefine;
+            cmt_skip <= inst_selfdefine | inst_csr ;
             `endif
         end
     end
