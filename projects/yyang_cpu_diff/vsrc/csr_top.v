@@ -31,10 +31,10 @@ module csr_top (
 
     assign index_mcycle         =   csr_index == `CSR_MCYCLE_INDEX;
 
-    assign inst_csrrwx          =   csr_ctrl == 2'b01;
-    assign inst_csrrsx          =   csr_ctrl == 2'b10;
-    assign inst_csrrcx          =   csr_ctrl == 2'b11;
-    assign inst_csrinvalid      =   ( csr_ctrl == 2'b00 ) & ( csr_src == 1'b1 ); 
+    assign inst_csrrwx          =   csr_ctrl[1:0] == 2'b01;
+    assign inst_csrrsx          =   csr_ctrl[1:0] == 2'b10;
+    assign inst_csrrcx          =   csr_ctrl[1:0] == 2'b11;
+    assign inst_csrinvalid      =   ( csr_ctrl[1:0] == 2'b00 ) & ( csr_src == 1'b1 ); 
 
     assign csr_nxt              =   { `DATA_BUS_SIZE { inst_csrinvalid } } & csr_org 
                                     | { `DATA_BUS_SIZE { inst_csrrwx } } & csrrwx_res
