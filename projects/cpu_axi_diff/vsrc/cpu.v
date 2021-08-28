@@ -3,20 +3,16 @@
 
 `include "defines.v"
 
-module SimTop(
-    input         clock,
-    input         reset,
-
-    input  [63:0] io_logCtrl_log_begin,
-    input  [63:0] io_logCtrl_log_end,
-    input  [63:0] io_logCtrl_log_level,
-    input         io_perfInfo_clean,
-    input         io_perfInfo_dump,
-
-    output        io_uart_out_valid,
-    output [7:0]  io_uart_out_ch,
-    output        io_uart_in_valid,
-    input  [7:0]  io_uart_in_ch
+module cpu(
+    input                               clock,
+    input                               reset,
+    
+    output                              if_valid,
+    input                               if_ready,
+    input  [63:0]                       if_data_read,
+    output [63:0]                       if_addr,
+    output [1:0]                        if_size,
+    input  [1:0]                        if_resp
 );
 
 // if_stage
@@ -50,12 +46,23 @@ wire [4 : 0]inst_type_o;
 wire [`REG_BUS]rd_data;
 
 
+wire fetched;
+
 if_stage If_stage(
   .clk                (clock),
   .rst                (reset),
   
   .pc                 (pc),
-  .inst               (inst)
+  .inst               (inst),
+
+  .if_valid           (if_valid),
+  .if_ready           (if_ready),
+  .if_data_read       (if_data_read),
+  .if_addr            (if_addr),
+  .if_size            (if_size),
+  .if_resp            (if_resp),
+
+  .fetched            (fetched)
 );
 
 id_stage Id_stage(
@@ -118,7 +125,7 @@ reg [63:0] cycleCnt;
 reg [63:0] instrCnt;
 reg [`REG_BUS] regs_diff [0 : 31];
 
-wire inst_valid = (pc != `PC_START) | (inst != 0);
+wire inst_valid = fetched;
 
 always @(negedge clock) begin
   if (reset) begin
@@ -132,7 +139,7 @@ always @(negedge clock) begin
     cmt_inst <= inst;
     cmt_valid <= inst_valid;
 
-		regs_diff <= regs;
+    regs_diff <= regs;
 
     trap <= inst[6:0] == 7'h6b;
     trap_code <= regs[10][7:0];
