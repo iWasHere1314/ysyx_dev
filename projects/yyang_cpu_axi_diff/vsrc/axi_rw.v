@@ -68,7 +68,7 @@ module axi_rw # (
     input  [AXI_DATA_WIDTH:0]           rw_addr_i,
     input  [1:0]                        rw_size_i,
     output [1:0]                        rw_resp_o,
-    input  [AXI_ID_WIDTH-1:0]           rw_id_i,
+
     // Advanced eXtensible Interface
     
     //写地址
@@ -111,7 +111,7 @@ module axi_rw # (
     output [7:0]                        axi_ar_len_o,
     output [2:0]                        axi_ar_size_o,
     output [1:0]                        axi_ar_burst_o,
-    output                              axi_ar_axi_lock_o,
+    output                              axi_ar_lock_o,
     output [3:0]                        axi_ar_cache_o,
     output [3:0]                        axi_ar_qos_o,
     output [3:0]                        axi_ar_region_o,
@@ -125,6 +125,7 @@ module axi_rw # (
     input  [AXI_ID_WIDTH-1:0]           axi_r_id_i,
     input  [AXI_USER_WIDTH-1:0]         axi_r_user_i
 );
+
 
     wire w_trans    = rw_req_i == `REQ_WRITE;
     wire r_trans    = rw_req_i == `REQ_READ;
