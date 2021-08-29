@@ -68,7 +68,7 @@ module axi_rw # (
     input  [AXI_DATA_WIDTH:0]           rw_addr_i,
     input  [1:0]                        rw_size_i,
     output [1:0]                        rw_resp_o,
-
+    input  [AXI_ID_WIDTH-1:0]           rw_id_i,
     // Advanced eXtensible Interface
     
     //写地址
@@ -111,7 +111,7 @@ module axi_rw # (
     output [7:0]                        axi_ar_len_o,
     output [2:0]                        axi_ar_size_o,
     output [1:0]                        axi_ar_burst_o,
-    output                              axi_ar_lock_o,
+    output                              axi_ar_axi_lock_o,
     output [3:0]                        axi_ar_cache_o,
     output [3:0]                        axi_ar_qos_o,
     output [3:0]                        axi_ar_region_o,
@@ -238,8 +238,7 @@ module axi_rw # (
     wire [AXI_DATA_WIDTH-1:0] mask_l            = mask[AXI_DATA_WIDTH-1:0];
     wire [AXI_DATA_WIDTH-1:0] mask_h            = mask[MASK_WIDTH-1:AXI_DATA_WIDTH];// l，h对应关系同理
 
-    wire [AXI_ID_WIDTH-1:0] axi_id              = {AXI_ID_WIDTH{1'b0}};
-    wire [AXI_USER_WIDTH-1:0] axi_user          = {AXI_USER_WIDTH{1'b0}};// 目前只有一个，也就不用考虑id了
+    wire [AXI_USER_WIDTH-1:0] axi_user          = {AXI_USER_WIDTH{1'b0}};// 用户自定义，不使用
 
 
     /* 这一部分是针对cpu端的 */
@@ -278,7 +277,18 @@ module axi_rw # (
 
     /* 这一部分是针对slave端的 */
     // ------------------Write Transaction------------------
-
+    // aw
+    assign axi_aw_valid_o   = w_state_addr;
+    assign axi_aw_addr_o    = axi_addr;
+    assign axi_aw_prot_o    = `AXI_PROT_UNPRIVILEGED_ACCESS | `AXI_PROT_SECURE_ACCESS | `AXI_PROT_DATA_ACCESS; //不做保护
+    assign axi_aw_id_o      = rw_id_i;
+    assign axi_aw_user_o    = axi_user;
+    assign axi_aw_len_o     = axi_len;
+    assign axi_aw_size_o    = axi_size;
+    assign axi_aw_burst_o   = `AXI_BURST_TYPE_INCR;
+    assign axi_aw_lock_o    = 1'b0;
+    assign axi_aw_cache_o   = `AXI_AWCACHE_NORMAL_NON_CACHEABLE_NON_BUFFERABLE;
+    assign axi_aw_qos_o     = 4'h0;
 
     
     // ------------------Read Transaction------------------
@@ -287,7 +297,7 @@ module axi_rw # (
     assign axi_ar_valid_o   = r_state_addr;// 当目前在输出地址时，那就写地址允许
     assign axi_ar_addr_o    = axi_addr;
     assign axi_ar_prot_o    = `AXI_PROT_UNPRIVILEGED_ACCESS | `AXI_PROT_SECURE_ACCESS | `AXI_PROT_DATA_ACCESS; //不做保护
-    assign axi_ar_id_o      = axi_id;
+    assign axi_ar_id_o      = rw_id_i;
     assign axi_ar_user_o    = axi_user;
     assign axi_ar_len_o     = axi_len;
     assign axi_ar_size_o    = axi_size;
@@ -295,8 +305,7 @@ module axi_rw # (
     assign axi_ar_lock_o    = 1'b0;
     assign axi_ar_cache_o   = `AXI_ARCACHE_NORMAL_NON_CACHEABLE_NON_BUFFERABLE;
     assign axi_ar_qos_o     = 4'h0;
-    assign axi_ar_region_o  = 4'h0;
-
+    assign
     // Read data channel signals
     assign axi_r_ready_o    = r_state_read;// 确实！
 
