@@ -7,7 +7,7 @@ module ex_top (
     input   [`ALU_OP_BUS]       alu_op,
     // word instruction
     input                       inst_word,
-    // branch or sltxx     
+    // branch or sltxx
     input                       inst_sltxx,
     input   [`COMP_TYPE_BUS]    comp_type,
     // shift          

@@ -3,7 +3,8 @@ module id_immgen (
     input   [`INST_BUS]         inst,
     input   [`GEN_TYPE_BUS]     gen_type,
     output  [`DATA_BUS]         imm_data,
-    output  [`IMM_SHIFT_BUS]    imm_shift
+    output  [`IMM_SHIFT_BUS]    imm_shift,
+    output  [`DATA_BUS]         imm_csr
 );
     wire inst_store;
     wire inst_xuix;
@@ -47,5 +48,6 @@ module id_immgen (
     assign imm_data             =   { { 32 { imm_pre[31] } } , imm_pre };  
     
     assign imm_shift            =   inst[`INST_25_20];
+    assign imm_csr              =   { 59'b0, inst[`INST_19_15] };
                                  
 endmodule

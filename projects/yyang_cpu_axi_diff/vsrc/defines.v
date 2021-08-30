@@ -1,5 +1,7 @@
 `timescale 1ns / 1ps
 
+/* self-defined marco */
+`define DEFINE_PUTCH
 
 /* if marco */
 `define INST_ADDR_BUS           63:0
@@ -13,7 +15,7 @@
 `define REG_NUM                 (1<<`REG_INDEX_SIZE)
 `define REG_BUS                 63:0
 `define REG_BUS_SIZE            64
-`define REG_ZERO                0
+`define REG_ZERO                64'b0
 
 /* id marco */
 
@@ -26,6 +28,7 @@
 `define OPCODE_BUS              6:0
 `define FUNCT3_BUS              2:0
 `define FUNCT7_BUS              6:0
+`define CSR_LOC_BUS             31:20
 
 `define EFF_OPCODE_LUI          5'b01101
 `define EFF_OPCODE_AUIPC        5'b00101
@@ -38,6 +41,7 @@
 `define EFF_OPCODE_ALIW         5'b00110
 `define EFF_OPCODE_AL           5'b01100
 `define EFF_OPCODE_ALW          5'b01110
+`define EFF_OPCODE_CSR          5'b11100
 
 //register
 `define RD_LOC_BUS              11:7
@@ -55,10 +59,10 @@
 `define INST_30_25              30:25
 `define INST_20                 20:20
 `define INST_19_12              19:12
+`define INST_19_15              19:15
 `define INST_11_7               11:7
 `define INST_11_8               11:8
 `define INST_7                  7:7
-
          
 //alu control
 `define ALU_OP_BUS              2:0
@@ -94,12 +98,19 @@
 /* memory acess marco */
 `define DATA_ADDR_BUS           63:0
 `define ADDR_LOW_BUS            2:0
+
+/* csr marco */
+`define CSR_INDEX_BUS           11:0
+`define CSR_CTRL_BUS            2:0
+`define CSR_MCYCLE_INDEX        12'hB00
+
 /*  */
 `define ZERO_DWORD              64'h00000000_00000000   
      
 `define INST_ADD                8'h11
 
 /* axi */
+
 `define AXI_ADDR_WIDTH      64
 `define AXI_DATA_WIDTH      64
 `define AXI_ID_WIDTH        4

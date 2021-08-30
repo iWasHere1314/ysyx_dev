@@ -68,7 +68,7 @@ module axi_rw # (
     input  [AXI_DATA_WIDTH:0]           rw_addr_i,
     input  [1:0]                        rw_size_i,
     output [1:0]                        rw_resp_o,
-
+    input  [AXI_ID_WIDTH-1:0]           rw_id_i,
     // Advanced eXtensible Interface
     
     //写地址
@@ -188,7 +188,7 @@ module axi_rw # (
 
 
     // ------------------Number of transmission------------------
-    reg [7:0] len;
+    reg [7:0] len; // 正在写的是第几beat
     wire len_reset      = reset | (w_trans & w_state_idle) | (r_trans & r_state_idle);
     wire len_incr_en    = (len != axi_len) & (w_hs | r_hs);
     always @(posedge clock) begin
@@ -260,6 +260,7 @@ module axi_rw # (
         end
     end
     assign rw_ready_o     = rw_ready;
+        //因为rw_ready会迟一个周期，所以返回的读数据并不会有问题
 
     // 直接将信息返回即可
     reg [1:0] rw_resp;
@@ -290,8 +291,52 @@ module axi_rw # (
     assign axi_aw_lock_o    = 1'b0;
     assign axi_aw_cache_o   = `AXI_AWCACHE_NORMAL_NON_CACHEABLE_NON_BUFFERABLE;
     assign axi_aw_qos_o     = 4'h0;
+    assign axi_aw_region_o  = 4'h0;
 
+    //w
+    reg [AXI_ADDR_WIDTH-1:0] axi_w_data_r, axi_w_strb_r, axi_w_last_r;
     
+    assign axi_w_valid_o    = w_state_write;
+    assign axi_w_data_o     = axi_w_data_r;
+    assign axi_w_strb_o     = axi_w_strb_r;
+    assign axi_w_last_o     = axi_w_last_r;
+    assign axi_user_o       = axi_user;
+
+    generate
+        for( genvar i=0; i < TRANS_LEN; i = i + 1 ) begin
+            always @( posedge clock ) begin
+                if( reset ) begin
+                    axi_w_data_r <= 0;
+                end
+                else if( ~aligned & overstep ) begin
+                    // 这种写法的唯一保障在于接收方接收到后ready立马置低，即写至少需要额外一周期
+                    // 写需要一周期，也合理
+                    if( len[0] ) begin
+                        axi_w_data_r <= data_write_i & mask_l;
+                        axi_w_strb_r <= mask_l;
+                    end
+                    else begin
+                        axi_w_data_r <= ( data_write_i >> aligned_offset_l )& mask_h;
+                        axi_w_strb_r <= mask_h;
+                    end
+                end
+                else if( len == i )begin
+                    axi_w_data_r <= data_write_i[i*AXI_DATA_WIDTH +: AXI_DATA_WIDTH ];
+                    axi_w_strb_r <= {AXI_DATA_WIDTH{1'b1}};
+                end
+            end
+        end
+    endgenerate
+    
+    
+
+
+
+    //b
+
+    assign axi_b_ready_o    = w_state_resp;
+    
+
     // ------------------Read Transaction------------------
 
     // Read address channel signals
@@ -306,7 +351,6 @@ module axi_rw # (
     assign axi_ar_lock_o    = 1'b0;
     assign axi_ar_cache_o   = `AXI_ARCACHE_NORMAL_NON_CACHEABLE_NON_BUFFERABLE;
     assign axi_ar_qos_o     = 4'h0;
-    assign
     // Read data channel signals
     assign axi_r_ready_o    = r_state_read;// 确实！
 

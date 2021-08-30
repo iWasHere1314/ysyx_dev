@@ -41,7 +41,7 @@ module ex_alu (
     assign alu_xor      =   alu_op == 3'b101;
     assign alu_or       =   alu_op == 3'b110;
     assign alu_and      =   alu_op == 3'b111;
-    assign comp_signed  =   comp_type[2] & comp_type[0]; // ( comp_type[2] == 1'b1 ) && ( comp_type[0] == 1'b1 );
+    assign comp_signed  =   ~( comp_type[2] & comp_type[0] );
 
     assign alu_op1_pre  =   ( alu_src_pc  == 1'b1 )? rs1_data: pc;
     assign alu_op2_pre  =   ( alu_src_imm == 1'b0 )? rs2_data: imm_data;

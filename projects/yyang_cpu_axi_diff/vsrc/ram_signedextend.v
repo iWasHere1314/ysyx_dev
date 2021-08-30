@@ -12,7 +12,7 @@ module ram_signedextend (
     wire                        load_signed;
 
     wire                        signed_bit;
-
+    
     wire    [`DATA_BUS]         mask_lbx;
     wire    [`DATA_BUS]         mask_lhx;
     wire    [`DATA_BUS]         mask_lwx;
@@ -24,7 +24,7 @@ module ram_signedextend (
     assign load_lhx                 =   load_type[1:0] == 2'b10;
     assign load_lwx                 =   load_type[1:0] == 2'b11;
     assign load_ld                  =   load_type[2:0] == 3'b100;
-    assign load_signed              =   ~ ( ( load_type[2] == 1'b1 ) & ~load_ld );
+    assign load_signed              =   ( load_type[2] == 1'b0 ) && ( load_type[1:0] != 2'b0 ); 
 
     assign signed_bit               =  load_signed & 
                                         ( 1'b0 | load_lbx & signedextend_data_pre[07]
@@ -40,9 +40,9 @@ module ram_signedextend (
                                               | ( { 64 { load_lhx } } & mask_lhx )
                                               | ( { 64 { load_lwx } } & mask_lwx )
                                               | ( { 64 { load_ld  } } & mask_ld  );
-    assign signedextend_data_pre    =   read_data >> ( addr_low << 2'd3 );
+    assign signedextend_data_pre    =   ( read_data >> ( { 3'b000, addr_low } << 2'd3 ) ) & mask ;
     
     assign signedextend_data        =   load_signed? 
-                                        ( ( signedextend_data_pre & mask ) | ( { 64 { signed_bit } } & ~mask ) )
+                                        ( ( signedextend_data_pre  ) | ( { 64 { signed_bit } } & ~mask ) )
                                         : signedextend_data_pre;
 endmodule

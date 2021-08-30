@@ -20,6 +20,7 @@ module id_top (
     output                      inst_jump,
     output                      inst_word,
     output                      inst_branch,
+    output                      inst_csr,
 
     /* immediate */
     output  [`DATA_BUS]         imm_data,
@@ -47,25 +48,41 @@ module id_top (
     /* load */
     output [`LOAD_TYPE_BUS]     load_type,
 
+        /* csr */
+    output [`CSR_INDEX_BUS]     csr_index,
+    output [`CSR_CTRL_BUS]      csr_ctrl,
+    output                      csr_src,                   
+    output [`DATA_BUS]          imm_csr,
+
     /* instruction */
     output                      inst_en
+    `ifdef DEFINE_PUTCH
+    ,
+    output                      inst_selfdefine
+    `endif
 );
-    
     wire [`GEN_TYPE_BUS] gen_type;
 
-    assign rs1_index = inst[`RS1_LOC_BUS];
-    assign rs2_index = inst[`RS2_LOC_BUS];
-    assign rd_index = inst[`RD_LOC_BUS];
+    assign rs1_index    =   inst[`RS1_LOC_BUS];
+    assign rs2_index    =   inst[`RS2_LOC_BUS];
+    assign rd_index     =   inst[`RD_LOC_BUS];
+    assign csr_index    =   inst[`CSR_LOC_BUS];
 
     id_immgen my_id_immgen(
         .inst( inst ),
         .gen_type( gen_type ),
         .imm_data( imm_data ),
-        .imm_shift( imm_shift)
+        .imm_shift( imm_shift),
+        .imm_csr( imm_csr )
     );
 
     id_control my_id_control(
         /* input */
+
+        `ifdef DEFINE_PUTCH
+        .inst( inst ),
+        `endif 
+
         .opcode( inst[`OPCODE_LOC_BUS] ),
         .funct3( inst[`FUNCT3_LOC_BUS] ),
         .funct7( inst[`FUNCT7_LOC_BUS] ),
@@ -83,7 +100,8 @@ module id_top (
         .inst_jump( inst_jump ),
         .inst_word( inst_word ),
         .inst_branch( inst_branch ),
-
+        .inst_csr( inst_csr ),
+        
         /* memory control */
         .mem_write( mem_write ),
         .mem_read( mem_read ),
@@ -108,8 +126,19 @@ module id_top (
 
         /* load */
         .load_type( load_type ),
+
+        /* csr  */
+        .csr_ctrl( csr_ctrl ),
+        .csr_src( csr_src ),
+
         /* instruction */
         .inst_en( inst_en )
+
+        `ifdef DEFINE_PUTCH
+        ,
+        .inst_selfdefine( inst_selfdefine )
+        `endif
+
     );
 
 endmodule
