@@ -233,8 +233,8 @@ module axi_rw # (
     wire [OFFSET_WIDTH-1:0] aligned_offset_h    = AXI_DATA_WIDTH - aligned_offset_l;// 非对齐高地址lane偏移
     wire [MASK_WIDTH-1:0] mask                  = (({MASK_WIDTH{size_b}} & {{MASK_WIDTH-8{1'b0}}, 8'hff})
                                                     | ({MASK_WIDTH{size_h}} & {{MASK_WIDTH-16{1'b0}}, 16'hffff})
-                                                    | ({MASK_WIDTH{size_w}} & {{MASK_WIDTH-32{1'b0}}, 32'hffffffff})
-                                                    | ({MASK_WIDTH{size_d}} & {{MASK_WIDTH-64{1'b0}}, 64'hffffffff_ffffffff})
+                                                    | ({MASK_WIDTH{size_w}} & {{MASK_WIDTH-32{1'b0}}, 32'hffff_ffff})
+                                                    | ({MASK_WIDTH{size_d}} & {{MASK_WIDTH-64{1'b0}}, 64'hffff_ffff_ffff_ffff})
                                                     ) << aligned_offset_l;// 对应的各种mask，用128位方便移位吧。。。
     wire [AXI_DATA_WIDTH-1:0] mask_l            = mask[AXI_DATA_WIDTH-1:0];
     wire [AXI_DATA_WIDTH-1:0] mask_h            = mask[MASK_WIDTH-1:AXI_DATA_WIDTH];// l，h对应关系同理
@@ -313,16 +313,16 @@ module axi_rw # (
                     // 写需要一周期，也合理
                     if( len[0] ) begin
                         axi_w_data_r <= data_write_i & mask_l;
-                        axi_w_strb_r <= mask_l;
+                        axi_w_strb_r <= { mask_l[63], mask_l[55], mask_l[47], mask_l[39], mask_l[31], mask_l[23], mask_l[15], mask_l[7] } ;
                     end
                     else begin
                         axi_w_data_r <= ( data_write_i >> aligned_offset_l )& mask_h;
-                        axi_w_strb_r <= mask_h;
+                        axi_w_strb_r <= { mask_h[63], mask_h[55], mask_h[47], mask_h[39], mask_h[31], mask_h[23], mask_h[15], mask_h[7] } ;
                     end
                 end
                 else if( len == i )begin
                     axi_w_data_r <= data_write_i[i*AXI_DATA_WIDTH +: AXI_DATA_WIDTH ] & mask_l;
-                    axi_w_strb_r <= mask_l;
+                    axi_w_strb_r <= { mask_l[63], mask_l[55], mask_l[47], mask_l[39], mask_l[31], mask_l[23], mask_l[15], mask_l[7] } ;
                 end
             end
         end
