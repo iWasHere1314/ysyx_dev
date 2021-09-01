@@ -294,7 +294,8 @@ module axi_rw # (
     assign axi_aw_region_o  = 4'h0;
 
     //w
-    reg [AXI_ADDR_WIDTH-1:0] axi_w_data_r, axi_w_strb_r;
+    reg [AXI_ADDR_WIDTH-1:0] axi_w_data_r;
+    reg [AXI_ADDR_WIDTH/8-1:0] axi_w_strb_r;
     
     assign axi_w_valid_o    = w_state_write;
     assign axi_w_data_o     = axi_w_data_r;
@@ -313,16 +314,16 @@ module axi_rw # (
                     // 写需要一周期，也合理
                     if( len[0] ) begin
                         axi_w_data_r <= data_write_i & mask_l;
-                        axi_w_strb_r <= { mask_l[63], mask_l[55], mask_l[47], mask_l[39], mask_l[31], mask_l[23], mask_l[15], mask_l[7] } ;
+                        axi_w_strb_r <= { mask_l[56], mask_l[48], mask_l[40], mask_l[32], mask_l[24], mask_l[16], mask_l[8], mask_l[0] } ;
                     end
                     else begin
                         axi_w_data_r <= ( data_write_i >> aligned_offset_l )& mask_h;
-                        axi_w_strb_r <= { mask_h[63], mask_h[55], mask_h[47], mask_h[39], mask_h[31], mask_h[23], mask_h[15], mask_h[7] } ;
+                        axi_w_strb_r <= { mask_h[56], mask_h[48], mask_h[40], mask_h[32], mask_h[24], mask_h[16], mask_h[8], mask_h[0] } ;
                     end
                 end
                 else if( len == i )begin
                     axi_w_data_r <= data_write_i[i*AXI_DATA_WIDTH +: AXI_DATA_WIDTH ] & mask_l;
-                    axi_w_strb_r <= { mask_l[63], mask_l[55], mask_l[47], mask_l[39], mask_l[31], mask_l[23], mask_l[15], mask_l[7] } ;
+                    axi_w_strb_r <= { mask_l[56], mask_l[48], mask_l[40], mask_l[32], mask_l[24], mask_l[16], mask_l[8], mask_l[0] } ;
                 end
             end
         end
