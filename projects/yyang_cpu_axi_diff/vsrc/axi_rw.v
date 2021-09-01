@@ -294,13 +294,13 @@ module axi_rw # (
     assign axi_aw_region_o  = 4'h0;
 
     //w
-    reg [AXI_ADDR_WIDTH-1:0] axi_w_data_r, axi_w_strb_r, axi_w_last_r;
+    reg [AXI_ADDR_WIDTH-1:0] axi_w_data_r, axi_w_strb_r;
     
     assign axi_w_valid_o    = w_state_write;
     assign axi_w_data_o     = axi_w_data_r;
     assign axi_w_strb_o     = axi_w_strb_r;
-    assign axi_w_last_o     = axi_w_last_r;
-    assign axi_w_user_o       = axi_user;
+    assign axi_w_last_o     = axi_len == len;
+    assign axi_w_user_o     = axi_user;
 
     generate
         for( genvar i=0; i < TRANS_LEN; i = i + 1 ) begin
