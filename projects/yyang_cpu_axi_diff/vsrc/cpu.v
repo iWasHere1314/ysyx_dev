@@ -300,7 +300,7 @@ module cpu(
             {cmt_wen, cmt_wdest, cmt_wdata, cmt_pc, cmt_inst, cmt_valid, trap, trap_code, cycleCnt, instrCnt} <= 0;
         end
         else if (~trap) begin
-            cmt_wen <= rd_en;
+            cmt_wen <= rd_en & inst_valid;
             cmt_wdest <= {3'd0, rd_index};
             cmt_wdata <= rd_data;
             cmt_pc <= inst_addr;
