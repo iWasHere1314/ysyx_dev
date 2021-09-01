@@ -175,7 +175,7 @@ module axi_rw # (
             r_state <= R_STATE_IDLE;
         end
         else begin
-            if ( r_valid ) begin
+            if ( r_valid & ~rw_ready ) begin
                 case (r_state)// 之所以读部分可以这样写，是因为读逻辑
                     R_STATE_IDLE:               r_state <= R_STATE_ADDR;
                     R_STATE_ADDR: if (ar_hs)    r_state <= R_STATE_READ;
