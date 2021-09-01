@@ -31,6 +31,7 @@ module cpu(
     `endif 
 
     // if
+    wire    [`INST_ADDR_BUS]    inst_addr;
     wire    [`INST_BUS]         inst;    
     wire                        inst_valid;
     // id

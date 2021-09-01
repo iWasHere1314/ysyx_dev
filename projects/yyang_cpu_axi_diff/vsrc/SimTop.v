@@ -123,9 +123,9 @@ module SimTop(
     wire [`AXI_USER_WIDTH-1:0] r_user;
 
     //axi_rw
-	wire rw_ready_o;
-    wire [`AXI_DATA_WIDTH-1:0] data_read_o;
-    wire [1:0] rw_resp_o;
+	wire rw_ready;
+    wire [`AXI_DATA_WIDTH-1:0] data_read;
+    wire [1:0] rw_resp;
 
     //if_mem_arbiter
     wire if_ready;
@@ -157,7 +157,7 @@ module SimTop(
 
     //aw
     assign aw_ready                                 = `AXI_TOP_INTERFACE(aw_ready);
-    assign `AXI_TOP_INTERFACE(aw_ready)             = aw_ready;
+    assign `AXI_TOP_INTERFACE(aw_valid)             = aw_valid;
     assign `AXI_TOP_INTERFACE(aw_bits_addr)         = aw_addr;
     assign `AXI_TOP_INTERFACE(aw_bits_prot)         = aw_prot;
     assign `AXI_TOP_INTERFACE(aw_bits_id)           = aw_id;
@@ -182,7 +182,7 @@ module SimTop(
     assign b_resp                                   = `AXI_TOP_INTERFACE(b_bits_resp);
     assign b_id                                     = `AXI_TOP_INTERFACE(b_bits_id);
     assign b_user                                   = `AXI_TOP_INTERFACE(b_bits_user);
-    
+
     //ar
     assign ar_ready                                 = `AXI_TOP_INTERFACE(ar_ready);
     assign `AXI_TOP_INTERFACE(ar_valid)             = ar_valid;
@@ -280,7 +280,7 @@ module SimTop(
     );
 
     //if_mem_arbiter
-    if_meme_arbiter my_if_meme_arbiter    (
+    if_mem_arbiter my_if_mem_arbiter    (
         /* if */
         .if_ready( if_ready ),
         .if_data_read( if_data_read ),
@@ -303,7 +303,7 @@ module SimTop(
 
         /* axi_rw */
         .rw_valid( rw_valid ),
-    	.rw_ready( rw_valid ),
+    	.rw_ready( rw_ready ),
         .rw_req( rw_req ),
         .data_read( data_read ),
         .data_write( data_write ),

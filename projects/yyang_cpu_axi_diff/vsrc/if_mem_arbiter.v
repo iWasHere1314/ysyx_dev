@@ -1,5 +1,5 @@
 `include "defines.v"
-module if_meme_arbiter  # (
+module if_mem_arbiter  # (
     parameter RW_DATA_WIDTH     = 64,
     parameter RW_ADDR_WIDTH     = 64,
     parameter AXI_DATA_WIDTH    = 64,
@@ -47,11 +47,11 @@ module if_meme_arbiter  # (
 
     assign state_cur            =   mem_valid? STATE_MEM: STATE_IF;
     assign state_cur_if         =   state_cur == STATE_IF;
-    assign state_cue_mem        =   state_cur == STATE_MEM;
+    assign state_cur_mem        =   state_cur == STATE_MEM;
 
     assign rw_valid             =   state_cur_if ? if_valid: mem_valid;
     assign if_ready             =   state_cur_if & rw_ready; 
-    assign mem_ready            =   state_cue_mem & rw_ready;
+    assign mem_ready            =   state_cur_mem & rw_ready;
     assign rw_req               =   state_cur_if ? if_req: mem_req;
     assign if_data_read         =   data_read;
     assign mem_data_read        =   data_read;  
