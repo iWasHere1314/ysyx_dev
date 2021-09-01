@@ -27,7 +27,7 @@ module if_top (
     assign if_addr              =   nxt_inst_addr;
     assign if_valid             =   1'b1;
     assign if_size              =   `SIZE_W;
-    assign inst_valid           =   handshake_done & ( inst_addr != `PC_START - 64'h4 );
+    assign inst_valid           =   handshake_done;
     assign handshake_done       =   if_valid & if_ready;
     assign if_req               =   `REQ_READ;
     assign inst                 =   inst_r;
