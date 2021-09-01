@@ -30,7 +30,7 @@ module if_top (
     assign inst_valid           =   handshake_done;
     assign handshake_done       =   if_valid & if_ready;
     assign if_req               =   `REQ_READ;
-
+    assign inst                 =   inst_r;
     always @( posedge clk ) begin
         if( rst ) begin
             inst_r <= `INST_NOP;
