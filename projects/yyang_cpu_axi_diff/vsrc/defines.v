@@ -9,6 +9,7 @@
 `define INST_ADDR_SIZE          64
 `define INST_SIZE               32
 `define PC_START                64'h00000000_80000000  
+`define INST_NOP                32'h0000_0033
 /* regfile marco */
 `define REG_INDEX_BUS           4:0  
 `define REG_INDEX_SIZE          5

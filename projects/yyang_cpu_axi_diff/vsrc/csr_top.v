@@ -3,12 +3,13 @@ module csr_top (
     input                           clk,
     input                           rst,
 
+    input                           inst_valid,
     input   [`CSR_INDEX_BUS]        csr_index,
     input   [`DATA_BUS]             rs1_data,
     input   [`DATA_BUS]             imm_csr,
     input   [`CSR_CTRL_BUS]         csr_ctrl,
     input                           csr_src,
-    
+
     output  [`DATA_BUS]             csr_read
 );
     /* index */
@@ -53,7 +54,7 @@ module csr_top (
         if( rst ) begin
             mcycle_r <= `DATA_BUS_SIZE'b0;
         end
-        else  if( index_mcycle )begin
+        else  if( index_mcycle & inst_valid )begin
             mcycle_r <= csr_nxt;
         end
         else begin

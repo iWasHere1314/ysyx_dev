@@ -321,8 +321,8 @@ module axi_rw # (
                     end
                 end
                 else if( len == i )begin
-                    axi_w_data_r <= data_write_i[i*AXI_DATA_WIDTH +: AXI_DATA_WIDTH ];
-                    axi_w_strb_r <= {AXI_DATA_WIDTH{1'b1}};
+                    axi_w_data_r <= data_write_i[i*AXI_DATA_WIDTH +: AXI_DATA_WIDTH ] & mask_l;
+                    axi_w_strb_r <= mask_l;
                 end
             end
         end
