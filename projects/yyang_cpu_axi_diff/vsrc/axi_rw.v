@@ -158,7 +158,7 @@ module axi_rw # (
             w_state <= W_STATE_IDLE;
         end
         else begin
-            if ( w_valid & ~rw_ready ) begin
+            if ( w_valid & ~rw_ready ) begin// 由于设置了mem_finished信号，此处若不加这个，会提前送出错误的写地址
                 case (w_state)
                     W_STATE_IDLE:               w_state <= W_STATE_ADDR;
                     W_STATE_ADDR:  if (aw_hs)   w_state <= W_STATE_WRITE;
@@ -175,8 +175,8 @@ module axi_rw # (
             r_state <= R_STATE_IDLE;
         end
         else begin
-            if (r_valid & ~rw_ready ) begin
-                case (r_state)
+            if ( r_valid ) begin
+                case (r_state)// 之所以读部分可以这样写，是因为读逻辑
                     R_STATE_IDLE:               r_state <= R_STATE_ADDR;
                     R_STATE_ADDR: if (ar_hs)    r_state <= R_STATE_READ;
                     R_STATE_READ: if (r_done)   r_state <= R_STATE_IDLE;
