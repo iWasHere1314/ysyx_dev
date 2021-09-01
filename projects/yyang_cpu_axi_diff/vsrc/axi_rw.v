@@ -158,7 +158,7 @@ module axi_rw # (
             w_state <= W_STATE_IDLE;
         end
         else begin
-            if (w_valid) begin
+            if ( w_valid & ~rw_ready ) begin
                 case (w_state)
                     W_STATE_IDLE:               w_state <= W_STATE_ADDR;
                     W_STATE_ADDR:  if (aw_hs)   w_state <= W_STATE_WRITE;
@@ -175,7 +175,7 @@ module axi_rw # (
             r_state <= R_STATE_IDLE;
         end
         else begin
-            if (r_valid) begin
+            if (r_valid & ~rw_ready ) begin
                 case (r_state)
                     R_STATE_IDLE:               r_state <= R_STATE_ADDR;
                     R_STATE_ADDR: if (ar_hs)    r_state <= R_STATE_READ;
@@ -351,6 +351,7 @@ module axi_rw # (
     assign axi_ar_lock_o    = 1'b0;
     assign axi_ar_cache_o   = `AXI_ARCACHE_NORMAL_NON_CACHEABLE_NON_BUFFERABLE;
     assign axi_ar_qos_o     = 4'h0;
+
     // Read data channel signals
     assign axi_r_ready_o    = r_state_read;// 确实！
 
