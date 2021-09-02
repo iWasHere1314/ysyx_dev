@@ -85,7 +85,7 @@ module mem_top(
 
 
     assign mem_valid                =   ( mem_write | mem_read ) & ~mem_finished;
-    assign mem_data_write           =   write_data;
+    assign mem_data_write           =   write_data <<( { 3'b0, data_addr[2:0] } << 3 );
     assign mem_addr                 =   data_addr;
     assign mem_size                 =     { 2 { store_sb | load_lbx } } & `SIZE_B 
                                         | { 2 { store_sh | load_lhx } } & `SIZE_H
