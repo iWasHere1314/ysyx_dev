@@ -84,10 +84,10 @@ module cpu(
     wire    [`CSR_CTRL_BUS]     csr_ctrl;
     wire                        csr_src;                  
     wire    [`DATA_BUS]         imm_csr;
-    wire    [`DATA_BUS]         csr_read;
-
-    /* instruction */
-    wire                        inst_en;
+    wire                        inst_ecall;
+    wire                        inst_ebreak;
+    wire                        inst_trap;
+    wire                        inst_mret;
 
     // ex
     wire    [`INST_ADDR_BUS]    alu_raw_res;
@@ -95,21 +95,26 @@ module cpu(
     wire                        branchjudge_res;
 
     // mem
-
     wire    [`DATA_BUS]         read_data;
 
     // regfile
     wire    [`REG_BUS]          rs1_data;
     wire    [`REG_BUS]          rs2_data;
-    /* difftest interface */
-                                            
+    
+    //csr
+    wire    [`DATA_BUS]         csr_read;
+    wire                        csr_trap;
+    wire    [`INST_ADDR_BUS]    csr_nxt_pc;
+
+    //difftest interface                 
     wire    [`REG_BUS]          regs_o  [31:0] ;
 
 
     assign branchjudge_ok       =   branchjudge_res & inst_branch;
-    assign rd_data              =   inst_jump? ( inst_addr + `INST_ADDR_SIZE'h4 )
-                                        : ( inst_csr? csr_read 
-                                        : ( inst_load? read_data:( inst_lui? imm_data: ex_odata ) ) );
+    assign rd_data              =   inst_trap | inst_mret? csr_nxt_pc
+                                    : ( inst_jump? ( inst_addr + `INST_ADDR_SIZE'h4 )
+                                    : ( inst_csr? csr_read 
+                                    : ( inst_load? read_data:( inst_lui? imm_data: ex_odata ) ) ) );
 
 
     if_top my_if_top(
@@ -136,6 +141,9 @@ module cpu(
     id_top my_id_top(
         .inst( inst ),
         
+        /* interrupt  */
+        .csr_trap( csr_trap ),
+
         /* register control */
         .rs1_index( rs1_index ),
         .rs2_index( rs2_index ),
@@ -153,7 +161,11 @@ module cpu(
         .inst_word( inst_word ),
         .inst_branch( inst_branch ),
         .inst_csr( inst_csr ),
-    
+        .inst_ecall( inst_ecall ),
+        .inst_ebreak( inst_ebreak ),
+        .inst_mret( inst_mret ),
+        .inst_trap( inst_trap ),
+
         /* immediate */
         .imm_data( imm_data ),
     
@@ -184,10 +196,9 @@ module cpu(
         .csr_index( csr_index ),
         .csr_ctrl( csr_ctrl ),
         .csr_src( csr_src ),                   
-        .imm_csr( imm_csr ),
+        .imm_csr( imm_csr )
 
         /* instruction */
-        .inst_en( inst_en )
         `ifdef DEFINE_PUTCH
         ,
         .inst_selfdefine( inst_selfdefine )
@@ -268,13 +279,22 @@ module cpu(
         .clk( clock ),
         .rst( reset ),
 
+        .inst_addr( inst_addr ),
         .inst_valid( inst_valid ),
         .csr_index( csr_index ),
         .rs1_data( rs1_data ),
         .imm_csr( imm_csr ),
         .csr_ctrl( csr_ctrl ),
         .csr_src( csr_src ),
-        .csr_read( csr_read )
+        .inst_trap( inst_trap ),
+        .inst_mret( inst_mret ),
+        .clint_mtip( 0 ),
+        .inst_ecall( inst_ecall ),  
+        .inst_ebreak( inst_ebreak ),
+
+        .csr_read( csr_read ),
+        .csr_trap( csr_trap ),
+        .csr_nxt_pc( csr_nxt_pc )
     );
 
     // Difftest

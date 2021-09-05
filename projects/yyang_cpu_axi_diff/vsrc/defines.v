@@ -59,6 +59,7 @@
 `define INST_30_21              30:21
 `define INST_30_25              30:25
 `define INST_20                 20:20
+`define INST_19_7               19:7
 `define INST_19_12              19:12
 `define INST_19_15              19:15
 `define INST_11_7               11:7
@@ -103,7 +104,21 @@
 /* csr marco */
 `define CSR_INDEX_BUS           11:0
 `define CSR_CTRL_BUS            2:0
+
 `define CSR_MCYCLE_INDEX        12'hB00
+`define CSR_MISA_INDEX          12'h301
+`define CSR_MVENDORID_INDEX     12'hf11
+`define CSR_MARCHID_INDEX        12'hf12
+`define CSR_MIMPID_INDEX        12'hf13
+`define CSR_MHARTID_INDEX       12'hf14
+`define CSR_MSTATUS_INDEX       12'h300
+`define CSR_MTVEC_INDEX         12'h305
+`define CSR_MEPC_INDEX          12'h341
+`define CSR_MCAUSE_INDEX        12'h342
+`define CSR_MIP_INDEX           12'h344
+`define CSR_MIE_INDEX           12'h304
+`define CSR_MSCRATCH_INDEX      12'h340
+`define CSR_MINSTRET_INDEX      12'hB02
 
 /*  */
 `define ZERO_DWORD              64'h00000000_00000000   

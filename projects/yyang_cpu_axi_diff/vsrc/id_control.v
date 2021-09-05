@@ -9,6 +9,9 @@ module id_control (
     input   [`FUNCT3_BUS]       funct3,
     input   [`FUNCT7_BUS]       funct7,
     
+    /* interrupt */
+    input                       csr_trap,
+
     /* register control */
     output                      rs1_en,
     output                      rs2_en,
@@ -23,7 +26,10 @@ module id_control (
     output                      inst_word,
     output                      inst_branch,
     output                      inst_csr,
-    
+    output                      inst_ecall,
+    output                      inst_ebreak,
+    output                      inst_trap,
+    output                      inst_mret,
     /* memory control */
     output                      mem_write,
     output                      mem_read,
@@ -51,10 +57,9 @@ module id_control (
 
     /* csr */
     output [`CSR_CTRL_BUS]      csr_ctrl,
-    output                      csr_src,  
+    output                      csr_src
 
     /* instruction */
-    output                      inst_en
     `ifdef DEFINE_PUTCH
     ,
     output                      inst_selfdefine
@@ -71,6 +76,8 @@ module id_control (
     // wire inst_word;   
     // wire inst_branch;
     // wire inst_csr;
+    // wire inst_trap;
+
     wire inst_store;
     wire inst_ali;
     wire inst_aliw;
@@ -79,6 +86,7 @@ module id_control (
     wire inst_auipc;
     wire inst_jal;
     wire inst_jalr;
+    
 
     wire inst_mem;
     wire inst_alxx;
@@ -96,12 +104,16 @@ module id_control (
     wire inst_slt_u;
     wire inst_csr_ni;
     wire inst_csr_i;
+    wire inst_expt;
     /* all instructions */
 
     // wire inst_lui;
     // wire inst_auipc;
     // wire inst_jal;
     // wire inst_jalr;
+    // wire inst_ecall;
+    // wire inst_ebreak;
+    // wire inst_mret;
     wire inst_beq;
     wire inst_bne;
     wire inst_blt;
@@ -170,7 +182,7 @@ module id_control (
     assign inst_word    =   inst_aliw | inst_alw;
     assign inst_branch  =   eff_opcode == `EFF_OPCODE_BRANCH;
     assign inst_csr     =   eff_opcode == `EFF_OPCODE_CSR;
-    
+    assign inst_trap    =   csr_trap | inst_ecall | inst_ebreak;
     assign inst_store   =   eff_opcode == `EFF_OPCODE_STORE;
     assign inst_ali     =   eff_opcode == `EFF_OPCODE_ALI;
     assign inst_aliw    =   eff_opcode == `EFF_OPCODE_ALIW;
@@ -194,13 +206,17 @@ module id_control (
     assign inst_slt_nu  =   inst_slt | inst_slti;
     assign inst_slt_u   =   inst_sltu | inst_sltiu;
     assign inst_csr_ni  =   inst_csr & ( funct3[2] == 1'b0 ) & funct3[1:0] != 2'b00;
-    assign inst_csr_i  =   inst_csr & ( funct3[2] == 1'b1 ) & funct3[1:0] != 2'b00;
+    assign inst_csr_i   =   inst_csr & ( funct3[2] == 1'b1 ) & funct3[1:0] != 2'b00;
+    assign inst_expt    =   inst_csr & inst[`INST_19_7] == 13'b0;
     /* all instructions' assignments */
 
     // assign inst_lui     = eff_opcode == `EFF_OPCODE_LUI;
     // assign inst_auipc   = eff_opcode == `EFF_OPCODE_AUIPC;
     // assign inst_jal     = eff_opcode == `EFF_OPCODE_JAL;
     // assign inst_jalr    = eff_opcode == `EFF_OPCODE_JALR;  
+    assign inst_ecall   =   inst_expt & inst[`INST_31_20] == 12'b0;
+    assign inst_ebreak  =   inst_expt & inst[`INST_31_20] == 12'b1;
+    assign inst_mret    =   inst_expt & inst[`INST_31_20] == 12'h302;
     assign inst_beq     =   inst_branch & ( funct3 == 3'b000 );
     assign inst_bne     =   inst_branch & ( funct3 == 3'b001 );
     assign inst_blt     =   inst_branch & ( funct3 == 3'b100 );
@@ -317,5 +333,4 @@ module id_control (
     assign csr_ctrl     =   inst_csr? funct3: 3'b100;
     assign csr_src      =   funct3[2];
     
-    assign inst_en      =   1'b1;
 endmodule

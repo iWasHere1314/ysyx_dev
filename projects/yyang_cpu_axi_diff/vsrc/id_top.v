@@ -3,7 +3,9 @@
 
 module id_top (
     input   [`INST_BUS]         inst,
-    
+    /* interrupt */
+    input                       csr_trap,
+
     /* register control */
     output  [`REG_INDEX_BUS]    rs1_index,
     output  [`REG_INDEX_BUS]    rs2_index,
@@ -21,6 +23,10 @@ module id_top (
     output                      inst_word,
     output                      inst_branch,
     output                      inst_csr,
+    output                      inst_ecall,
+    output                      inst_ebreak,
+    output                      inst_trap,
+    output                      inst_mret,
 
     /* immediate */
     output  [`DATA_BUS]         imm_data,
@@ -52,10 +58,9 @@ module id_top (
     output [`CSR_INDEX_BUS]     csr_index,
     output [`CSR_CTRL_BUS]      csr_ctrl,
     output                      csr_src,                   
-    output [`DATA_BUS]          imm_csr,
+    output [`DATA_BUS]          imm_csr
 
     /* instruction */
-    output                      inst_en
     `ifdef DEFINE_PUTCH
     ,
     output                      inst_selfdefine
@@ -79,14 +84,15 @@ module id_top (
     id_control my_id_control(
         /* input */
 
-        `ifdef DEFINE_PUTCH
         .inst( inst ),
-        `endif 
 
         .opcode( inst[`OPCODE_LOC_BUS] ),
         .funct3( inst[`FUNCT3_LOC_BUS] ),
         .funct7( inst[`FUNCT7_LOC_BUS] ),
-    
+
+        /* interrupt */
+        .csr_trap( csr_trap ),    
+        
         /* register control */
         .rs1_en( rs1_en ),
         .rs2_en( rs2_en ),
@@ -101,6 +107,10 @@ module id_top (
         .inst_word( inst_word ),
         .inst_branch( inst_branch ),
         .inst_csr( inst_csr ),
+        .inst_ecall( inst_ecall ),
+        .inst_ebreak( inst_ebreak ),
+        .inst_mret( inst_mret ),
+        .inst_trap( inst_trap ),
         
         /* memory control */
         .mem_write( mem_write ),
@@ -129,10 +139,9 @@ module id_top (
 
         /* csr  */
         .csr_ctrl( csr_ctrl ),
-        .csr_src( csr_src ),
+        .csr_src( csr_src )
 
         /* instruction */
-        .inst_en( inst_en )
 
         `ifdef DEFINE_PUTCH
         ,
