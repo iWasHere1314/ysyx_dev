@@ -132,9 +132,9 @@ module SimTop(
     wire [`INST_BUS] if_data_read;
     wire [1:0] if_resp;
 
-	wire mem_ready;
-    wire [`DATA_BUS] mem_data_read;
-    wire [1:0] mem_resp;
+	wire cpu_mem_ready;
+    wire [`DATA_BUS] cpu_mem_data_read;
+    wire [1:0] cpu_mem_resp;
 
     wire rw_valid;
     wire rw_req;
@@ -149,11 +149,11 @@ module SimTop(
     wire [1:0] if_size;
     wire if_req;
 
-    wire mem_valid;
-    wire [63:0] mem_data_write;
-    wire [63:0] mem_addr;
-    wire [1:0] mem_size;
-    wire mem_req;
+    wire cpu_mem_valid;
+    wire [63:0] cpu_mem_data_write;
+    wire [63:0] cpu_mem_addr;
+    wire [1:0] cpu_mem_size;
+    wire cpu_mem_req;
 
     //aw
     assign aw_ready                                 = `AXI_TOP_INTERFACE(aw_ready);
@@ -292,14 +292,14 @@ module SimTop(
         .if_req( if_req ),
 
         /* mem */
-        .mem_valid( mem_valid ),
-    	.mem_ready( mem_ready ),
-        .mem_data_read( mem_data_read ),
-        .mem_data_write( mem_data_write ),
-        .mem_addr( mem_addr ),
-        .mem_size( mem_size ),
-        .mem_resp( mem_resp ),
-        .mem_req( mem_req ),
+        .mem_valid( cpu_mem_valid ),
+    	.mem_ready( cpu_mem_ready ),
+        .mem_data_read( cpu_mem_data_read ),
+        .mem_data_write( cpu_mem_data_write ),
+        .mem_addr( cpu_mem_addr ),
+        .mem_size( cpu_mem_size ),
+        .mem_resp( cpu_mem_resp ),
+        .mem_req( cpu_mem_req ),
 
         /* axi_rw */
         .rw_valid( rw_valid ),
@@ -326,14 +326,14 @@ module SimTop(
         .if_size( if_size ),
         .if_req( if_req ),
 
-        .mem_valid( mem_valid ),
-        .mem_ready( mem_ready ),
-        .mem_data_read( mem_data_read ),
-        .mem_data_write( mem_data_write ),
-        .mem_addr( mem_addr ),
-        .mem_size( mem_size ),
-        .mem_resp( mem_resp ),
-        .mem_req( mem_req )
+        .cpu_mem_valid( cpu_mem_valid ),
+        .cpu_mem_ready( cpu_mem_ready ),
+        .cpu_mem_data_read( cpu_mem_data_read ),
+        .cpu_mem_data_write( cpu_mem_data_write ),
+        .cpu_mem_addr( cpu_mem_addr ),
+        .cpu_mem_size( cpu_mem_size ),
+        .cpu_mem_resp( cpu_mem_resp ),
+        .cpu_mem_req( cpu_mem_req )
     );
 
 endmodule

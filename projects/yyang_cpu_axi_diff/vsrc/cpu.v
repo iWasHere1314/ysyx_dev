@@ -12,14 +12,14 @@ module cpu(
     output  [1:0]               if_size,
     output                      if_req,
 
-    output                      mem_valid,
-    input                       mem_ready,
-    input   [`DATA_BUS]         mem_data_read,
-    output  [`DATA_BUS]         mem_data_write,
-    output  [`DATA_ADDR_BUS]    mem_addr,
-    output  [1:0]               mem_size,
-    input   [1:0]               mem_resp,
-    output                      mem_req
+    output                      cpu_mem_valid,
+    input                       cpu_mem_ready,
+    input   [`DATA_BUS]         cpu_mem_data_read,
+    output  [`DATA_BUS]         cpu_mem_data_write,
+    output  [`DATA_ADDR_BUS]    cpu_mem_addr,
+    output  [1:0]               cpu_mem_size,
+    input   [1:0]               cpu_mem_resp,
+    output                      cpu_mem_req
 );
 
     wire                        branchjudge_ok;
@@ -27,7 +27,7 @@ module cpu(
 
     /* self-defined */
     `ifdef DEFINE_PUTCH
-    wire    inst_selfdefine;
+    wire                        inst_selfdefine;
     `endif 
 
     // if
@@ -96,6 +96,11 @@ module cpu(
 
     // mem
     wire    [`DATA_BUS]         read_data;
+    wire                        mem_valid;
+    wire    [`DATA_BUS]         mem_data_write;
+    wire    [`DATA_ADDR_BUS]    mem_addr;
+    wire    [1:0]               mem_size;
+    wire                        mem_req;
 
     // regfile
     wire    [`REG_BUS]          rs1_data;
@@ -105,6 +110,30 @@ module cpu(
     wire    [`DATA_BUS]         csr_read;
     wire                        csr_trap;
     wire    [`INST_ADDR_BUS]    csr_nxt_pc;
+
+    //clint_dstb
+    wire                        clint_dstb_ready;
+    wire    [`DATA_BUS]         clint_dstb_data_read;
+    wire    [1:0]               clint_dstb_resp;
+
+    wire                        clint_dstb_mem_valid;
+    wire    [`DATA_BUS]         clint_dstb_mem_data_write;
+    wire    [`DATA_ADDR_BUS]    clint_dstb_mem_addr;
+    wire    [1:0]               clint_dstb_mem_size;
+    wire                        clint_dstb_mem_req;
+
+    wire                        clint_valid;
+    wire    [`DATA_BUS]         clint_data_write;
+    wire    [`DATA_ADDR_BUS]    clint_addr;
+    wire    [1:0]               clint_size;
+    wire                        clint_req;
+
+    //clint
+
+    wire                        clint_mtip;
+    wire                        clint_ready;
+    wire    [`DATA_BUS]         clint_data_read;
+    wire    [1:0]               clint_resp;
 
     //difftest interface                 
     wire    [`REG_BUS]          regs_o  [31:0] ;
@@ -234,8 +263,6 @@ module cpu(
         .branchjudge_res( branchjudge_res )
     );
     
-
-
     regfile my_regfile(
         .clk( clock ),
         .rst( reset ),
@@ -267,12 +294,12 @@ module cpu(
         .inst_valid( inst_valid ),
 
         .mem_valid( mem_valid ),
-        .mem_ready( mem_ready ),
-        .mem_data_read( mem_data_read ),
+        .mem_ready( clint_dstb_ready ),
+        .mem_data_read( clint_dstb_data_read ),
         .mem_data_write( mem_data_write ),
         .mem_addr( mem_addr ),
         .mem_size( mem_size ),
-        .mem_resp( mem_resp ),
+        .mem_resp( clint_dstb_resp ),
         .mem_req( mem_req )
     );
     csr_top my_csr_top(
@@ -288,7 +315,7 @@ module cpu(
         .csr_src( csr_src ),
         .inst_trap( inst_trap ),
         .inst_mret( inst_mret ),
-        .clint_mtip( 0 ),
+        .clint_mtip( clint_mtip ),
         .inst_ecall( inst_ecall ),  
         .inst_ebreak( inst_ebreak ),
 
@@ -297,6 +324,51 @@ module cpu(
         .csr_nxt_pc( csr_nxt_pc )
     );
 
+    clint_dstb my_clint_dstb (
+        .clint_dstb_valid( mem_valid ),
+        .clint_dstb_ready( clint_dstb_ready ),
+        .clint_dstb_data_read( clint_dstb_data_read ),
+        .clint_dstb_data_write( mem_data_write ),
+        .clint_dstb_addr( mem_addr ),
+        .clint_dstb_size( mem_size ),
+        .clint_dstb_resp( clint_dstb_resp ),
+        .clint_dstb_req( mem_req ),
+
+        .clint_dstb_mem_valid( cpu_mem_valid ),
+        .clint_dstb_mem_ready( cpu_mem_ready ),
+        .clint_dstb_mem_data_read( cpu_mem_data_read ),
+        .clint_dstb_mem_data_write( cpu_mem_data_write ),
+        .clint_dstb_mem_addr( cpu_mem_addr ),
+        .clint_dstb_mem_size( cpu_mem_size ),
+        .clint_dstb_mem_resp( cpu_mem_resp ),
+        .clint_dstb_mem_req( cpu_mem_req ),
+
+        .clint_valid( clint_valid ),
+        .clint_ready( clint_ready ),
+        .clint_data_read( clint_data_read ),
+        .clint_data_write( clint_data_write ),
+        .clint_addr( clint_addr ),
+        .clint_size( clint_size ),
+        .clint_resp( clint_resp ),
+        .clint_req( clint_req )
+    );
+
+    clint my_clint(
+        .clk( clock ),
+        .rst( reset ),
+
+        .clint_mtip( clint_mtip ),
+
+        .clint_valid( clint_valid ),
+        .clint_data_write( clint_data_write ),
+        .clint_addr( clint_addr ),
+        .clint_size( clint_size ),
+        .clint_req( clint_req ),
+
+        .clint_ready( clint_ready ),
+        .clint_data_read( clint_data_read ),
+        .clint_resp( clint_resp )
+    );
     // Difftest
     reg cmt_wen;
     reg [7:0] cmt_wdest;
