@@ -412,7 +412,7 @@ module cpu(
             trap_code <= regs_o[10][7:0];
             cycleCnt <= cycleCnt + 1;
             instrCnt <= instrCnt + inst_valid;
-            cmt_skip <= 1'b0 
+            cmt_skip <= inst_csr 
                         `ifdef DEFINE_PUTCH
                         | inst_selfdefine 
                         `endif
