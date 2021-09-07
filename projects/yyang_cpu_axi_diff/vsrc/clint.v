@@ -13,7 +13,7 @@ module clint (
 
     output                      clint_ready,
     output  [`DATA_BUS]         clint_data_read,
-    output  [1:0]               clint_resp        
+    output  [1:0]               clint_resp
 );
 
     reg     [`DATA_BUS]         mtime_r;
@@ -44,7 +44,7 @@ module clint (
         if( rst ) begin
             mtimecmp_r <= `DATA_BUS_SIZE'b0;
         end
-        else if( mtime_en & clint_write ) begin
+        else if( mtimecmp_en & clint_write ) begin
             mtimecmp_r <= clint_data_write;
         end
         else begin

@@ -274,10 +274,12 @@ module cpu(
         .rd_index( rd_index ),
         .rd_data( rd_data ),
         .rs1_data( rs1_data ),
-        .rs2_data( rs2_data ),
+        .rs2_data( rs2_data )
+        `ifdef DEFINE_DIFFTEST
         /* difftest interface */
-
+                             ,
         .regs_o( regs_o ) 
+        `endif
     );
 
     mem_top my_mem_top(
@@ -369,6 +371,7 @@ module cpu(
         .clint_data_read( clint_data_read ),
         .clint_resp( clint_resp )
     );
+`ifdef DEFINE_DIFFTEST
     // Difftest
     reg cmt_wen;
     reg [7:0] cmt_wdest;
@@ -542,3 +545,5 @@ module cpu(
       .fpr_31             (0)
     );
 endmodule
+
+`endif

@@ -12,9 +12,11 @@ module regfile (
     input   [`REG_BUS]          rd_data,
     output  [`REG_BUS]          rs1_data,
     output  [`REG_BUS]          rs2_data
+    `ifdef DEFINE_DIFFTEST
     /* difftest interface */
                                         ,
     output  [`REG_BUS]          regs_o  [31:0] 
+    `endif
 );
     
     reg [`REG_BUS] regfile_r [`REG_NUM-1:1];
