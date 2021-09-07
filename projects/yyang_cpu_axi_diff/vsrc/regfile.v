@@ -38,7 +38,7 @@ module regfile (
             end
         end
     endgenerate
-
+`ifdef DEFINE_DIFFTEST
     generate
         assign regs_o[0] = `DATA_BUS_SIZE'b0;
 		for (i = 1; i < `REG_NUM; i = i + 1) begin
@@ -46,6 +46,7 @@ module regfile (
             assign regs_o[i] = ( rd_en & ( rd_index == i ) ) ? rd_data : regfile_r[i];
 		end
 	endgenerate
+`endif
 
     wire [`REG_BUS] rs1_data_pre = rs1_index == `REG_ZERO ? `REG_BUS_SIZE'b0 : regfile_r[rs1_index];
     wire [`REG_BUS] rs2_data_pre = rs2_index == `REG_ZERO ? `REG_BUS_SIZE'b0 : regfile_r[rs2_index];

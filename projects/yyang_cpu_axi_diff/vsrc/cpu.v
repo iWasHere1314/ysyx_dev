@@ -551,6 +551,7 @@ module cpu(
       .fpr_30             (0),
       .fpr_31             (0)
     );
+`endif
+
 endmodule
 
-`endif

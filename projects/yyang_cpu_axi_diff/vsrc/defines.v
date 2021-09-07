@@ -2,7 +2,7 @@
 
 /* debug marco */
 `define DEFINE_PUTCH
-`define DEFINE_DIFFTEST
+//`define DEFINE_DIFFTEST
 
 /* if marco */
 `define INST_ADDR_BUS           63:0
