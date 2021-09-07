@@ -121,8 +121,8 @@
 `define CSR_MSCRATCH_INDEX      12'h340
 `define CSR_MINSTRET_INDEX      12'hB02
 
-`define MTIME_ADDR              64'h0
-`define MTIMECMP_ADDR           64'h0
+`define MTIME_ADDR              64'h8888888888
+`define MTIMECMP_ADDR           64'h8888888888
 
 /*  */
 `define ZERO_DWORD              64'h00000000_00000000   

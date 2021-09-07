@@ -433,13 +433,7 @@ module cpu(
       .valid              (cmt_valid),
       .pc                 (cmt_pc),
       .instr              (cmt_inst),
-      .skip               (
-                            `ifdef DEFINE_PUTCH
-                                cmt_skip
-                            `else 
-                                0
-                            `endif
-                            ),
+      .skip               ( cmt_skip ),
       .isRVC              (0),
       .scFailed           (0),
       .wen                (cmt_wen),
