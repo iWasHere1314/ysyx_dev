@@ -26,13 +26,20 @@ module clint_dstb (
     output  [1:0]               clint_size,
     input   [1:0]               clint_resp,
     output                      clint_req
-
+    `ifdef DEFINE_DIFFTEST
+                                            ,
+    output                      clint_skip
+    `endif
 );
     wire                        to_clint;
     wire                        to_other;
 
     assign to_clint                     =   ( clint_dstb_addr == `MTIME_ADDR ) | ( clint_dstb_addr == `MTIMECMP_ADDR );
     assign to_other                     =   ~to_clint;
+    
+    `ifdef DEFINE_DIFFTEST
+    assign clint_skip                   =   to_clint;
+    `endif
 
     assign clint_dstb_ready             =   to_clint? clint_ready: clint_dstb_mem_ready;
     assign clint_dstb_data_read         =   to_clint? clint_data_read: clint_dstb_mem_data_read;

@@ -136,8 +136,11 @@ module cpu(
     wire    [1:0]               clint_resp;
 
     //difftest interface                 
-    wire    [`REG_BUS]          regs_o  [31:0] ;
 
+    `ifdef DEFINE_DIFFTEST
+    wire                        clint_skip;
+    wire    [`REG_BUS]          regs_o  [31:0] ;
+    `endif
 
     assign branchjudge_ok       =   branchjudge_res & inst_branch;
     assign rd_data              =   inst_trap | inst_mret? csr_nxt_pc
@@ -353,6 +356,10 @@ module cpu(
         .clint_size( clint_size ),
         .clint_resp( clint_resp ),
         .clint_req( clint_req )
+        `ifdef DEFINE_DIFFTEST
+                                            ,
+        .clint_skip( clint_skip )
+        `endif
     );
 
     clint my_clint(
@@ -384,10 +391,7 @@ module cpu(
     reg [63:0] cycleCnt;
     reg [63:0] instrCnt;
     reg [`REG_BUS] regs_diff [ 31:0 ];
-    
-    `ifdef DEFINE_PUTCH
     reg cmt_skip;
-    `endif
 
     // wire inst_valid = ( inst_addr != `PC_START) | (inst != 0);
     always @(negedge clock) begin
@@ -408,9 +412,14 @@ module cpu(
             trap_code <= regs_o[10][7:0];
             cycleCnt <= cycleCnt + 1;
             instrCnt <= instrCnt + inst_valid;
-            `ifdef DEFINE_PUTCH
-            cmt_skip <= inst_selfdefine | inst_csr ;
-            `endif
+            cmt_skip <= 1'b0 
+                        `ifdef DEFINE_PUTCH
+                        | inst_selfdefine 
+                        `endif
+                        `ifdef DEFINE_DIFFTEST
+                        | clint_skip
+                        `endif
+                        ;
         end
     end
 
