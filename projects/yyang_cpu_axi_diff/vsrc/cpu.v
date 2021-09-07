@@ -139,7 +139,7 @@ module cpu(
 
     `ifdef DEFINE_DIFFTEST
     wire                        clint_skip;
-    wire    [`REG_BUS]          regs_o  [31:0] ;
+    reg     [`REG_BUS]          regs_o  [31:0] ;
     `endif
 
     assign branchjudge_ok       =   branchjudge_res & inst_branch;
@@ -416,9 +416,7 @@ module cpu(
                         `ifdef DEFINE_PUTCH
                         | inst_selfdefine 
                         `endif
-                        `ifdef DEFINE_DIFFTEST
                         | clint_skip
-                        `endif
                         ;
         end
     end
