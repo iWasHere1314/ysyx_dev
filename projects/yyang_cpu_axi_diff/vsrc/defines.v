@@ -121,7 +121,7 @@
 `define CSR_MSCRATCH_INDEX      12'h340
 `define CSR_MINSTRET_INDEX      12'hB02
 
-`define CLINT_BASE              64'h0
+`define CLINT_BASE              64'h2000000
 `define MTIME_ADDR              `CLINT_BASE + 64'hBFF8
 `define MTIMECMP_ADDR           `CLINT_BASE + 64'h4000
 
