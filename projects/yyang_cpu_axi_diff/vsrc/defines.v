@@ -109,7 +109,7 @@
 `define CSR_MCYCLE_INDEX        12'hB00
 `define CSR_MISA_INDEX          12'h301
 `define CSR_MVENDORID_INDEX     12'hf11
-`define CSR_MARCHID_INDEX        12'hf12
+`define CSR_MARCHID_INDEX       12'hf12
 `define CSR_MIMPID_INDEX        12'hf13
 `define CSR_MHARTID_INDEX       12'hf14
 `define CSR_MSTATUS_INDEX       12'h300
