@@ -143,7 +143,7 @@ module cpu(
     `endif
 
     assign branchjudge_ok       =   branchjudge_res & inst_branch;
-    assign rd_data              =   inst_trap | inst_mret? 64'h0
+    assign rd_data              =   inst_trap | inst_mret? inst_addr
                                     : ( inst_jump? ( inst_addr + `INST_ADDR_SIZE'h4 )
                                     : ( inst_csr? csr_read 
                                     : ( inst_load? read_data:( inst_lui? imm_data: ex_odata ) ) ) );
