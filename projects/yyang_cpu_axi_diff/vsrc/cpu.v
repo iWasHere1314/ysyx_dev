@@ -140,6 +140,13 @@ module cpu(
     `ifdef DEFINE_DIFFTEST
     wire                        clint_skip;
     wire    [`REG_BUS]          regs_o  [31:0] ;
+    wire    [`DATA_BUS]         mstatus;    
+    wire    [`DATA_BUS]         mepc;
+    wire    [`DATA_BUS]         mtvec;  
+    wire    [`DATA_BUS]         mcause; 
+    wire    [`DATA_BUS]         mip;    
+    wire    [`DATA_BUS]         mie;    
+    wire    [`DATA_BUS]         mscratch; 
     `endif
 
     assign branchjudge_ok       =   branchjudge_res & inst_branch;
@@ -329,6 +336,16 @@ module cpu(
         .csr_read( csr_read ),
         .csr_trap( csr_trap ),
         .csr_nxt_pc( csr_nxt_pc )
+        `ifdef DEFINE_DIFFTEST
+                                    ,
+        .mstatus( mstatus ),    
+        .mepc( mepc ),
+        .mtvec( mtvec ),
+        .mcause( mcause ),
+        .mip( mip ),
+        .mie( mie ),
+        .mscratch( mscratch ) 
+        `endif
     );
 
     clint_dstb my_clint_dstb (
@@ -394,7 +411,13 @@ module cpu(
     reg [63:0] instrCnt;
     reg [`REG_BUS] regs_diff [ 31:0 ];
     reg cmt_skip;
-
+    reg [`DATA_BUS] cmt_mstatus;    
+    reg [`DATA_BUS] cmt_mepc;
+    reg [`DATA_BUS] cmt_mtvec;  
+    reg [`DATA_BUS] cmt_mcause; 
+    reg [`DATA_BUS] cmt_mip;    
+    reg [`DATA_BUS] cmt_mie;    
+    reg [`DATA_BUS] cmt_mscratch; 
     // wire inst_valid = ( inst_addr != `PC_START) | (inst != 0);
     always @(negedge clock) begin
         if (reset) begin
@@ -414,12 +437,19 @@ module cpu(
             trap_code <= regs_o[10][7:0];
             cycleCnt <= cycleCnt + 1;
             instrCnt <= instrCnt + inst_valid;
-            cmt_skip <= inst_csr 
+            cmt_skip <= 1'b0
                         `ifdef DEFINE_PUTCH
                         | inst_selfdefine 
                         `endif
                         | clint_skip
                         ;
+            cmt_mstatus <= mstatus;    
+            cmt_mepc <= mepc;
+            cmt_mtvec <= mtvec;
+            cmt_mcause <= mcause;
+            cmt_mip <= mip;
+            cmt_mie <= mie;
+            cmt_mscratch <= mscratch;
         end
     end
 
@@ -492,20 +522,20 @@ module cpu(
       .clock              (clock),
       .coreid             (0),
       .priviledgeMode     (0),
-      .mstatus            (0),
+      .mstatus            (cmt_mstatus),
       .sstatus            (0),
-      .mepc               (0),
+      .mepc               (cmt_mepc),
       .sepc               (0),
       .mtval              (0),
       .stval              (0),
-      .mtvec              (0),
+      .mtvec              (cmt_mtvec),
       .stvec              (0),
-      .mcause             (0),
+      .mcause             (cmt_mcause),
       .scause             (0),
       .satp               (0),
-      .mip                (0),
-      .mie                (0),
-      .mscratch           (0),
+      .mip                (cmt_mip),
+      .mie                (cmt_mie),
+      .mscratch           (cmt_mscratch),
       .sscratch           (0),
       .mideleg            (0),
       .medeleg            (0)
