@@ -163,20 +163,20 @@ static void csrrw(rtlreg_t *dest, const rtlreg_t *src, uint32_t csrid) {
 
 static word_t priv_instr(uint32_t op, const rtlreg_t *src) {
   switch (op) {
-#ifndef CONFIG_MODE_USER
+#ifndef CONFIG_MODE_MSER
     case 0x102: // sret
       mstatus->sie = mstatus->spie;
       mstatus->spie = (ISDEF(CONFIG_DIFFTEST_REF_QEMU) ? 0 // this is bug of QEMU
           : 1);
       cpu.mode = mstatus->spp;
-      mstatus->spp = MODE_U;
+      mstatus->spp = MODE_M;
       return sepc->val;
     case 0x302: // mret
       mstatus->mie = mstatus->mpie;
       mstatus->mpie = (ISDEF(CONFIG_DIFFTEST_REF_QEMU) ? 0 // this is bug of QEMU
           : 1);
       cpu.mode = mstatus->mpp;
-      mstatus->mpp = MODE_U;
+      mstatus->mpp = MODE_M;
       update_mmu_state();
       return mepc->val;
       break;
@@ -198,7 +198,7 @@ void isa_hostcall(uint32_t id, rtlreg_t *dest, const rtlreg_t *src1,
   word_t ret = 0;
   switch (id) {
     case HOSTCALL_CSR: csrrw(dest, src1, imm); return;
-#ifdef CONFIG_MODE_USER
+#ifdef CONFIG_MODE_MSER
     case HOSTCALL_TRAP:
       Assert(imm == 0x8, "Unsupport exception = %ld", imm);
       uintptr_t host_syscall(uintptr_t id, uintptr_t arg1, uintptr_t arg2,
