@@ -19,16 +19,6 @@ module csr_top (
     output                          csr_trap,
     output  [`INST_ADDR_BUS]        csr_nxt_pc,
     output  [`DATA_BUS]             csr_read
-    `ifdef DEFINE_DIFFTEST
-                                    ,
-    output  [`DATA_BUS]             mstatus,    
-    output  [`DATA_BUS]             mepc,
-    output  [`DATA_BUS]             mtvec,
-    output  [`DATA_BUS]             mcause,
-    output  [`DATA_BUS]             mip,
-    output  [`DATA_BUS]             mie,
-    output  [`DATA_BUS]             mscratch 
-    `endif
 );
     /* index */
     wire                            index_mcycle;
@@ -297,13 +287,5 @@ module csr_top (
                                     | { `DATA_BUS_SIZE{ index_mip } } & ( mip_r )
                                     | { `DATA_BUS_SIZE{ index_mscratch } } & ( mscratch_r )
                                     | { `DATA_BUS_SIZE{ index_minstret } } & ( minstret_r ); 
-    `ifdef DEFINE_DIFFTEST
-    assign mstatus              =   mstatus_r;
-    assign mepc                 =   mepc_r; 
-    assign mtvec                =   mtvec_r;
-    assign mcause               =   mcause_r;
-    assign mip                  =   mip_r;
-    assign mie                  =   mie_r;
-    assign mscratch             =   mscratch_r;
-    `endif
+    
 endmodule
