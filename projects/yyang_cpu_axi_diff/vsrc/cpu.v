@@ -143,18 +143,20 @@ module cpu(
     `endif
 
     assign branchjudge_ok       =   branchjudge_res & inst_branch;
-    assign rd_data              =   inst_trap | inst_mret? inst_addr
-                                    : ( inst_jump? ( inst_addr + `INST_ADDR_SIZE'h4 )
+    assign rd_data              =   inst_jump? ( inst_addr + `INST_ADDR_SIZE'h4 )
                                     : ( inst_csr? csr_read 
-                                    : ( inst_load? read_data:( inst_lui? imm_data: ex_odata ) ) ) );
+                                    : ( inst_load? read_data:( inst_lui? imm_data: ex_odata ) ) );
 
 
     if_top my_if_top(
         .clk( clock ),
         .rst( reset ),
         .branchjudge_ok( branchjudge_ok ),
+        .inst_trap( inst_trap ),
+        .inst_mret( inst_mret ),
         .inst_jump( inst_jump ),
         .jump_addr( alu_raw_res ),
+        .csr_nxt_pc( csr_nxt_pc ),
         .imm_offset( imm_data ),
 
         .if_ready( if_ready ),

@@ -4,7 +4,10 @@ module if_top (
     input                       rst,
     input                       branchjudge_ok,
     input                       inst_jump,
+    input                       inst_mret,
+    input                       inst_trap,
     input   [`INST_ADDR_BUS]    jump_addr,
+    input   [`INST_ADDR_BUS]    csr_nxt_pc,
     input   [`DATA_BUS]         imm_offset,
     
     input                       if_ready,
@@ -23,7 +26,7 @@ module if_top (
     wire    [`INST_ADDR_BUS]    nxt_inst_addr;
     wire                        handshake_done;
 
-    assign nxt_inst_addr        =   inst_jump? jump_addr: ( inst_addr + ( branchjudge_ok? imm_offset: `INST_ADDR_SIZE'h4 )  );    
+    assign nxt_inst_addr        =   inst_trap | inst_mret? csr_nxt_pc : ( inst_jump? jump_addr: ( inst_addr + ( branchjudge_ok? imm_offset: `INST_ADDR_SIZE'h4 ) ) );    
     assign if_addr              =   nxt_inst_addr;
     assign if_valid             =   1'b1;
     assign if_size              =   `SIZE_W;
