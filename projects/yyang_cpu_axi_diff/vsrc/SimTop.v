@@ -129,7 +129,7 @@ module SimTop(
 
     //if_mem_arbiter
     wire if_ready;
-    wire [`INST_BUS] if_data_read;
+    wire [`DATA_BUS] if_data_read;
     wire [1:0] if_resp;
 
 	wire cpu_mem_ready;
@@ -141,7 +141,7 @@ module SimTop(
     wire  [63:0] data_write;
     wire  [63:0] rw_addr;
     wire  [1:0] rw_size;
-    wire  [63:0] rw_id;
+    wire  [3:0] rw_id;
 
     // cpu 
     wire if_valid;

@@ -11,7 +11,7 @@ module if_top (
     input   [`DATA_BUS]         imm_offset,
     
     input                       if_ready,
-    input   [`INST_BUS]         if_data_read,
+    input   [`DATA_BUS]         if_data_read,
     input   [1:0]               if_resp,
 
     output  [`INST_ADDR_BUS]    inst_addr,

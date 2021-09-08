@@ -9,35 +9,35 @@ module if_mem_arbiter  # (
 )
 (
     /* if */
-    output                      if_ready,
-    output  [`INST_BUS]         if_data_read,
-    output  [1:0]               if_resp,
+    output                          if_ready,
+    output  [`DATA_BUS]             if_data_read,
+    output  [1:0]                   if_resp,
 
-    input                       if_valid,
-    input   [`INST_ADDR_BUS]    if_addr,
-    input   [1:0]               if_size,
-    input                       if_req,
+    input                           if_valid,
+    input   [`INST_ADDR_BUS]        if_addr,
+    input   [1:0]                   if_size,
+    input                           if_req,
 
-    /* mem */
-    input                       mem_valid,
-	output                      mem_ready,
-    output  [`DATA_BUS]         mem_data_read,
-    input   [`DATA_BUS]         mem_data_write,
-    input   [`DATA_ADDR_BUS]    mem_addr,
-    input   [1:0]               mem_size,
-    output  [1:0]               mem_resp,
-    input                       mem_req,
+    /* mem */   
+    input                           mem_valid,
+	output                          mem_ready,
+    output  [`DATA_BUS]             mem_data_read,
+    input   [`DATA_BUS]             mem_data_write,
+    input   [`DATA_ADDR_BUS]        mem_addr,
+    input   [1:0]                   mem_size,
+    output  [1:0]                   mem_resp,
+    input                           mem_req,
 
-    /* axi_rw */
-    output                      rw_valid,
-	input                       rw_ready,
-    output                      rw_req,
-    input   [RW_DATA_WIDTH:0]   data_read,
-    output  [RW_DATA_WIDTH:0]   data_write,
-    output  [AXI_DATA_WIDTH:0]  rw_addr,
-    output  [1:0]               rw_size,
-    input   [1:0]               rw_resp,
-    output  [AXI_ID_WIDTH-1:0]  rw_id
+    /* axi_rw */    
+    output                          rw_valid,
+	input                           rw_ready,
+    output                          rw_req,
+    input   [RW_DATA_WIDTH-1:0]     data_read,
+    output  [RW_DATA_WIDTH-1:0]     data_write,
+    output  [AXI_DATA_WIDTH-1:0]    rw_addr,
+    output  [1:0]                   rw_size,
+    input   [1:0]                   rw_resp,
+    output  [3:0]                   rw_id
 );
 
     parameter STATE_IF = 1'b0, STATE_MEM = 1'b1;

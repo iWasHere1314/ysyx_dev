@@ -48,8 +48,8 @@ module regfile (
 	endgenerate
 `endif
 
-    wire [`REG_BUS] rs1_data_pre = rs1_index == `REG_ZERO ? `REG_BUS_SIZE'b0 : regfile_r[rs1_index];
-    wire [`REG_BUS] rs2_data_pre = rs2_index == `REG_ZERO ? `REG_BUS_SIZE'b0 : regfile_r[rs2_index];
+    wire [`REG_BUS] rs1_data_pre = rs1_index == 5'b0 ? `REG_BUS_SIZE'b0 : regfile_r[rs1_index];
+    wire [`REG_BUS] rs2_data_pre = rs2_index == 5'b0 ? `REG_BUS_SIZE'b0 : regfile_r[rs2_index];
 
     assign rs1_data = rs1_en ? rs1_data_pre: `REG_BUS_SIZE'b0;
     assign rs2_data = rs2_en ? rs2_data_pre: `REG_BUS_SIZE'b0;
