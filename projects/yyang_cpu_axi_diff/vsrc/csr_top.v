@@ -40,7 +40,6 @@ module csr_top (
     wire                            inst_csrrwx;
     wire                            inst_csrrsx;
     wire                            inst_csrrcx;
-    wire                            inst_csrinvalid;
     wire                            trap_en;
     wire                            ret_en; 
     wire    [`DATA_BUS]             mcycle_nxt;
@@ -88,7 +87,6 @@ module csr_top (
     assign inst_csrrwx          =   csr_ctrl[1:0] == 2'b01;
     assign inst_csrrsx          =   csr_ctrl[1:0] == 2'b10;
     assign inst_csrrcx          =   csr_ctrl[1:0] == 2'b11;
-    assign inst_csrinvalid      =   csr_ctrl      == 3'b100;
     assign trap_en              =   inst_valid & inst_trap;
     assign ret_en               =   inst_valid & inst_mret;
     assign minstret_nxt         =   minstret_r + `DATA_BUS_SIZE'h1;
@@ -169,7 +167,7 @@ module csr_top (
             mtvec_r <= `DATA_BUS_SIZE'h0;
         end
         else if( index_mtvec & inst_valid ) begin
-            mtvec_r <= csr_nxt;
+            mtvec_r <= csr_nxt & ~64'h3;
         end
         else begin
             mtvec_r <= mtvec_r;
