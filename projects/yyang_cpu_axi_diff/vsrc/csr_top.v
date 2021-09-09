@@ -301,7 +301,7 @@ module csr_top (
     `ifdef DEFINE_DIFFTEST
     assign csr_skip             =   ~( index_mstatus | index_mtvec | index_mepc | index_mepc | index_mcause | index_mip | index_mie | index_mscratch );
     assign mstatus              =   mstatus_r;
-    assign mtvec                =   64'h2;
+    assign mtvec                =   mtvec_r;
     assign mepc                 =   mepc_r;
     assign mcause               =   mcause_r;
     assign mip                  =   mip_r;
