@@ -471,7 +471,7 @@ module cpu(
       .clock              (clock),
       .coreid             (0),
       .index              (0),
-      .valid              (1),
+      .valid              (cmt_valid),
       .pc                 (cmt_pc),
       .instr              (cmt_inst),
       .skip               (cmt_skip ),
@@ -519,7 +519,7 @@ module cpu(
       .gpr_31             (regs_diff[31])
     );
     DifftestArchEvent DifftestArchEvent(
-        .clock( clock ),
+        .clock( 0 ),
         .coreid( 0 ),
         .intrNO( 0 ),
         .cause( 0 ),
