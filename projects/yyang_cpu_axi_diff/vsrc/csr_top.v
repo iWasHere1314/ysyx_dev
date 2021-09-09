@@ -154,16 +154,18 @@ module csr_top (
     //mstatus
     always @( posedge clk ) begin
         if( rst ) begin
-            mstatus_r <=  ( `DATA_BUS_SIZE'b11 << 11 );
+            mstatus_r <=  `DATA_BUS_SIZE'b0;
         end
         else if( index_mstatus & inst_valid ) begin
             mstatus_r <= csr_nxt & `DATA_BUS_SIZE'h1888;
         end
         else if( trap_en ) begin
+            mstatus_r[12:11] <= 2'b11;
             mstatus_r[7] <= mstatus_r[3];
             mstatus_r[3] <= 1'b0;
         end
         else if( ret_en ) begin
+            mstatus_r[12:11] <= 2'b00;
             mstatus_r[7] <= 1'b1;
             mstatus_r[3] <= mstatus_r[7];
         end
@@ -301,8 +303,8 @@ module csr_top (
     `ifdef DEFINE_DIFFTEST
     assign csr_skip             =   ~( index_mstatus | index_mtvec | index_mepc | index_mepc | index_mcause | index_mip | index_mie | index_mscratch | inst_ecall | inst_ebreak | inst_mret );
     assign mstatus              =   index_mstatus? csr_nxt & `DATA_BUS_SIZE'h1888: 
-                                    trap_en? {mstatus_r[63:8], mstatus_r[3],mstatus_r[6:4],1'b0,mstatus_r[2:0]}:
-                                    ret_en? {mstatus_r[63:8], 1'b1,mstatus_r[6:4],mstatus_r[7],mstatus_r[2:0]}:
+                                    trap_en? {mstatus_r[63:13], 2'b11, mstatus_r[10:8], mstatus_r[3],mstatus_r[6:4],1'b0,mstatus_r[2:0]}:
+                                    ret_en? {mstatus_r[63:13], 2'b00, mstatus_r[10:8], 1'b1,mstatus_r[6:4],mstatus_r[7],mstatus_r[2:0]}:
                                     mstatus_r;
     assign mtvec                =   index_mtvec? csr_nxt & ~64'h3: mtvec_r;
     assign mepc                 =   index_mepc? csr_nxt: mepc_r;
