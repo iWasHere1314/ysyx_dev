@@ -232,7 +232,7 @@ module csr_top (
             mip_r <= `DATA_BUS_SIZE'h0;
         end
         else if( index_mip & inst_valid ) begin
-            mip_r <= csr_nxt & `DATA_BUS_SIZE'h80;
+            mip_r <= 1'b1;//csr_nxt & `DATA_BUS_SIZE'h80;
         end
         else if( clint_mtip ) begin
             mip_r[7] <= 1'b1;
