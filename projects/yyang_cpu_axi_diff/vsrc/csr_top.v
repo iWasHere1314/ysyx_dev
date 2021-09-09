@@ -196,7 +196,7 @@ module csr_top (
         else if( index_mepc & inst_valid ) begin
             mepc_r <= csr_nxt;
         end
-        else if( inst_trap | inst_ecall | inst_ebreak ) begin
+        else if( ( inst_trap | inst_ecall | inst_ebreak) & inst_valid ) begin
             mepc_r <= inst_addr;
         end
         else begin
