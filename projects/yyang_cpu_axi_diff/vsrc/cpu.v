@@ -518,14 +518,14 @@ module cpu(
       .gpr_30             (regs_diff[30]),
       .gpr_31             (regs_diff[31])
     );
-    // DifftestArchEvent DifftestArchEvent(
-    //     .clock( clock ),
-    //     .coreid( 0 ),
-    //     .intrNO( 6 ),
-    //     .cause( 10 ),
-    //     .exceptionPC( 0 ),
-    //     .exceptionInst( 0 )
-    // );
+    DifftestArchEvent DifftestArchEvent(
+        .clock( clock ),
+        .coreid( 0 ),
+        .intrNO( 0 ),
+        .cause( 0 ),
+        .exceptionPC( 0 ),
+        .exceptionInst( 0 )
+    );
     DifftestTrapEvent DifftestTrapEvent(
       .clock              (clock),
       .coreid             (0),
