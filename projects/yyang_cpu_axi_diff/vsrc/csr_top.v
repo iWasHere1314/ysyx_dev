@@ -242,7 +242,7 @@ module csr_top (
     //mie
     always @( posedge clk ) begin
         if( rst ) begin
-            mie_r <= `DATA_BUS_SIZE'h80;
+            mie_r <= `DATA_BUS_SIZE'h0;
         end
         else if( index_mie & inst_valid ) begin
             mie_r <= csr_nxt & `DATA_BUS_SIZE'h80;
