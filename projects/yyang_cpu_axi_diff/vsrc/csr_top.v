@@ -312,10 +312,10 @@ module csr_top (
     assign mcause               =   index_mcause? csr_nxt: 
                                     inst_ecall? `DATA_BUS_SIZE'd11: 
                                     inst_ebreak? `DATA_BUS_SIZE'd3:
-                                    clint_mtip? ( `DATA_BUS_SIZE'h1<<(`DATA_BUS_SIZE-1) ) + `DATA_BUS_SIZE'h7: 
+                                    csr_trap? ( `DATA_BUS_SIZE'h1<<(`DATA_BUS_SIZE-1) ) + `DATA_BUS_SIZE'h7: 
                                     mcause_r;
     assign mip                  =   index_mip? csr_nxt & `DATA_BUS_SIZE'h80:
-                                    csr_trap? { mip_r[63:8], 1'b1, mip_r[6:0] }:
+                                    clint_mtip? { mip_r[63:8], 1'b1, mip_r[6:0] }:
                                     mip_r;
     assign mie                  =   index_mie? csr_nxt & `DATA_BUS_SIZE'h80: mie_r;
     assign mscratch             =   index_mscratch? csr_nxt: mscratch_r;
