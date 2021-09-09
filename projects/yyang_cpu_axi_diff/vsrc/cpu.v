@@ -521,9 +521,10 @@ module cpu(
     DifftestArchEvent DifftestArchEvent(
         .clock( clock ),
         .coreid( 0 ),
-        .intrNO( cmt_einst ),
-        .cause( cmt_cause ),
-        .exceptionPC( cmt_pc )
+        .intrNO( cmt_cause ),
+        .cause( 0 ),
+        .exceptionPC( cmt_pc ),
+        .exceptionInst( cmt_inst )
     );
     DifftestTrapEvent DifftestTrapEvent(
       .clock              (clock),
