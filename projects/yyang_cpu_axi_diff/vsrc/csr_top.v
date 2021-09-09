@@ -158,7 +158,7 @@ module csr_top (
             mstatus_r <=  `DATA_BUS_SIZE'b0;
         end
         else if( index_mstatus & inst_valid ) begin
-            mstatus_r <= { ( &csr_nxt[16:15] ) | ( &csr_nxt[14:13] ) ,csr_nxt[62:0] } /* & `DATA_BUS_SIZE'h1888 */;
+            mstatus_r <= { ( csr_nxt[16:15] == 2'b11 ) | ( csr_nxt[14:13] == 2'b11 ) ,csr_nxt[62:0] } /* & `DATA_BUS_SIZE'h1888 */;
         end
         else if( trap_en ) begin
             mstatus_r[12:11] <= 2'b11;
