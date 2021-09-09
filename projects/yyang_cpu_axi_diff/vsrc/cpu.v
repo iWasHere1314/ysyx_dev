@@ -528,7 +528,7 @@ module cpu(
       .priviledgeMode     (3),
       .mstatus            (cmt_mstatus),
       .sstatus            (0),
-      .mepc               (cmt_mepc),
+      .mepc               (64'h8000050c),
       .sepc               (0),
       .mtval              (0),
       .stval              (0),
