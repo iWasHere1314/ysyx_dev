@@ -309,7 +309,9 @@ module csr_top (
                                     ret_en? {mstatus_r[63:13], 2'b00, mstatus_r[10:8], 1'b1,mstatus_r[6:4],mstatus_r[7],mstatus_r[2:0]}:
                                     mstatus_r;
     assign mtvec                =   index_mtvec? csr_nxt & ~64'h3: mtvec_r;
-    assign mepc                 =   index_mepc? csr_nxt: mepc_r;
+    assign mepc                 =   index_mepc? csr_nxt:
+                                    ( inst_trap | inst_ecall | inst_ebreak )? inst_addr:
+                                    mepc_r ;
     assign mcause               =   index_mcause? csr_nxt: 
                                     inst_ecall? `DATA_BUS_SIZE'd11: 
                                     inst_ebreak? `DATA_BUS_SIZE'd3:
