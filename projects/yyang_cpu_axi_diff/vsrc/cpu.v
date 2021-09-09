@@ -471,7 +471,7 @@ module cpu(
       .clock              (clock),
       .coreid             (0),
       .index              (0),
-      .valid              (inst_valid),
+      .valid              (1),
       .pc                 (cmt_pc),
       .instr              (cmt_inst),
       .skip               (cmt_skip ),
