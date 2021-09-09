@@ -299,7 +299,7 @@ module csr_top (
                                     | { `DATA_BUS_SIZE{ index_mscratch } } & ( mscratch_r )
                                     | { `DATA_BUS_SIZE{ index_minstret } } & ( minstret_r ); 
     `ifdef DEFINE_DIFFTEST
-    assign csr_skip             =   ~( index_mstatus | index_mtvec | index_mepc | index_mepc | index_mcause | index_mip | index_mie | index_mscratch );
+    assign csr_skip             =   ~( index_mstatus | index_mtvec | index_mepc | index_mepc | index_mcause | index_mip | index_mie | index_mscratch | inst_ecall | inst_ebreak | inst_mret );
     assign mstatus              =   mstatus_r;
     assign mtvec                =   mtvec_r;
     assign mepc                 =   mepc_r;
