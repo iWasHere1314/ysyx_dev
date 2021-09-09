@@ -215,9 +215,9 @@ module csr_top (
         else if( inst_ebreak & inst_valid ) begin
             mcause_r <= `DATA_BUS_SIZE'd3;
         end
-        else if( clint_mtip & inst_valid ) begin
-            mcause_r <= ( `DATA_BUS_SIZE'h1<<(`DATA_BUS_SIZE-1) ) + `DATA_BUS_SIZE'h7;
-        end
+        // else if( clint_mtip & inst_valid ) begin
+        //     mcause_r <= ( `DATA_BUS_SIZE'h1<<(`DATA_BUS_SIZE-1) ) + `DATA_BUS_SIZE'h7;
+        // end
         else begin
             mcause_r <= mcause_r;
         end
