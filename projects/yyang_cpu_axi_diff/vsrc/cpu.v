@@ -542,7 +542,7 @@ module cpu(
       .coreid             (0),
       .priviledgeMode     (3),
       .mstatus            (mstatus),
-      .sstatus            (0),
+      .sstatus            (mstatus & 64'h80000003000de122),
       .mepc               (mepc),
       .sepc               (0),
       .mtval              (0),
