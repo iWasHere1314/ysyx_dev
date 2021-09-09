@@ -521,8 +521,8 @@ module cpu(
     DifftestArchEvent DifftestArchEvent(
         .clock( clock ),
         .coreid( 0 ),
-        .intrNO( 0 ),
-        .cause( 0 ),
+        .intrNO( 6 ),
+        .cause( 10 ),
         .exceptionPC( 0 ),
         .exceptionInst( 0 )
     );
