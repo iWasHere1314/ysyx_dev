@@ -28,7 +28,8 @@ module csr_top (
     output  [`REG_BUS]              mcause,
     output  [`REG_BUS]              mip,
     output  [`REG_BUS]              mie,
-    output  [`REG_BUS]              mscratch    
+    output  [`REG_BUS]              mscratch,
+    output  [31:0]                  cause
     `endif
 );
     /* index */
@@ -217,9 +218,9 @@ module csr_top (
         else if( inst_ebreak & inst_valid ) begin
             mcause_r <= `DATA_BUS_SIZE'd3;
         end
-        // else if( clint_mtip & inst_valid ) begin
-        //     mcause_r <= ( `DATA_BUS_SIZE'h1<<(`DATA_BUS_SIZE-1) ) + `DATA_BUS_SIZE'h7;
-        // end
+        else if( clint_mtip & inst_valid ) begin
+            mcause_r <= ( `DATA_BUS_SIZE'h1<<(`DATA_BUS_SIZE-1) ) + `DATA_BUS_SIZE'h7;
+        end
         else begin
             mcause_r <= mcause_r;
         end
@@ -233,9 +234,9 @@ module csr_top (
         else if( index_mip & inst_valid ) begin
             mip_r <= csr_nxt & `DATA_BUS_SIZE'h80;
         end
-        // else if( clint_mtip ) begin
-        //     mip_r[7] <= 1'b1;
-        // end
+        else if( clint_mtip ) begin
+            mip_r[7] <= 1'b1;
+        end
         else begin
             mip_r <= mip_r;
         end
@@ -285,7 +286,7 @@ module csr_top (
 
 
     //output
-    assign csr_trap             =   1'b0/* mstatus_r[4] & ( mie_r[7] & clint_mtip ) */;
+    assign csr_trap             =   mstatus_r[4] & ( mie_r[7] & clint_mtip );
     assign csr_nxt_pc           =   inst_ecall? mtvec_r: mepc_r;
     assign csr_read             =    { `DATA_BUS_SIZE { index_mcycle } } & ( mcycle_r )
                                     | { `DATA_BUS_SIZE{ index_misa } } & ( misa_r )
@@ -308,9 +309,16 @@ module csr_top (
                                     mstatus_r;
     assign mtvec                =   index_mtvec? csr_nxt & ~64'h3: mtvec_r;
     assign mepc                 =   index_mepc? csr_nxt: mepc_r;
-    assign mcause               =   index_mcause? csr_nxt: inst_ecall? `DATA_BUS_SIZE'd11: inst_ebreak? `DATA_BUS_SIZE'd3: mcause_r;
-    assign mip                  =   index_mip? csr_nxt & `DATA_BUS_SIZE'h80: mip_r;
+    assign mcause               =   index_mcause? csr_nxt: 
+                                    inst_ecall? `DATA_BUS_SIZE'd11: 
+                                    inst_ebreak? `DATA_BUS_SIZE'd3:
+                                    clint_mtip? ( `DATA_BUS_SIZE'h1<<(`DATA_BUS_SIZE-1) ) + `DATA_BUS_SIZE'h7: 
+                                    mcause_r;
+    assign mip                  =   index_mip? csr_nxt & `DATA_BUS_SIZE'h80:
+                                    clint_mtip? { mip_r[63:8], 1'b1, mip_r[6:0] }:
+                                    mip_r;
     assign mie                  =   index_mie? csr_nxt & `DATA_BUS_SIZE'h80: mie_r;
     assign mscratch             =   index_mscratch? csr_nxt: mscratch_r;
+    assign cause                =   { mcause[`DATA_BUS_SIZE-1], mcause[30:0] }; 
     `endif
 endmodule

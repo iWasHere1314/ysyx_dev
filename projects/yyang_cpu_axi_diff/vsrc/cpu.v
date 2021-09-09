@@ -147,7 +147,8 @@ module cpu(
     wire    [`REG_BUS]          mcause;
     wire    [`REG_BUS]          mip;
     wire    [`REG_BUS]          mie;
-    wire    [`REG_BUS]          mscratch;    
+    wire    [`REG_BUS]          mscratch;  
+    wire    [31:0]              cause;  
     `endif
 
     assign branchjudge_ok       =   branchjudge_res & inst_branch;
@@ -346,7 +347,8 @@ module cpu(
         .mcause( mcause ),
         .mip( mip ),
         .mie( mie ),
-        .mscratch( mscratch )    
+        .mscratch( mscratch ),
+        .cause( cause ) 
         `endif
     );
 
@@ -421,7 +423,8 @@ module cpu(
     reg [`REG_BUS]  cmt_mip;
     reg [`REG_BUS]  cmt_mie;
     reg [`REG_BUS]  cmt_mscratch;
-
+    reg [31:0]      cmt_cause;
+    reg [`REG_BUS]  cmt_einst;
     // wire inst_valid = ( inst_addr != `PC_START) | (inst != 0);
     always @(negedge clock) begin
         if (reset) begin
@@ -454,6 +457,8 @@ module cpu(
             cmt_mip <= mip;
             cmt_mie <= mie;
             cmt_mscratch <= mscratch;
+            cmt_cause <= inst_trap & ~inst_ebreak & ~inst_ecall? cause: 0 ;
+            cmt_einst <= inst_trap & ~inst_ebreak & ~inst_ecall? inst: 0;
         end
     end
 
@@ -512,6 +517,13 @@ module cpu(
       .gpr_29             (regs_diff[29]),
       .gpr_30             (regs_diff[30]),
       .gpr_31             (regs_diff[31])
+    );
+    DifftestArchEvent DifftestArchEvent(
+        .clock( clock ),
+        .coreid( 0 ),
+        .intrNO( cmt_einst ),
+        .cause( cmt_cause ),
+        .exceptionPC( cmt_pc )
     );
     DifftestTrapEvent DifftestTrapEvent(
       .clock              (clock),
