@@ -521,20 +521,20 @@ module cpu(
     DifftestArchEvent DifftestArchEvent(
         .clock( clock ),
         .coreid( 0 ),
-        .intrNO( cmt_cause ),
+        .intrNO( 0 ),
         .cause( 0 ),
-        .exceptionPC( cmt_pc ),
-        .exceptionInst( cmt_einst )
+        .exceptionPC( 0 ),
+        .exceptionInst( 0 )
     );
-    // DifftestTrapEvent DifftestTrapEvent(
-    //   .clock              (clock),
-    //   .coreid             (0),
-    //   .valid              (trap),
-    //   .code               (trap_code),
-    //   .pc                 (cmt_pc),
-    //   .cycleCnt           (cycleCnt),
-    //   .instrCnt           (instrCnt)
-    // );
+    DifftestTrapEvent DifftestTrapEvent(
+      .clock              (clock),
+      .coreid             (0),
+      .valid              (trap),
+      .code               (trap_code),
+      .pc                 (cmt_pc),
+      .cycleCnt           (cycleCnt),
+      .instrCnt           (instrCnt)
+    );
     DifftestCSRState DifftestCSRState(
       .clock              (clock),
       .coreid             (0),
