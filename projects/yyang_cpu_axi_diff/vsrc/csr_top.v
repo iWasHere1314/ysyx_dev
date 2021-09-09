@@ -231,9 +231,9 @@ module csr_top (
         else if( index_mip & inst_valid ) begin
             mip_r <= csr_nxt & `DATA_BUS_SIZE'h80;
         end
-        else if( clint_mtip ) begin
-            mip_r[7] <= 1'b1;
-        end
+        // else if( clint_mtip ) begin
+        //     mip_r[7] <= 1'b1;
+        // end
         else begin
             mip_r <= mip_r;
         end
@@ -300,12 +300,15 @@ module csr_top (
                                     | { `DATA_BUS_SIZE{ index_minstret } } & ( minstret_r ); 
     `ifdef DEFINE_DIFFTEST
     assign csr_skip             =   ~( index_mstatus | index_mtvec | index_mepc | index_mepc | index_mcause | index_mip | index_mie | index_mscratch | inst_ecall | inst_ebreak | inst_mret );
-    assign mstatus              =   mstatus_r;
-    assign mtvec                =   mtvec_r;
-    assign mepc                 =   mepc_r;
-    assign mcause               =   mcause_r;
-    assign mip                  =   mip_r;
-    assign mie                  =   mie_r;
-    assign mscratch             =   mscratch_r;
+    assign mstatus              =   index_mstatus? csr_nxt & `DATA_BUS_SIZE'h88: 
+                                    trap_en? {mstatus_r[63:8], mstatus_r[3],mstatus_r[6:4],1'b0,mstatus_r[2:0]}:
+                                    ret_en? {mstatus_r[63:8], 1'b1,mstatus_r[6:4],mstatus_r[7],mstatus_r[2:0]}:
+                                    mstatus_r;
+    assign mtvec                =   index_mtvec? csr_nxt & ~64'h3: mtvec_r;
+    assign mepc                 =   index_mepc? csr_nxt: mepc_r;
+    assign mcause               =   index_mcause? csr_nxt: inst_ecall? `DATA_BUS_SIZE'd11: inst_ebreak? `DATA_BUS_SIZE'd3: mcause_r;
+    assign mip                  =   index_mip? csr_nxt & `DATA_BUS_SIZE'h80: mip_r;
+    assign mie                  =   index_mie? csr_nxt & `DATA_BUS_SIZE'h80: mie_r;
+    assign mscratch             =   index_mscratch? csr_nxt: mscratch_r;
     `endif
 endmodule
