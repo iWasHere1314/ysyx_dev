@@ -458,9 +458,9 @@ module cpu(
             cmt_mip <= mip;
             cmt_mie <= mie;
             cmt_mscratch <= mscratch;
-            cmt_cause <= inst_trap & ~inst_ebreak & ~inst_ecall? cause: 0 ;
-            cmt_einst <= inst_trap & ~inst_ebreak & ~inst_ecall? inst: 0;
-            cmt_epc <= inst_trap & ~inst_ebreak & ~inst_ecall? inst_addr: 0;
+            cmt_cause <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? cause: 0 ;
+            cmt_einst <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? inst: 0;
+            cmt_epc <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? inst_addr: 0;
         end
     end
 
