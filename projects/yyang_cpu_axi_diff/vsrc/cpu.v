@@ -140,7 +140,7 @@ module cpu(
     `ifdef DEFINE_DIFFTEST
     wire                        clint_skip;
     wire    [`REG_BUS]          regs_o  [31:0] ;
-    // output                          csr_skip
+    wire                        csr_skip;
     wire    [`REG_BUS]          mstatus;
     wire    [`REG_BUS]          mtvec;
     wire    [`REG_BUS]          mepc;
@@ -339,7 +339,7 @@ module cpu(
         .csr_nxt_pc( csr_nxt_pc )
         `ifdef DEFINE_DIFFTEST
                                             ,
-        // output                          csr_skip
+        .csr_skip( csr_skip ),
         .mstatus( mstatus ),
         .mtvec( mtvec ),
         .mepc( mepc ),
@@ -441,7 +441,7 @@ module cpu(
             trap_code <= regs_o[10][7:0];
             cycleCnt <= cycleCnt + 1;
             instrCnt <= instrCnt + inst_valid;
-            cmt_skip <= /*inst_csr & ~inst_ecall & ~inst_ebreak & ~inst_trap*/
+            cmt_skip <= csr_skip
                         `ifdef DEFINE_PUTCH
                         | inst_selfdefine 
                         `endif

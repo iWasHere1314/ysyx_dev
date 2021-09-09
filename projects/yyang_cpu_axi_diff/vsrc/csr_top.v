@@ -21,7 +21,7 @@ module csr_top (
     output  [`DATA_BUS]             csr_read
     `ifdef DEFINE_DIFFTEST
                                             ,
-    // output                          csr_skip
+    output                          csr_skip,
     output  [`REG_BUS]              mstatus,
     output  [`REG_BUS]              mtvec,
     output  [`REG_BUS]              mepc,
@@ -299,7 +299,7 @@ module csr_top (
                                     | { `DATA_BUS_SIZE{ index_mscratch } } & ( mscratch_r )
                                     | { `DATA_BUS_SIZE{ index_minstret } } & ( minstret_r ); 
     `ifdef DEFINE_DIFFTEST
-    // assign csr_skip             =   ~( index_mstatus | index_mtvec | index_mepc | index_mepc | index_mcause | index_mip | index_mie | index_mscratch );
+    assign csr_skip             =   ~( index_mstatus | index_mtvec | index_mepc | index_mepc | index_mcause | index_mip | index_mie | index_mscratch );
     assign mstatus              =   mstatus_r;
     assign mtvec                =   mtvec_r;
     assign mepc                 =   mepc_r;
