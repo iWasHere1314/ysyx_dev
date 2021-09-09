@@ -524,7 +524,7 @@ module cpu(
         .intrNO( cmt_cause ),
         .cause( 0 ),
         .exceptionPC( cmt_pc ),
-        .exceptionInst( cmt_inst )
+        .exceptionInst( cmt_einst )
     );
     DifftestTrapEvent DifftestTrapEvent(
       .clock              (clock),
