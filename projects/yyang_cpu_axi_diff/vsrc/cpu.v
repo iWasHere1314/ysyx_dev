@@ -532,7 +532,7 @@ module cpu(
       .sepc               (0),
       .mtval              (0),
       .stval              (0),
-      .mtvec              (cmt_mtvec),
+      .mtvec              (mtvec),
       .stvec              (0),
       .mcause             (cmt_mcause),
       .scause             (0),
