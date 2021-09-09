@@ -218,7 +218,7 @@ module csr_top (
         else if( inst_ebreak & inst_valid ) begin
             mcause_r <= `DATA_BUS_SIZE'd3;
         end
-        else if( csr_trap & inst_valid ) begin
+        else if( inst_trap & inst_valid ) begin
             mcause_r <= ( `DATA_BUS_SIZE'h1<<(`DATA_BUS_SIZE-1) ) + `DATA_BUS_SIZE'h7;
         end
         else begin
