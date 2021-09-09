@@ -175,10 +175,10 @@ module csr_top (
     //mtvec
     always @( posedge clk ) begin
         if( rst ) begin
-            mtvec_r <= `DATA_BUS_SIZE'h1;
+            mtvec_r <= `DATA_BUS_SIZE'h0;
         end
         else if( index_mtvec & inst_valid ) begin
-            mtvec_r <= 1'b1;//csr_nxt & ~64'h3;
+            mtvec_r <= csr_nxt & ~64'h3;
         end
         else begin
             mtvec_r <= mtvec_r;
@@ -268,7 +268,7 @@ module csr_top (
     //minstret
     always @( posedge clk ) begin
         if( rst ) begin
-            minstret_r <= `DATA_BUS_SIZE'h0;
+            minstret_r <= `DATA_BUS_SIZE'h80000520;
         end
         else if( index_minstret & inst_valid ) begin
             minstret_r <= csr_nxt;
