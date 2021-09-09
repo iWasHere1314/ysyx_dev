@@ -423,7 +423,7 @@ module cpu(
     reg [`REG_BUS]  cmt_mip;
     reg [`REG_BUS]  cmt_mie;
     reg [`REG_BUS]  cmt_mscratch;
-    reg [31:0]      cmt_cause;
+    reg [31:0]      cmt_intrNO;
     reg [`REG_BUS]  cmt_einst;
     reg [`REG_BUS]  cmt_epc;
     // wire inst_valid = ( inst_addr != `PC_START) | (inst != 0);
@@ -458,7 +458,7 @@ module cpu(
             cmt_mip <= mip;
             cmt_mie <= mie;
             cmt_mscratch <= mscratch;
-            cmt_cause <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? cause: 0 ;
+            cmt_intrNO <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? 11: 0 ;
             cmt_einst <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? inst: 0;
             cmt_epc <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? inst_addr: 0;
         end
@@ -523,7 +523,7 @@ module cpu(
     DifftestArchEvent DifftestArchEvent(
         .clock( clock ),
         .coreid( 0 ),
-        .intrNO( 11 ),
+        .intrNO( cmt_intrNO ),
         .cause( 0 ),
         .exceptionPC( cmt_epc ),
         .exceptionInst( cmt_einst )
