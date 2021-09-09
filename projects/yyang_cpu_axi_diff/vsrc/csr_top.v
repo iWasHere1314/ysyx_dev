@@ -242,7 +242,7 @@ module csr_top (
     //mie
     always @( posedge clk ) begin
         if( rst ) begin
-            mie_r <= `DATA_BUS_SIZE'h0;
+            mie_r <= `DATA_BUS_SIZE'h80;
         end
         else if( index_mie & inst_valid ) begin
             mie_r <= csr_nxt & `DATA_BUS_SIZE'h80;
@@ -283,7 +283,7 @@ module csr_top (
 
 
     //output
-    assign csr_trap             =   mstatus_r[4] & ( mie_r[7] & clint_mtip );
+    assign csr_trap             =   1'b0/* mstatus_r[4] & ( mie_r[7] & clint_mtip ) */;
     assign csr_nxt_pc           =   inst_ecall? mtvec_r: mepc_r;
     assign csr_read             =    { `DATA_BUS_SIZE { index_mcycle } } & ( mcycle_r )
                                     | { `DATA_BUS_SIZE{ index_misa } } & ( misa_r )
