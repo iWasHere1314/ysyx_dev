@@ -287,7 +287,7 @@ module csr_top (
 
     //output
     assign csr_trap             =   mstatus_r[4] & ( mie_r[7] & mip_r[7] );
-    assign csr_nxt_pc           =   inst_ecall? mtvec_r: mepc_r;
+    assign csr_nxt_pc           =   inst_ecall | inst_ebreak | inst_trap ? mtvec_r: mepc_r;
     assign csr_read             =    { `DATA_BUS_SIZE { index_mcycle } } & ( mcycle_r )
                                     | { `DATA_BUS_SIZE{ index_misa } } & ( misa_r )
                                     | { `DATA_BUS_SIZE{ index_mvendorid } } & ( mvendorid_r )
