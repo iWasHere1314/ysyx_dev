@@ -526,15 +526,15 @@ module cpu(
         .exceptionPC( cmt_pc ),
         .exceptionInst( cmt_einst )
     );
-    DifftestTrapEvent DifftestTrapEvent(
-      .clock              (clock),
-      .coreid             (0),
-      .valid              (trap),
-      .code               (trap_code),
-      .pc                 (cmt_pc),
-      .cycleCnt           (cycleCnt),
-      .instrCnt           (instrCnt)
-    );
+    // DifftestTrapEvent DifftestTrapEvent(
+    //   .clock              (clock),
+    //   .coreid             (0),
+    //   .valid              (trap),
+    //   .code               (trap_code),
+    //   .pc                 (cmt_pc),
+    //   .cycleCnt           (cycleCnt),
+    //   .instrCnt           (instrCnt)
+    // );
     DifftestCSRState DifftestCSRState(
       .clock              (clock),
       .coreid             (0),
