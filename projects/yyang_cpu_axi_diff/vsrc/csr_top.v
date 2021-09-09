@@ -196,7 +196,7 @@ module csr_top (
         else if( index_mepc & inst_valid ) begin
             mepc_r <= csr_nxt;
         end
-        else if( inst_trap ) begin
+        else if( inst_trap | inst_ecall | inst_ebreak ) begin
             mepc_r <= inst_addr;
         end
         else begin
@@ -301,6 +301,7 @@ module csr_top (
                                     | { `DATA_BUS_SIZE{ index_mip } } & ( mip_r )
                                     | { `DATA_BUS_SIZE{ index_mscratch } } & ( mscratch_r )
                                     | { `DATA_BUS_SIZE{ index_minstret } } & ( minstret_r ); 
+
     `ifdef DEFINE_DIFFTEST
     assign csr_skip             =   ~( index_mstatus | index_mtvec | index_mepc | index_mepc | index_mcause | index_mip | index_mie | index_mscratch | inst_ecall | inst_ebreak | inst_mret );
     assign mstatus              =   index_mstatus? { ( csr_nxt[16:15] == 2'b11 ) | ( csr_nxt[14:13] == 2'b11 ) ,csr_nxt[62:0] } /* & `DATA_BUS_SIZE'h1888 */: 
