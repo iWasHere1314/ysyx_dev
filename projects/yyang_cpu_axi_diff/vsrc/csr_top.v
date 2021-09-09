@@ -175,7 +175,7 @@ module csr_top (
     //mtvec
     always @( posedge clk ) begin
         if( rst ) begin
-            mtvec_r <= `DATA_BUS_SIZE'h0;
+            mtvec_r <= `DATA_BUS_SIZE'h1;
         end
         else if( index_mtvec & inst_valid ) begin
             mtvec_r <= 1'b1;//csr_nxt & ~64'h3;
