@@ -549,7 +549,7 @@ module cpu(
       .mcause             (mcause),
       .scause             (0),
       .satp               (0),
-      .mip                (mip),
+      .mip                (0),
       .mie                (mie),
       .mscratch           (mscratch),
       .sscratch           (0),
