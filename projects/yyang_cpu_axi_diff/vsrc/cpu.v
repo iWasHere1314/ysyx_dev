@@ -519,7 +519,7 @@ module cpu(
       .gpr_31             (regs_diff[31])
     );
     DifftestArchEvent DifftestArchEvent(
-        .clock( 0 ),
+        .clock( clock ),
         .coreid( 0 ),
         .intrNO( 0 ),
         .cause( 0 ),
