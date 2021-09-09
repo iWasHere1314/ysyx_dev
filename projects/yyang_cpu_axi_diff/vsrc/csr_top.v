@@ -303,7 +303,7 @@ module csr_top (
     assign mstatus              =   mstatus_r;
     assign mtvec                =   mtvec_r;
     assign mepc                 =   mepc_r;
-    assign mcause               =   mcause_r;
+    assign mcause               =   64'd11;
     assign mip                  =   mip_r;
     assign mie                  =   mie_r;
     assign mscratch             =   mscratch_r;
