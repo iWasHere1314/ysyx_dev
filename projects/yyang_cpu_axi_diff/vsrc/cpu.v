@@ -437,7 +437,7 @@ module cpu(
             cmt_wdata <= rd_data;
             cmt_pc <= inst_addr;
             cmt_inst <= inst;
-            cmt_valid <= inst_valid & ( ( inst_addr != `PC_START) | (inst != 0) ) ;
+            cmt_valid <= inst_valid & ( ( inst_addr != `PC_START) | (inst != 0) ) & ~( inst_trap & ~inst_ecall & ~inst_ebreak );
         
         	    regs_diff <= regs_o;
 
