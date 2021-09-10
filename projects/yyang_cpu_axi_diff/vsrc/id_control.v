@@ -178,10 +178,10 @@ module id_control (
     assign inst_selfdefine  =   inst == 32'h7b;
     `endif
 
-    assign inst             =   csr_trap? `INST_NOP: inst_i;
-    assign opcode           =   csr_trap? 7'h33: opcode_i;
-    assign funct3           =   csr_trap? 3'b0: funct3_i;
-    assign funct7           =   csr_trap? 7'b0: funct7_i;
+    assign inst             =   inst_trap_r? `INST_NOP: inst_i;
+    assign opcode           =   inst_trap_r? 7'h33: opcode_i;
+    assign funct3           =   inst_trap_r? 3'b0: funct3_i;
+    assign funct7           =   inst_trap_r? 7'b0: funct7_i;
 
     wire [`EFF_OPCODE_BUS] eff_opcode = opcode[`EFF_OPCODE_LOC_BUS];
 
