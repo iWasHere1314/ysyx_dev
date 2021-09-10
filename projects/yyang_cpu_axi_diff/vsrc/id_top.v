@@ -68,10 +68,10 @@ module id_top (
 );
     wire [`GEN_TYPE_BUS] gen_type;
 
-    assign rs1_index    =   inst[`RS1_LOC_BUS];
-    assign rs2_index    =   inst[`RS2_LOC_BUS];
-    assign rd_index     =   inst[`RD_LOC_BUS];
-    assign csr_index    =   inst[`CSR_LOC_BUS];
+    assign rs1_index    =   csr_trap? inst[`RS1_LOC_BUS]: 5'b0;
+    assign rs2_index    =   csr_trap? inst[`RS2_LOC_BUS]: 5'b0;
+    assign rd_index     =   csr_trap? inst[`RD_LOC_BUS]: 5'b0 ;
+    assign csr_index    =   csr_trap? inst[`CSR_LOC_BUS]: 12'b0 ;
 
     id_immgen my_id_immgen(
         .inst( inst ),
