@@ -66,6 +66,8 @@ module id_control (
     `endif
 );
     
+    /* interrupt */
+
     /* all instruction types */
 
     // wire inst_sltxx;
