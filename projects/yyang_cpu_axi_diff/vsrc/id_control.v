@@ -346,12 +346,21 @@ module id_control (
     assign csr_ctrl     =   inst_csr? funct3: 3'b100;
     assign csr_src      =   funct3[2];
     
+    // 这样写是因为取指是多周期的，所以触发定时器中断时指令可能已经取回，会出错
+    // 所以选择寄存中断信号，在处理完本条指令再响应中断
+    // 这样处理将延迟中断处理一个取指周期（指令取回所需周期数，单周期cpu即位1）
+    // 而一旦该信号为高，下一个周期就会进行进入中断前的处理，故不能再使其为高，直接置低即可
     always @( posedge clk ) begin
         if( rst ) begin
             inst_trap_r <= 1'b0;
         end
         else if( inst_valid ) begin
-            inst_trap_r <= csr_trap;
+            if( inst_trap_r ) begin
+                inst_trap_r <= 1'b0;
+            end
+            else begin
+                inst_trap_r <= csr_trap;
+            end
         end
         else begin
             inst_trap_r <= inst_trap_r;
