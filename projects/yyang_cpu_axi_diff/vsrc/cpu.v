@@ -458,6 +458,7 @@ module cpu(
             cmt_mip <= mip;
             cmt_mie <= mie;
             cmt_mscratch <= mscratch;
+
             cmt_intrNO <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? 7: 0 ;
             cmt_einst <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? inst: 0;
             cmt_epc <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? inst_addr: 0;
@@ -523,10 +524,10 @@ module cpu(
     DifftestArchEvent DifftestArchEvent(
         .clock( clock ),
         .coreid( 0 ),
-        .intrNO( cmt_intrNO ),
+        .intrNO( inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? 7: 0 ),
         .cause( 0 ),
-        .exceptionPC( cmt_epc ),
-        .exceptionInst( cmt_einst )
+        .exceptionPC( inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? inst_addr: 0 ),
+        .exceptionInst( inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? inst: 0 )
     );
     DifftestTrapEvent DifftestTrapEvent(
       .clock              (clock),
