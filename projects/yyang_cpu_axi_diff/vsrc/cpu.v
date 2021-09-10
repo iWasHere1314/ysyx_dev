@@ -426,10 +426,6 @@ module cpu(
     reg [31:0]      cmt_intrNO;
     reg [`REG_BUS]  cmt_einst;
     reg [`REG_BUS]  cmt_epc;
-    reg [31:0]      cmt_intrNO_pre;
-    reg [`REG_BUS]  cmt_einst_pre;
-    reg [`REG_BUS]  cmt_epc_pre;
-    
     // wire inst_valid = ( inst_addr != `PC_START) | (inst != 0);
     always @(negedge clock) begin
         if (reset) begin
@@ -462,13 +458,9 @@ module cpu(
             cmt_mip <= mip;
             cmt_mie <= mie;
             cmt_mscratch <= mscratch;
-            
-            cmt_intrNO_pre <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? 7: 0 ;
-            cmt_einst_pre <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? inst: 0;
-            cmt_epc_pre <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? inst_addr: 0;
-            cmt_intrNO <= cmt_intrNO_pre;
-            cmt_einst <= cmt_einst_pre;
-            cmt_epc <= cmt_epc_pre;
+            cmt_intrNO <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? 7: 0 ;
+            cmt_einst <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? inst: 0;
+            cmt_epc <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? inst_addr: 0;
         end
     end
 
