@@ -4,7 +4,7 @@ module clint (
     input                       rst,
 
     output                      clint_mtip,
-
+    output                      clint_update,
     input                       clint_valid,
     input   [`DATA_BUS]         clint_data_write,
     input   [`DATA_ADDR_BUS]    clint_addr,
@@ -18,6 +18,7 @@ module clint (
 
     reg     [`DATA_BUS]         mtime_r;
     reg     [`DATA_BUS]         mtimecmp_r;
+    reg                         clint_update_r;
     wire                        clint_read;
     wire                        clint_write;
     wire                        mtime_en;
@@ -52,10 +53,23 @@ module clint (
         end
     end
 
+    always @( posedge clk ) begin
+        if( rst | clint_update_r ) begin
+            clint_update_r <= 1'b0;
+        end    
+        else if( clint_write ) begin
+            clint_update_r <= 1'b1;
+        end
+        else begin
+            clint_update_r <= clint_update_r;
+        end
+    end
+
     assign clint_ready          =   1'b1;
     assign clint_data_read      =   ( { `DATA_BUS_SIZE { mtime_en & clint_read } } & mtime_r ) 
                                     | ( { `DATA_BUS_SIZE { mtimecmp_en & clint_read } } & mtimecmp_r );
     assign clint_resp           =   2'b0;
 
     assign clint_mtip           =   mtime_r >= mtimecmp_r;
+    assign clint_update         =   clint_update_r;
 endmodule

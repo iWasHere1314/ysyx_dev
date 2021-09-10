@@ -131,6 +131,7 @@ module cpu(
     //clint
 
     wire                        clint_mtip;
+    wire                        clint_update;
     wire                        clint_ready;
     wire    [`DATA_BUS]         clint_data_read;
     wire    [1:0]               clint_resp;
@@ -332,6 +333,7 @@ module cpu(
         .inst_trap( inst_trap ),
         .inst_mret( inst_mret ),
         .clint_mtip( clint_mtip ),
+        .clint_update( clint_update ),
         .inst_ecall( inst_ecall ),  
         .inst_ebreak( inst_ebreak ),
 
@@ -390,7 +392,8 @@ module cpu(
         .rst( reset ),
 
         .clint_mtip( clint_mtip ),
-
+        .clint_update( clint_update ),
+        
         .clint_valid( clint_valid ),
         .clint_data_write( clint_data_write ),
         .clint_addr( clint_addr ),

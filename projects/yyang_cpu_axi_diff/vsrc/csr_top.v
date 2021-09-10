@@ -13,6 +13,7 @@ module csr_top (
     input                           inst_trap,
     input                           inst_mret,
     input                           clint_mtip,
+    input                           clint_update,
     input                           inst_ecall,
     input                           inst_ebreak,
 
@@ -234,8 +235,9 @@ module csr_top (
         else if( index_mip & inst_valid ) begin
             mip_r <= csr_nxt & `DATA_BUS_SIZE'h80;
         end
-        else if( clint_mtip ) begin
-            mip_r[7] <= 1'b1;
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        else if( clint_mtip | clint_update ) begin
+            mip_r[7] <= clint_mtip;
         end
         else begin
             mip_r <= mip_r;
