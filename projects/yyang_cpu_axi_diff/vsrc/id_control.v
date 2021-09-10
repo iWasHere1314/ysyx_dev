@@ -173,9 +173,9 @@ module id_control (
     `ifdef DEFINE_PUTCH
     assign inst_selfdefine  =   inst == 32'h7b;
     `endif
-    
+
     assign inst             =   csr_trap? `INST_NOP: inst_i;
-    assign opcode           =   csr_trap? 7'b0: opcode_i;
+    assign opcode           =   csr_trap? 7'h33: opcode_i;
     assign funct3           =   csr_trap? 3'b0: funct3_i;
     assign funct7           =   csr_trap? 7'b0: funct7_i;
 
