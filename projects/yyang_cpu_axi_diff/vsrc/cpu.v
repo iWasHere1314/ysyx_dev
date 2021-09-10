@@ -393,7 +393,7 @@ module cpu(
 
         .clint_mtip( clint_mtip ),
         .clint_update( clint_update ),
-        
+
         .clint_valid( clint_valid ),
         .clint_data_write( clint_data_write ),
         .clint_addr( clint_addr ),
@@ -555,7 +555,7 @@ module cpu(
       .mcause             (mcause),
       .scause             (0),
       .satp               (0),
-      .mip                (mip),
+      .mip                (0),
       .mie                (mie),
       .mscratch           (mscratch),
       .sscratch           (0),
