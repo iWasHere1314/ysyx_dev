@@ -55,6 +55,6 @@ module clint_dstb (
     assign clint_data_write             =   { `DATA_BUS_SIZE { to_clint } } & clint_dstb_data_write;
     assign clint_addr                   =   { `DATA_BUS_SIZE { to_clint } } & clint_dstb_addr;
     assign clint_size                   =   { 2 { to_clint } } & clint_dstb_size;
-    assign clint_req                    =   to_other & clint_dstb_req;
+    assign clint_req                    =   to_clint & clint_dstb_req;
 
 endmodule
