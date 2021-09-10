@@ -1,13 +1,11 @@
 `include "defines.v"
 
 module id_control (
-    `ifdef DEFINE_PUTCH
-    input   [`INST_BUS]         inst,
-    `endif 
+    input   [`INST_BUS]         inst_i,
 
-    input   [`OPCODE_BUS]       opcode,
-    input   [`FUNCT3_BUS]       funct3,
-    input   [`FUNCT7_BUS]       funct7,
+    input   [`OPCODE_BUS]       opcode_i,
+    input   [`FUNCT3_BUS]       funct3_i,
+    input   [`FUNCT7_BUS]       funct7_i,
     
     /* interrupt */
     input                       csr_trap,
@@ -67,6 +65,10 @@ module id_control (
 );
     
     /* interrupt */
+    wire [`INST_BUS]        inst;
+    wire [`OPCODE_BUS]      opcode;
+    wire [`FUNCT3_BUS]      funct3;
+    wire [`FUNCT7_BUS]      funct7;
 
     /* all instruction types */
 
@@ -169,9 +171,14 @@ module id_control (
     // wire inst_csrrci; //不使用，因为控制信号直接用funct3
 
     `ifdef DEFINE_PUTCH
-    assign inst_selfdefine = inst == 32'h7b;
+    assign inst_selfdefine  =   inst == 32'h7b;
     `endif
     
+    assign inst             =   csr_trap? `INST_NOP: inst_i;
+    assign opcode           =   csr_trap? 7'b0: opcode_i;
+    assign funct3           =   csr_trap? 3'b0: funct3_i;
+    assign funct7           =   csr_trap? 7'b0: funct7_i;
+
     wire [`EFF_OPCODE_BUS] eff_opcode = opcode[`EFF_OPCODE_LOC_BUS];
 
       

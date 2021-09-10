@@ -84,11 +84,11 @@ module id_top (
     id_control my_id_control(
         /* input */
 
-        .inst( inst ),
+        .inst_i( inst ),
 
-        .opcode( inst[`OPCODE_LOC_BUS] ),
-        .funct3( inst[`FUNCT3_LOC_BUS] ),
-        .funct7( inst[`FUNCT7_LOC_BUS] ),
+        .opcode_i( inst[`OPCODE_LOC_BUS] ),
+        .funct3_i( inst[`FUNCT3_LOC_BUS] ),
+        .funct7_i( inst[`FUNCT7_LOC_BUS] ),
 
         /* interrupt */
         .csr_trap( csr_trap ),    
