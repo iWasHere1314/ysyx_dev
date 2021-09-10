@@ -305,7 +305,7 @@ module csr_top (
                                     | { `DATA_BUS_SIZE{ index_minstret } } & ( minstret_r ); 
 
     `ifdef DEFINE_DIFFTEST
-    assign csr_skip             =   ~( index_mstatus | index_mtvec | index_mepc | index_mepc | index_mcause | index_mip | index_mie | index_mscratch | inst_ecall | inst_ebreak | inst_mret );
+    assign csr_skip             =   ~( index_mstatus | index_mtvec | index_mepc | index_mepc | index_mcause /* | index_mip */ | index_mie | index_mscratch | inst_ecall | inst_ebreak | inst_mret );
     assign mstatus              =   index_mstatus? { ( csr_nxt[16:15] == 2'b11 ) | ( csr_nxt[14:13] == 2'b11 ) ,csr_nxt[62:0] } /* & `DATA_BUS_SIZE'h1888 */: 
                                     trap_en? {mstatus_r[63:13], 2'b11, mstatus_r[10:8], mstatus_r[3],mstatus_r[6:4],1'b0,mstatus_r[2:0]}:
                                     ret_en? {mstatus_r[63:13], 2'b00, mstatus_r[10:8], 1'b1,mstatus_r[6:4],mstatus_r[7],mstatus_r[2:0]}:
