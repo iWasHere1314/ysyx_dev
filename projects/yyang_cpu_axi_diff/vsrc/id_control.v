@@ -1,6 +1,10 @@
 `include "defines.v"
 
 module id_control (
+    input                       clk,
+    input                       rst,
+    input                       inst_valid,
+
     input   [`INST_BUS]         inst_i,
 
     input   [`OPCODE_BUS]       opcode_i,
@@ -69,7 +73,7 @@ module id_control (
     wire [`OPCODE_BUS]      opcode;
     wire [`FUNCT3_BUS]      funct3;
     wire [`FUNCT7_BUS]      funct7;
-
+    reg                     inst_trap_r;
     /* all instruction types */
 
     // wire inst_sltxx;
@@ -191,7 +195,7 @@ module id_control (
     assign inst_word    =   inst_aliw | inst_alw;
     assign inst_branch  =   eff_opcode == `EFF_OPCODE_BRANCH;
     assign inst_csr     =   eff_opcode == `EFF_OPCODE_CSR;
-    assign inst_trap    =   csr_trap | inst_ecall | inst_ebreak;
+    assign inst_trap    =   inst_trap_r | inst_ecall | inst_ebreak;
     assign inst_store   =   eff_opcode == `EFF_OPCODE_STORE;
     assign inst_ali     =   eff_opcode == `EFF_OPCODE_ALI;
     assign inst_aliw    =   eff_opcode == `EFF_OPCODE_ALIW;
@@ -342,4 +346,15 @@ module id_control (
     assign csr_ctrl     =   inst_csr? funct3: 3'b100;
     assign csr_src      =   funct3[2];
     
+    always @( posedge clk ) begin
+        if( rst ) begin
+            inst_trap_r <= 1'b0;
+        end
+        else if( inst_valid ) begin
+            inst_trap_r <= csr_trap;
+        end
+        else begin
+            inst_trap_r <= inst_trap_r;
+        end
+    end
 endmodule

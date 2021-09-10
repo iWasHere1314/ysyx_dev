@@ -183,6 +183,10 @@ module cpu(
     );
 
     id_top my_id_top(
+        .clk( clock ),
+        .rst( reset ),
+        .inst_valid( inst_valid ),
+        
         .inst( inst ),
         
         /* interrupt  */
@@ -555,7 +559,7 @@ module cpu(
       .mcause             (mcause),
       .scause             (0),
       .satp               (0),
-      .mip                (0),
+      .mip                (0),// !!!!!
       .mie                (mie),
       .mscratch           (mscratch),
       .sscratch           (0),

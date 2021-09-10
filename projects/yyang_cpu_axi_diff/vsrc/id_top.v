@@ -2,6 +2,10 @@
 /* verilator lint_off UNUSED */
 
 module id_top (
+    input                       clk,
+    input                       rst, 
+    input                       inst_valid,
+
     input   [`INST_BUS]         inst,
     /* interrupt */
     input                       csr_trap,
@@ -83,7 +87,10 @@ module id_top (
 
     id_control my_id_control(
         /* input */
-
+        .clk( clk ),
+        .rst( rst ),
+        .inst_valid( inst_valid ),
+        
         .inst_i( inst ),
 
         .opcode_i( inst[`OPCODE_LOC_BUS] ),
