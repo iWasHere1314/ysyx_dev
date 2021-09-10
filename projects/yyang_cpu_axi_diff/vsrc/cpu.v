@@ -186,7 +186,7 @@ module cpu(
         .clk( clock ),
         .rst( reset ),
         .inst_valid( inst_valid ),
-
+        
         .inst( inst ),
         
         /* interrupt  */
@@ -547,7 +547,7 @@ module cpu(
     DifftestCSRState DifftestCSRState(
       .clock              (clock),
       .coreid             (0),
-      .priviledgeMode     ( inst_mret? 0: 3 ),
+      .priviledgeMode     (3),
       .mstatus            (mstatus),
       .sstatus            (mstatus & 64'h80000003000de122),
       .mepc               (mepc),
