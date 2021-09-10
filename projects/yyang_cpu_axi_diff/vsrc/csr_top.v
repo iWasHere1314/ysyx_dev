@@ -317,7 +317,7 @@ module csr_top (
     assign mcause               =   index_mcause? csr_nxt: 
                                     inst_ecall? `DATA_BUS_SIZE'd11: 
                                     inst_ebreak? `DATA_BUS_SIZE'd3:
-                                    csr_trap? ( `DATA_BUS_SIZE'h1<<(`DATA_BUS_SIZE-1) ) + `DATA_BUS_SIZE'h7: 
+                                    inst_trap? ( `DATA_BUS_SIZE'h1<<(`DATA_BUS_SIZE-1) ) + `DATA_BUS_SIZE'h7: 
                                     mcause_r;
     assign mip                  =   index_mip? csr_nxt & `DATA_BUS_SIZE'h80:
                                     clint_mtip? { mip_r[63:8], 1'b1, mip_r[6:0] }:

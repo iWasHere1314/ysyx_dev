@@ -74,7 +74,7 @@ module id_top (
 
     assign rs1_index    =   inst_trap? 5'b0: inst[`RS1_LOC_BUS];
     assign rs2_index    =   inst_trap? 5'b0: inst[`RS2_LOC_BUS];
-    assign rd_index     =   inst_trap? 5'b0: inst[`RD_LOC_BUS] ;
+    assign rd_index     =   inst_trap? 5'b0: inst[`RD_LOC_BUS];
     assign csr_index    =   inst_trap? 12'b0: inst[`CSR_LOC_BUS];
 
     id_immgen my_id_immgen(
