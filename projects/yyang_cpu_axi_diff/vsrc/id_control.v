@@ -359,7 +359,7 @@ module id_control (
                 inst_trap_r <= 1'b0;
             end
             else begin
-                inst_trap_r <= csr_trap;
+                inst_trap_r <= csr_trap & ~( inst_ecall | inst_ebreak );
             end
         end
         else begin
