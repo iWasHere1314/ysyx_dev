@@ -197,7 +197,7 @@ module csr_top (
         else if( index_mepc & inst_valid ) begin
             mepc_r <= csr_nxt;
         end
-        else if( inst_trap  & inst_valid ) begin
+        else if( trap_en ) begin
             mepc_r <= inst_addr;
         end
         else begin
@@ -219,7 +219,7 @@ module csr_top (
         else if( inst_ebreak & inst_valid ) begin
             mcause_r <= `DATA_BUS_SIZE'd3;
         end
-        else if( inst_trap & inst_valid ) begin//确定不是ecall和break
+        else if( trap_en ) begin//确定不是ecall和break
             mcause_r <= ( `DATA_BUS_SIZE'h1<<(`DATA_BUS_SIZE-1) ) + `DATA_BUS_SIZE'h7;
         end
         else begin
