@@ -9,10 +9,6 @@ module id_top (
 
     input                       id_top_id2ex_inst_lui_i,
 
-    input                       id_top_id_rs1_en_i,
-    input                       id_top_id_rs2_en_i,
-    input                       id_top_id2ex_rd_en_i,
-    input                       id_top_ex2mem_rd_en_i,
     input                       id_top_mem2wb_rd_en_i,
 
     input   [`REG_INDEX_BUS]    id_top_id2ex_rd_index_i,
@@ -327,11 +323,6 @@ module id_top (
     id_forward my_id_forward(
         /* control signals */
         .id_forward_inst_lui_i( id_top_id2ex_inst_lui_i ),
-        .id_forward_id_rs1_en_i( id_control_rs1_en_o ),
-        .id_forward_id_rs2_en_i( id_control_rs2_en_o ),
-        .id_forward_id2ex_rd_en_i( id_top_id2ex_rd_en_i ),
-        .id_forward_ex2mem_rd_en_i( id_top_ex2mem_rd_en_i ),
-        .id_forward_mem2wb_rd_en_i( id_top_mem2wb_rd_en_i ),
         .id_forward_id_rs1_index_i( rs1_index  ),
         .id_forward_id_rs2_index_i( rs2_index ),
         .id_forward_id2ex_rd_index_i( id_top_id2ex_rd_index_i ),

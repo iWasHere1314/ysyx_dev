@@ -5,11 +5,6 @@ module ex_top(
 
     /* control signals */
 
-    input                       ex_top_id2ex_rs1_en_i,
-    input                       ex_top_id2ex_rs2_en_i,
-    input                       ex_top_ex2mem_rd_en_i,
-    input                       ex_top_mem2wb_rd_en_i,
-
     input                       ex_top_inst_word_i,
     input                       ex_top_inst_slt_nu_i,
     input                       ex_top_inst_slt_u_i,
@@ -88,10 +83,6 @@ module ex_top(
     );
     
     ex_forward my_ex_forward(
-        .ex_forward_id2ex_rs1_en_i( ex_top_id2ex_rs1_en_i ),
-        .ex_forward_id2ex_rs2_en_i( ex_top_id2ex_rs2_en_i ),
-        .ex_forward_ex2mem_rd_en_i( ex_top_ex2mem_rd_en_i ),
-        .ex_forward_mem2wb_rd_en_i( ex_top_mem2wb_rd_en_i ),
         .ex_forward_id2ex_rs1_index_i( ex_top_id2ex_rs1_index_i ),
         .ex_forward_id2ex_rs2_index_i( ex_top_id2ex_rs2_index_i ),
         .ex_forward_ex2mem_rd_index_i( ex_top_ex2mem_rd_index_i ),

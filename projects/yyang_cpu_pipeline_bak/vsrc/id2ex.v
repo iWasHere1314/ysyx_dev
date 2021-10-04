@@ -11,12 +11,10 @@ module id2ex(
     input  [`REG_INDEX_BUS]     id2ex_rs1_index_i,
     input  [`REG_INDEX_BUS]     id2ex_rs2_index_i,
     input  [`REG_INDEX_BUS]     id2ex_rd_index_i,
-
+    input  [`CSR_INDEX_BUS]     id2ex_csr_index_i,
 
     input                       id2ex_inst_nop_i,
 
-    input                       id2ex_rs1_en_i,
-    input                       id2ex_rs2_en_i,
     input                       id2ex_rd_en_i,
     input                       id2ex_inst_jump_i,
     input                       id2ex_inst_branch_i,
@@ -33,7 +31,6 @@ module id2ex(
     input                       id2ex_inst_auipc_i,
     input  [`ALU_OP_BUS]        id2ex_alu_op_i,
 
-    input  [`CSR_INDEX_BUS]     id2ex_csr_index_i,
     input                       id2ex_inst_csr_i,
     input                       id2ex_inst_load_i,
     input                       id2ex_mem_write_i,
@@ -59,8 +56,6 @@ module id2ex(
 
     output                      id2ex_inst_nop_o,
 
-    output                      id2ex_rs1_en_o,
-    output                      id2ex_rs2_en_o,
     output                      id2ex_rd_en_o,
     output                      id2ex_inst_jump_o,
     output                      id2ex_inst_branch_o,
@@ -97,12 +92,12 @@ module id2ex(
     `endif
 
     /* data signals */
-    input   [`REG_BUS]          id2ex_rs1_data_i,
-    input   [`REG_BUS]          id2ex_rs2_data_i,
-    input   [`DATA_BUS]         id2ex_imm_data_i,
-    input   [`DATA_BUS]         id2ex_rd_data_i,
-    input   [`INST_ADDR_BUS]    id2ex_inst_addr_i,
-    input   [`INST_ADDR_BUS]    id2ex_jumpbranch_addr_i,
+    input  [`REG_BUS]           id2ex_rs1_data_i,
+    input  [`REG_BUS]           id2ex_rs2_data_i,
+    input  [`DATA_BUS]          id2ex_imm_data_i,
+    input  [`DATA_BUS]          id2ex_rd_data_i,
+    input  [`INST_ADDR_BUS]     id2ex_inst_addr_i,
+    input  [`INST_ADDR_BUS]     id2ex_jumpbranch_addr_i,
 
     output  [`REG_BUS]          id2ex_rs1_data_o,
     output  [`REG_BUS]          id2ex_rs2_data_o,
@@ -119,8 +114,6 @@ module id2ex(
 
     reg                         inst_nop_r;
 
-    reg                         rs1_en_r;
-    reg                         rs2_en_r;
     reg                         rd_en_r;
     reg                         inst_jump_r;
     reg                         inst_branch_r;
@@ -174,8 +167,6 @@ module id2ex(
 
     assign id2ex_inst_nop_o         =   inst_nop_r;
 
-    assign id2ex_rs1_en_o           =   rs1_en_r;
-    assign id2ex_rs2_en_o           =   rs2_en_r;
     assign id2ex_rd_en_o            =   rd_en_r;
     assign id2ex_inst_jump_o        =   inst_jump_r;
     assign id2ex_inst_branch_o      =   inst_branch_r;
@@ -312,42 +303,6 @@ module id2ex(
         end
     end
 
-    always @( posedge clk ) begin
-        if( rst ) begin
-            rs1_en_r <= 1'b0;        
-        end
-        else if( flush_en ) begin
-            rs1_en_r <= 1'b0;
-        end
-        else if( stall_en ) begin
-            rs1_en_r <= rs1_en_r;
-        end
-        else if( flow_en ) begin
-            rs1_en_r <= id2ex_rs1_en_i;
-        end
-        else begin
-            rs1_en_r <= rs1_en_r;
-        end
-    end
-
-        always @( posedge clk ) begin
-        if( rst ) begin
-            rs2_en_r <= 1'b0;        
-        end
-        else if( flush_en ) begin
-            rs2_en_r <= 1'b0;
-        end
-        else if( stall_en ) begin
-            rs2_en_r <= rs2_en_r;
-        end
-        else if( flow_en ) begin
-            rs2_en_r <= id2ex_rs2_en_i;
-        end
-        else begin
-            rs2_en_r <= rs2_en_r;
-        end
-    end
-    
     always @( posedge clk ) begin
         if( rst ) begin
             rd_en_r <= 1'b0;        
