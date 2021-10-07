@@ -16,17 +16,14 @@ module  ex_forward(
     output                      ex_forward_ex_rs2_src_ex2mem_o,
     output                      ex_forward_ex_rs2_src_mem2wb_o
 );
-    wire                        ex_forward_ex_rs1_src_id2ex_n;
     wire                        ex_forward_ex_rs1_src_ex2mem_n;
     wire                        ex_forward_ex_rs1_src_mem2wb_n;
-    wire                        ex_forward_ex_rs2_src_id2ex_n;
     wire                        ex_forward_ex_rs2_src_ex2mem_n;
     wire                        ex_forward_ex_rs2_src_mem2wb_n;
 
-    assign ex_forward_ex_rs1_src_id2ex_n    = ~ex_forward_ex_rs1_src_id2ex_o;
     assign ex_forward_ex_rs1_src_ex2mem_n   = ~ex_forward_ex_rs1_src_ex2mem_o;
     assign ex_forward_ex_rs1_src_mem2wb_n   = ~ex_forward_ex_rs1_src_mem2wb_o;
-    assign ex_forward_ex_rs2_src_id2ex_n    = ~ex_forward_ex_rs2_src_id2ex_o;
+
     assign ex_forward_ex_rs2_src_ex2mem_n   = ~ex_forward_ex_rs2_src_ex2mem_o;
     assign ex_forward_ex_rs2_src_mem2wb_n   = ~ex_forward_ex_rs2_src_mem2wb_o;
     
@@ -36,7 +33,7 @@ module  ex_forward(
                                                 & ex_forward_id2ex_rs1_en_i & ex_forward_ex2mem_rd_en_i;
     assign ex_forward_ex_rs1_src_mem2wb_o   =   ( ex_forward_mem2wb_rd_index_i != `REG_INDEX_SIZE'b0 )  
                                                 & ex_forward_mem2wb_rd_index_i == ex_forward_id2ex_rs1_index_i
-                                                & ~ex_forward_ex_rs1_src_ex2mem_o & ex_forward_id2ex_rs1_en_i 
+                                                & ex_forward_ex_rs1_src_ex2mem_n & ex_forward_id2ex_rs1_en_i 
                                                 & ex_forward_mem2wb_rd_en_i;
 
     assign ex_forward_ex_rs2_src_id2ex_o    =   ex_forward_ex_rs2_src_ex2mem_n & ex_forward_ex_rs2_src_mem2wb_n;
@@ -45,6 +42,6 @@ module  ex_forward(
                                                 & ex_forward_id2ex_rs2_en_i & ex_forward_ex2mem_rd_en_i;
     assign ex_forward_ex_rs2_src_mem2wb_o   =   ( ex_forward_mem2wb_rd_index_i != `REG_INDEX_SIZE'b0 )  
                                                 & ex_forward_mem2wb_rd_index_i == ex_forward_id2ex_rs2_index_i
-                                                & ~ex_forward_ex_rs2_src_ex2mem_o & ex_forward_id2ex_rs2_en_i 
+                                                & ex_forward_ex_rs2_src_ex2mem_n & ex_forward_id2ex_rs2_en_i 
                                                 & ex_forward_mem2wb_rd_en_i;
 endmodule

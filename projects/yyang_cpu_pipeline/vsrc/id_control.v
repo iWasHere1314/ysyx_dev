@@ -1,10 +1,8 @@
 `include "defines.v"
-
 module id_control (
     input                       clk,
     input                       rst,
 
-    input                       id_control_inst_valid_i,
 
     input   [`INST_BUS]         id_control_inst_i,
 
@@ -56,7 +54,6 @@ module id_control (
     `endif
 );
     /* rename */
-    wire                        inst_valid;
     wire    [`INST_BUS]         inst; 
     wire    [`OPCODE_BUS]       opcode;
     wire    [`FUNCT3_BUS]       funct3;
@@ -211,7 +208,6 @@ module id_control (
 
     
     /* rename assignments */
-    assign inst_valid                   =   id_control_inst_valid_i;
     assign inst                         =   id_control_inst_i; 
     assign opcode                       =   id_control_opcode_i;
     assign funct3                       =   id_control_funct3_i;
@@ -253,7 +249,7 @@ module id_control (
     assign id_control_inst_ecall_o      =   inst_ecall;
     assign id_control_inst_ebreak_o     =   inst_ebreak;
     assign id_control_inst_mret_o       =   inst_mret;
-    assign id_control_inst_trap         =   inst_trap;
+    assign id_control_inst_trap_o       =   inst_trap;
 
     `ifdef DEFINE_PUTCH
     assign id_control_inst_selfdefine_o =   inst_selfdefine;
@@ -351,10 +347,10 @@ module id_control (
 
     /* all control signals' assignments */
     /* register control */
-    assign rs1_en                       =   1'b0 | inst_jalr | inst_branch | inst_mem | inst_alxx | inst_csr_ni;
-    assign rs2_en                       =   1'b0 | inst_branch | inst_store | inst_al_ni ;
-    assign rd_en                        =   1'b0 | inst_xuix | inst_jump | inst_load | inst_alxx | inst_csr;
-    assign jump_base_pc                 =   1'b0 | inst_jalr;
+    assign rs1_en                       =   inst_jalr | inst_branch | inst_mem | inst_alxx | inst_csr_ni;
+    assign rs2_en                       =   inst_branch | inst_store | inst_al_ni ;
+    assign rd_en                        =   inst_xuix | inst_jump | inst_load | inst_alxx | inst_csr;
+    assign jump_base_pc                 =   inst_jalr;
 
     /* instruction type */
     // assign inst_sltxx                   =   inst_slt | inst_sltu |inst_slti | inst_sltiu ;
@@ -366,56 +362,58 @@ module id_control (
     // assign inst_branch                  =   eff_opcode == `EFF_OPCODE_BRANCH;
 
     /* memory control */
-    assign mem_write                    =   1'b0 | inst_store ;
-    assign mem_read                     =   1'b0 | inst_load ;
+    assign mem_write                    =   inst_store ;
+    assign mem_read                     =   inst_load ;
 
     /* immediate number */
-    assign gen_type                     =   3'b000 | ( { 3 { inst_store } } & 3'b011) 
-                                                   | ( { 3 { inst_xuix } } & 3'b100 )
-                                                   | ( { 3 { inst_jal } } & 3'b101 )
-                                                   | ( { 3 { inst_jalr | inst_load | ( inst_al_i & ~inst_shift ) } } & 3'b110 )
-                                                   | ( { 3 { inst_branch } } & 3'b111 );
+    assign gen_type                     =     ( { 3 { inst_store } } & 3'b011) 
+                                            | ( { 3 { inst_xuix } } & 3'b100 )
+                                            | ( { 3 { inst_jal } } & 3'b101 )
+                                            | ( { 3 { inst_jalr | inst_load | ( inst_al_i & ~inst_shift ) } } & 3'b110 )
+                                            | ( { 3 { inst_branch } } & 3'b111 )
+                                            | ( { 3 { inst_shift } } & 3'b010 )
+                                            | ( { 3 { inst_csr } } & 3'b001);
 
     /* alu control */
-    assign alu_src_pc                   =   1'b1 & ( ~inst_auipc );
-    assign alu_src_imm                  =   1'b0 | inst_auipc | inst_mem | ( inst_al_i & ~inst_shift ) ;
-    assign alu_op                       =   3'b000 | ( { 3 { inst_auipc | inst_jump | inst_mem | inst_addxx } } & 3'b011 )  
-                                                   | ( { 3 { inst_slt_nu | inst_slt_u | inst_subxx } } & 3'b100)
-                                                   | ( { 3 { inst_xorxx } } & 3'b101 )
-                                                   | ( { 3 { inst_orxx } } & 3'b110 )
-                                                   | ( { 3 { inst_andxx } } & 3'b111);
+    assign alu_src_pc                   =   ~inst_auipc;
+    assign alu_src_imm                  =   inst_auipc | inst_mem | ( inst_al_i & ~inst_shift ) ;
+    assign alu_op                       =    ( { 3 { inst_auipc | inst_mem | inst_addxx } } & 3'b011 )  
+                                           | ( { 3 { inst_slt_nu | inst_slt_u | inst_subxx } } & 3'b100)
+                                           | ( { 3 { inst_xorxx } } & 3'b101 )
+                                           | ( { 3 { inst_orxx } } & 3'b110 )
+                                           | ( { 3 { inst_andxx } } & 3'b111);
 
     /* compare */
-    assign comp_type                    =   3'b000 | ( { 3 { inst_beq } } & 3'b010 )
-                                                   | ( { 3 { inst_bne } } & 3'b011 )
-                                                   | ( { 3 { inst_blt } } & 3'b100 )
-                                                   | ( { 3 { inst_bltu } } & 3'b101 )
-                                                   | ( { 3 { inst_bge } } & 3'b110 )
-                                                   | ( { 3 { inst_bgeu } } & 3'b111 );          
+    assign comp_type                    =    ( { 3 { inst_beq } } & 3'b010 )
+                                           | ( { 3 { inst_bne } } & 3'b011 )
+                                           | ( { 3 { inst_blt } } & 3'b100 )
+                                           | ( { 3 { inst_bltu } } & 3'b101 )
+                                           | ( { 3 { inst_bge } } & 3'b110 )
+                                           | ( { 3 { inst_bgeu } } & 3'b111 );          
 
     /* shift */
-    assign shift_type                   =   3'b000 | ( { 3 { inst_sll | inst_slli } } & 3'b001 )
-                                                   | ( { 3 { inst_sllw | inst_slliw } } & 3'b011 )
-                                                   | ( { 3 { inst_srlw | inst_srliw } } & 3'b111 )
-                                                   | ( { 3 { inst_srl | inst_srli } } & 3'b101 )         
-                                                   | ( { 3 { inst_sraw | inst_sraiw} } & 3'b110 )
-                                                   | ( { 3 { inst_sra | inst_srai } } & 3'b100 );
-    assign shift_num_src                =   1'b0 | ( inst_shift & inst_al_i );
+    assign shift_type                   =    ( { 3 { inst_sll | inst_slli } } & 3'b001 )
+                                           | ( { 3 { inst_sllw | inst_slliw } } & 3'b011 )
+                                           | ( { 3 { inst_srlw | inst_srliw } } & 3'b111 )
+                                           | ( { 3 { inst_srl | inst_srli } } & 3'b101 )         
+                                           | ( { 3 { inst_sraw | inst_sraiw} } & 3'b110 )
+                                           | ( { 3 { inst_sra | inst_srai } } & 3'b100 );
+    assign shift_num_src                =   ( inst_shift & inst_al_i );
 
     /* store */
-    assign store_type                   =   3'b000 | ( { 3 { inst_sb } } & 3'b100 )
-                                                   | ( { 3 { inst_sh } } & 3'b101 )
-                                                   | ( { 3 { inst_sw } } & 3'b110 )
-                                                   | ( { 3 { inst_sd } } & 3'b111 );
+    assign store_type                   =    ( { 3 { inst_sb } } & 3'b100 )
+                                           | ( { 3 { inst_sh } } & 3'b101 )
+                                           | ( { 3 { inst_sw } } & 3'b110 )
+                                           | ( { 3 { inst_sd } } & 3'b111 );
 
     /* load */
-    assign load_type                    =   3'b000 | ( { 3 { inst_lb } } & 3'b001 )
-                                                   | ( { 3 { inst_lbu } } & 3'b101 )
-                                                   | ( { 3 { inst_lh } } & 3'b010 )
-                                                   | ( { 3 { inst_lhu } } & 3'b110 )
-                                                   | ( { 3 { inst_lw } } & 3'b011 )
-                                                   | ( { 3 { inst_lwu } } & 3'b111 )
-                                                   | ( { 3 { inst_ld } } & 3'b100 );
+    assign load_type                    =    ( { 3 { inst_lb } } & 3'b001 )
+                                           | ( { 3 { inst_lbu } } & 3'b101 )
+                                           | ( { 3 { inst_lh } } & 3'b010 )
+                                           | ( { 3 { inst_lhu } } & 3'b110 )
+                                           | ( { 3 { inst_lw } } & 3'b011 )
+                                           | ( { 3 { inst_lwu } } & 3'b111 )
+                                           | ( { 3 { inst_ld } } & 3'b100 );
 
     assign csr_ctrl                     =   inst_csr? funct3: 3'b100;
     assign csr_src                      =   funct3[2];

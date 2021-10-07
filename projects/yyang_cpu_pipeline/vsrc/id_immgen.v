@@ -38,8 +38,8 @@ module id_immgen (
     assign inst_jal             =   gen_type == 3'b101;
     assign inst_jalr_load_ali   =   gen_type == 3'b110;
     assign inst_branch          =   gen_type == 3'b111;
-    assign inst_shift_i         =   gen_type == 3'b010;
-    assign inst_csr_i           =   gen_type == 3'b001;
+    assign inst_shift           =   gen_type == 3'b010;
+    assign inst_csr             =   gen_type == 3'b001;
 
     assign imm_store            =   { { 20 { inst[`INST_31]} }, inst[`INST_31_25], 
                                         inst[`INST_11_7] };
@@ -58,13 +58,13 @@ module id_immgen (
     assign imm_shift            =   { 26'b0, inst[`INST_25_20] };
     assign imm_csr              =   { 27'b0, inst[`INST_19_15] };
 
-    assign imm_pre              =   32'b0 | ( { 32 { inst_store } } & imm_store )
-                                          | ( { 32 { inst_xuix } } & imm_xuix )
-                                          | ( { 32 { inst_jal } } & imm_jal )
-                                          | ( { 32 { inst_jalr_load_ali } } & imm_jalr_load_ali )
-                                          | ( { 32 { inst_branch } } & imm_branch )
-                                          | ( { 32 { inst_shift } } & imm_shift  )
-                                          | ( { 32 { inst_csr } } & imm_csr );
+    assign imm_pre              =     ( { 32 { inst_store } } & imm_store )
+                                    | ( { 32 { inst_xuix } } & imm_xuix )
+                                    | ( { 32 { inst_jal } } & imm_jal )
+                                    | ( { 32 { inst_jalr_load_ali } } & imm_jalr_load_ali )
+                                    | ( { 32 { inst_branch } } & imm_branch )
+                                    | ( { 32 { inst_shift } } & imm_shift  )
+                                    | ( { 32 { inst_csr } } & imm_csr );
 
     assign imm_data             =   { { 32 { imm_pre[31] } } , imm_pre };  
                             

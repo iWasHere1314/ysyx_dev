@@ -8,7 +8,6 @@ module if_top (
     input                       if_top_trap_en_i,
     input                       if_top_inst_valid_i,
     input                       if_top_if_flush_i,
-    input                       if_top_id_stall_i,
     input                       if_top_dont_fetch_i,
 
     output                      if_top_fetched_ok_o,
@@ -18,6 +17,7 @@ module if_top (
     input   [`INST_ADDR_BUS]    if_top_csr_nxt_pc_i,
     
     
+    /* bus interface */
     input                       if_top_if_ready_i,
     input   [`DATA_BUS]         if_top_if_data_read_i,
     input   [1:0]               if_top_if_resp_i,
@@ -34,7 +34,7 @@ module if_top (
 
     assign nxt_inst_addr            =   if_top_trap_en_i? if_top_csr_nxt_pc_i:
                                          ( if_top_jumpbranch_en_i ? if_top_jumpbranch_addr_i : if_top_inst_addr_o + 64'd4 );    
-    assign if_top_fetched_ok_o      =   handshake_done;
+    assign if_top_fetched_ok_o      =   handshake_done | if_top_dont_fetch_i;
 
     assign if_top_if_addr_o         =   if_top_inst_addr_o;
     assign if_top_if_valid_o        =   ~if_top_dont_fetch_i;
@@ -50,7 +50,6 @@ module if_top (
         /* control signals */
         .if_pc_inst_valid_i( if_top_inst_valid_i ),
         .if_pc_if_flush_i( if_top_if_flush_i ),
-        .if_pc_id_stall_i( if_top_id_stall_i ),
 
         /* data_signals */
         .if_pc_nxt_inst_addr_i( nxt_inst_addr ),

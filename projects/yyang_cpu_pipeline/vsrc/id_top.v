@@ -9,8 +9,6 @@ module id_top (
 
     input                       id_top_id2ex_inst_lui_i,
 
-    input                       id_top_id_rs1_en_i,
-    input                       id_top_id_rs2_en_i,
     input                       id_top_id2ex_rd_en_i,
     input                       id_top_ex2mem_rd_en_i,
     input                       id_top_mem2wb_rd_en_i,
@@ -90,9 +88,6 @@ module id_top (
     output    [`REG_BUS]        id_top_regs_o[31:0]
     `endif
 );
-    wire    [`OPCODE_BUS]       id_control_opcode_i;
-    wire    [`FUNCT3_BUS]       id_control_funct3_i;
-    wire    [`FUNCT7_BUS]       id_control_funct7_i;
     
     wire                        id_control_rs1_en_o;
     wire                        id_control_rs2_en_o;
@@ -158,14 +153,14 @@ module id_top (
     wire    [`INST_ADDR_BUS]    jumpbranch_base;
 
 
-    assign id_rs1_data                  =   ( { 64 { id_forward_id_rs1_src_reg_o } } & id_regfile_rs1_data_o ) 
-                                            |  ( { 64 { id_forward_id_rs1_src_id2ex_o } } & id_top_id2ex_rd_data_i )
-                                            |  ( { 64 { id_forward_id_rs1_src_ex2mem_o } } & id_top_ex2mem_rd_data_i )
-                                            |  ( { 64 { id_forward_id_rs1_src_mem2wb_o} } & id_top_mem2wb_rd_data_i );
-    assign id_rs2_data                  =   ( { 64 { id_forward_id_rs2_src_reg_o } } & id_regfile_rs2_data_o ) 
-                                            |  ( { 64 { id_forward_id_rs2_src_id2ex_o } } & id_top_id2ex_rd_data_i )
-                                            |  ( { 64 { id_forward_id_rs2_src_ex2mem_o } } & id_top_ex2mem_rd_data_i )
-                                            |  ( { 64 { id_forward_id_rs2_src_mem2wb_o} } & id_top_mem2wb_rd_data_i );
+    assign id_rs1_data                  =     ( { 64 { id_forward_id_rs1_src_reg_o } } & id_regfile_rs1_data_o ) 
+                                            | ( { 64 { id_forward_id_rs1_src_id2ex_o } } & id_top_id2ex_rd_data_i )
+                                            | ( { 64 { id_forward_id_rs1_src_ex2mem_o } } & id_top_ex2mem_rd_data_i )
+                                            | ( { 64 { id_forward_id_rs1_src_mem2wb_o} } & id_top_mem2wb_rd_data_i );
+    assign id_rs2_data                  =     ( { 64 { id_forward_id_rs2_src_reg_o } } & id_regfile_rs2_data_o ) 
+                                            | ( { 64 { id_forward_id_rs2_src_id2ex_o } } & id_top_id2ex_rd_data_i )
+                                            | ( { 64 { id_forward_id_rs2_src_ex2mem_o } } & id_top_ex2mem_rd_data_i )
+                                            | ( { 64 { id_forward_id_rs2_src_mem2wb_o} } & id_top_mem2wb_rd_data_i );
 
     assign jumpbranch_base              =   ( id_control_jump_base_pc_o == 1'b0 ) ? id_top_inst_addr_i: id_rs1_data;
     
@@ -203,7 +198,7 @@ module id_top (
     assign id_top_inst_auipc_o          =   id_control_inst_auipc_o;
     assign id_top_alu_op_o              =   id_control_alu_op_o;
 
-    assign id_top_inst_csr_o            =   id_control_csr_src_o;
+    assign id_top_inst_csr_o            =   id_control_inst_csr_o;
     assign id_top_inst_load_o           =   id_control_inst_load_o;
     assign id_top_mem_write_o           =   id_control_mem_write_o;
     assign id_top_mem_read_o            =   id_control_mem_read_o;
@@ -225,7 +220,7 @@ module id_top (
     /* data signals */
 
     assign id_top_rs1_data_o            =   id_regfile_rs1_data_o;
-    assign id_top_rs2_data_o            =   id_regfile_rs1_data_o;
+    assign id_top_rs2_data_o            =   id_regfile_rs2_data_o;
     assign id_top_imm_data_o            =   id_immgen_imm_data_o;
     assign id_top_rd_data_o             =   id_control_inst_lui_o? id_immgen_imm_data_o: id_top_inst_addr_i;
     assign id_top_inst_addr_o           =   id_top_inst_addr_i;
@@ -249,7 +244,7 @@ module id_top (
         /* id */
         .id_control_rs1_en_o( id_control_rs1_en_o ),
         .id_control_rs2_en_o( id_control_rs2_en_o ),
-        .id_control_rd_en_o( id_top_rd_en_o ),
+        .id_control_rd_en_o( id_control_rd_en_o ),
         .id_control_jump_base_pc_o( id_control_jump_base_pc_o ),
         .id_control_comp_type_o( id_control_comp_type_o ),
         .id_control_inst_jump_o( id_control_inst_jump_o ),
@@ -353,8 +348,8 @@ module id_top (
         .id_branchjudge_comp_type_i( id_control_comp_type_o ),
 
         /* data signals */
-        .id_branchjudge_rs1_data_o( id_branchjudge_rs1_data_o ),
-        .id_branchjudge_rs2_data_o( id_branchjudge_rs2_data_o ),
+        .id_branchjudge_rs1_data_i( id_rs1_data ),
+        .id_branchjudge_rs2_data_i( id_rs2_data ),
         .id_branchjudge_ok_o( id_branchjudge_ok_o )
     );
 

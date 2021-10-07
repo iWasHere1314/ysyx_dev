@@ -22,6 +22,8 @@ module ex_top(
     input                       ex_top_inst_auipc_i,
     input   [`ALU_OP_BUS]       ex_top_alu_op_i,
 
+    input                       ex_top_mem_read_i,
+    input                       ex_top_mem_write_i,
     input   [`REG_INDEX_BUS]    ex_top_id2ex_rs1_index_i,
     input   [`REG_INDEX_BUS]    ex_top_id2ex_rs2_index_i,
     input   [`REG_INDEX_BUS]    ex_top_ex2mem_rd_index_i,
@@ -64,7 +66,7 @@ module ex_top(
                                         | ( { 64 { ex_forward_ex_rs2_src_ex2mem_o } } & ex_top_ex2mem_rd_data_i)
                                         | ( { 64 { ex_forward_ex_rs2_src_mem2wb_o } } & ex_top_mem2wb_rd_data_i );
 
-    assign ex_top_rd_data_o         =   ( ex_top_inst_arth_lgc_i | ex_top_inst_auipc_i ) ?
+    assign ex_top_rd_data_o         =   ( ex_top_inst_arth_lgc_i | ex_top_inst_auipc_i | ex_top_mem_read_i | ex_top_mem_write_i ) ?
                                           ex_core_res_data_o: ex_top_id2ex_rd_data_i; 
     
     ex_core my_ex_core(

@@ -38,23 +38,23 @@ module ex2mem(
     input                       ex2mem_inst_selfdefine_i,
     `endif
 
-    output   [`REG_INDEX_BUS]   ex2mem_rs1_index_o,
-    output   [`REG_INDEX_BUS]   ex2mem_rs2_index_o,
-    output   [`REG_INDEX_BUS]   ex2mem_rd_index_o,
+    output  [`REG_INDEX_BUS]    ex2mem_rs1_index_o,
+    output  [`REG_INDEX_BUS]    ex2mem_rs2_index_o,
+    output  [`REG_INDEX_BUS]    ex2mem_rd_index_o,
 
     output                      ex2mem_rs1_en_o,
     output                      ex2mem_rs2_en_o,
     output                      ex2mem_rd_en_o,
 
-    output   [`CSR_INDEX_BUS]   ex2mem_csr_index_o,
+    output  [`CSR_INDEX_BUS]    ex2mem_csr_index_o,
     output                      ex2mem_inst_csr_o,
     output                      ex2mem_inst_load_o,
     output                      ex2mem_mem_write_o,
     output                      ex2mem_mem_read_o,
-    output   [`STORE_TYPE_BUS]  ex2mem_store_type_o,
-    output   [`LOAD_TYPE_BUS]   ex2mem_load_type_o,
+    output  [`STORE_TYPE_BUS]   ex2mem_store_type_o,
+    output  [`LOAD_TYPE_BUS]    ex2mem_load_type_o,
     output                      ex2mem_csr_src_o,
-    output   [`CSR_CTRL_BUS]    ex2mem_csr_ctrl_o,
+    output  [`CSR_CTRL_BUS]     ex2mem_csr_ctrl_o,
     output                      ex2mem_inst_ecall_o,
     output                      ex2mem_inst_ebreak_o,
     output                      ex2mem_inst_mret_o,
@@ -73,11 +73,13 @@ module ex2mem(
     input   [`REG_BUS]          ex2mem_rs2_data_i,
     input   [`DATA_BUS]         ex2mem_imm_data_i,
     input   [`DATA_BUS]         ex2mem_rd_data_i,
+    input   [`INST_ADDR_BUS]    ex2mem_inst_addr_i,
 
-    output   [`REG_BUS]         ex2mem_rs1_data_o,
-    output   [`REG_BUS]         ex2mem_rs2_data_o,
-    output   [`DATA_BUS]        ex2mem_imm_data_o,
-    output   [`DATA_BUS]        ex2mem_rd_data_o
+    output  [`REG_BUS]          ex2mem_rs1_data_o,
+    output  [`REG_BUS]          ex2mem_rs2_data_o,
+    output  [`DATA_BUS]         ex2mem_imm_data_o,
+    output  [`DATA_BUS]         ex2mem_rd_data_o,
+    output  [`INST_ADDR_BUS]    ex2mem_inst_addr_o
 );
 
     reg     [`REG_INDEX_BUS]    rs1_index_r;
@@ -114,6 +116,7 @@ module ex2mem(
     reg     [`REG_BUS]          rs2_data_r;
     reg     [`DATA_BUS]         imm_data_r;
     reg     [`DATA_BUS]         rd_data_r;
+    reg     [`INST_ADDR_BUS]    inst_addr_r;
 
     wire                        flush_en;
     wire                        flow_en;
@@ -154,6 +157,7 @@ module ex2mem(
     assign ex2mem_rs2_data_o         =   rs2_data_r;
     assign ex2mem_imm_data_o         =   imm_data_r;
     assign ex2mem_rd_data_o          =   rd_data_r;
+    assign ex2mem_inst_addr_o        =   inst_addr_r;
 
     assign flush_en                  =   ex2mem_ex_flush_i & ex2mem_inst_valid_i;
     assign flow_en                   =   ex2mem_inst_valid_i;
@@ -532,6 +536,20 @@ module ex2mem(
         end
         else begin
             rd_data_r <= rd_data_r;
+        end
+    end
+    always @( posedge clk ) begin
+        if( rst ) begin
+            inst_addr_r <= 64'b0;   
+        end
+        else if( flush_en ) begin
+            inst_addr_r <= 64'b0;
+        end
+        else if( flow_en ) begin
+            inst_addr_r <= ex2mem_inst_addr_i;
+        end
+        else begin
+            inst_addr_r <= inst_addr_r;
         end
     end
 

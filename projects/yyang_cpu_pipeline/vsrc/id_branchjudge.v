@@ -4,8 +4,8 @@ module id_branchjudge (
     input   [`COMP_TYPE_BUS]    id_branchjudge_comp_type_i,
 
     /* data signals */
-    input   [`DATA_BUS]         id_branchjudge_rs1_data_o,
-    input   [`DATA_BUS]         id_branchjudge_rs2_data_o,
+    input   [`DATA_BUS]         id_branchjudge_rs1_data_i,
+    input   [`DATA_BUS]         id_branchjudge_rs2_data_i,
     output                      id_branchjudge_ok_o
 );
     /* rename */
@@ -32,8 +32,8 @@ module id_branchjudge (
     
     /* rename */
     assign comp_type                    =   id_branchjudge_comp_type_i;
-    assign rs1_data                     =   id_branchjudge_rs1_data_o;
-    assign rs2_data                     =   id_branchjudge_rs2_data_o;
+    assign rs1_data                     =   id_branchjudge_rs1_data_i;
+    assign rs2_data                     =   id_branchjudge_rs2_data_i;
     assign id_branchjudge_ok_o          =   branchjudge_ok;
     /* rename */
 
@@ -48,9 +48,9 @@ module id_branchjudge (
     assign branchjudge_ge               =   comp_type[2:1] == 2'b11;
     
     assign branchjudge_eq_res           =   sub_res == `DATA_EXTEND_SIZE'b0;
-    assign branchjudge_neq_res          =   sub_res != `DATA_EXTEND_SIZE'b0;
+    assign branchjudge_neq_res          =   ~branchjudge_eq_res;//sub_res != `DATA_EXTEND_SIZE'b0;
     assign branchjudge_ge_res           =   sub_res[64] == 1'b0;
-    assign branchjudge_lt_res           =   sub_res[64] == 1'b1;
+    assign branchjudge_lt_res           =   ~branchjudge_ge_res;//sub_res[64] == 1'b1;
 
     assign branchjudge_ok               =   0 | branchjudge_eq & branchjudge_eq_res
                                               | branchjudge_neq & branchjudge_neq_res

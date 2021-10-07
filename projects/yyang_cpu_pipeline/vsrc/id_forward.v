@@ -7,6 +7,7 @@ module id_forward (
     input                       id_forward_id2ex_rd_en_i,
     input                       id_forward_ex2mem_rd_en_i,
     input                       id_forward_mem2wb_rd_en_i,
+    
     input   [`REG_INDEX_BUS]    id_forward_id_rs1_index_i,
     input   [`REG_INDEX_BUS]    id_forward_id_rs2_index_i,
     input   [`REG_INDEX_BUS]    id_forward_id2ex_rd_index_i,
