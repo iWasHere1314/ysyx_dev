@@ -26,7 +26,8 @@ module if2id(
 
     wire                        flush_en;
     wire                        stall_en;
-
+    wire                        flow_en;
+    
     assign flush_en             =   if2id_if_flush_i & if2id_inst_valid_i;
     assign stall_en             =   if2id_id_stall_i & if2id_inst_valid_i;
     assign flow_en              =   if2id_inst_valid_i;

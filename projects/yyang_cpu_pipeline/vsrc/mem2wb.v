@@ -12,6 +12,9 @@ module mem2wb(
     input                       mem2wb_inst_trap_i,
     input                       mem2wb_intp_en_i,
     `ifdef DEFINE_DIFFTEST
+    input                       mem2wb_inst_csr_i,
+    input   [`INST_BUS]         mem2wb_inst_i,
+    input   [`INST_ADDR_BUS]    mem2wb_inst_addr_i,
     input                       mem2wb_inst_nop_i,
     input                       mem2wb_csr_skip_i,
     input   [`REG_BUS]          mem2wb_mstatus_i,
@@ -35,6 +38,9 @@ module mem2wb(
     output                      mem2wb_intp_en_o,
 
     `ifdef DEFINE_DIFFTEST
+    output                      mem2wb_inst_csr_o,
+    output  [`INST_BUS]         mem2wb_inst_o,
+    output  [`INST_ADDR_BUS]    mem2wb_inst_addr_o,
     output                      mem2wb_inst_nop_o,
     output                      mem2wb_csr_skip_o,
     output  [`REG_BUS]          mem2wb_mstatus_o,
@@ -67,6 +73,9 @@ module mem2wb(
     reg                         intp_en_r;
 
     `ifdef DEFINE_DIFFTEST
+    reg                         inst_csr_r;
+    reg     [`INST_BUS]         inst_r;
+    reg     [`INST_ADDR_BUS]    inst_addr_r;
     reg                         inst_nop_r;
     reg                         csr_skip_r;
     reg     [`REG_BUS]          mstatus_r;
@@ -96,6 +105,9 @@ module mem2wb(
     assign mem2wb_intp_en_o          =   intp_en_r;
 
     `ifdef DEFINE_DIFFTEST
+    assign mem2wb_inst_csr_o         =   inst_csr_r;
+    assign mem2wb_inst_o             =   inst_r;
+    assign mem2wb_inst_addr_o        =   inst_addr_r;
     assign mem2wb_inst_nop_o         =   inst_nop_r;
     assign mem2wb_csr_skip_o         =   csr_skip_r;
     assign mem2wb_mstatus_o          =   mstatus_r;
@@ -167,6 +179,39 @@ module mem2wb(
     end
 
     `ifdef DEFINE_DIFFTEST
+    always @( posedge clk ) begin
+        if( rst ) begin
+            inst_csr_r <= 1'b0;
+        end
+        else if( flow_en ) begin
+            inst_csr_r <= mem2wb_inst_csr_i;
+        end
+        else begin
+            inst_csr_r <= inst_csr_r;
+        end
+    end
+    always @( posedge clk ) begin
+        if( rst ) begin
+            inst_r <= `INST_NOP;
+        end
+        else if( flow_en ) begin
+            inst_r <= mem2wb_inst_i;
+        end
+        else begin
+            inst_r <= inst_r;
+        end
+    end
+    always @( posedge clk ) begin
+        if( rst ) begin
+            inst_addr_r <= 54'b0;
+        end
+        else if( flow_en ) begin
+            inst_addr_r <= mem2wb_inst_addr_i;
+        end
+        else begin
+            inst_addr_r <= inst_addr_r;
+        end
+    end
     always @( posedge clk ) begin
         if( rst ) begin
             inst_nop_r <= 1'b1;

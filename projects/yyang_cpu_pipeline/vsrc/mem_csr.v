@@ -36,6 +36,9 @@ module mem_csr(
     output  [31:0]                  mem_csr_cause_o
     `endif
 );
+    /* index */
+    wire                            index_mcycle;
+    wire                            index_misa;
     wire                            index_mvendorid;
     wire                            index_marchid;
     wire                            index_mimpid;

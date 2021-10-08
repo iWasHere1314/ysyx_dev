@@ -20,6 +20,7 @@ module id2ex(
     input                       id2ex_rd_en_i,
     input                       id2ex_inst_jump_i,
     input                       id2ex_inst_branch_i,
+    input                       id2ex_inst_lui_i,    
 
     input                       id2ex_inst_word_i,
     input                       id2ex_inst_slt_nu_i,
@@ -52,6 +53,10 @@ module id2ex(
     `ifdef DEFINE_PUTCH
     input                       id2ex_inst_selfdefine_i,
     `endif
+
+    `ifdef DEFINE_DIFFTEST
+    input   [`INST_BUS]         id2ex_inst_i,
+    `endif
     output  [`REG_INDEX_BUS]    id2ex_rs1_index_o,
     output  [`REG_INDEX_BUS]    id2ex_rs2_index_o,
     output  [`REG_INDEX_BUS]    id2ex_rd_index_o,
@@ -64,6 +69,7 @@ module id2ex(
     output                      id2ex_rd_en_o,
     output                      id2ex_inst_jump_o,
     output                      id2ex_inst_branch_o,
+    output                      id2ex_inst_lui_o,
 
     output                      id2ex_inst_word_o,
     output                      id2ex_inst_slt_nu_o,
@@ -110,6 +116,10 @@ module id2ex(
     output  [`DATA_BUS]         id2ex_rd_data_o,
     output  [`INST_ADDR_BUS]    id2ex_inst_addr_o,
     output  [`INST_ADDR_BUS]    id2ex_jumpbranch_addr_o
+    `ifdef DEFINE_DIFFTEST
+    ,
+    output  [`INST_BUS]         id2ex_inst_o
+    `endif
 );
 
     reg     [`REG_INDEX_BUS]    rs1_index_r;
@@ -124,6 +134,7 @@ module id2ex(
     reg                         rd_en_r;
     reg                         inst_jump_r;
     reg                         inst_branch_r;
+    reg                         inst_lui_r;
 
     reg                         inst_word_r;
     reg                         inst_slt_nu_r;
@@ -156,6 +167,9 @@ module id2ex(
     reg                         inst_selfdefine_r;
     `endif
 
+    `ifdef DEFINE_DIFFTEST
+    reg     [`INST_BUS]         inst_r;
+    `endif
     reg     [`REG_BUS]          rs1_data_r;
     reg     [`REG_BUS]          rs2_data_r;
     reg     [`DATA_BUS]         imm_data_r;
@@ -179,6 +193,7 @@ module id2ex(
     assign id2ex_rd_en_o            =   rd_en_r;
     assign id2ex_inst_jump_o        =   inst_jump_r;
     assign id2ex_inst_branch_o      =   inst_branch_r;
+    assign id2ex_inst_lui_o         =   inst_lui_r;
 
     assign id2ex_inst_word_o        =   inst_word_r;
     assign id2ex_inst_slt_nu_o      =   inst_slt_nu_r;
@@ -211,6 +226,9 @@ module id2ex(
     assign id2ex_inst_selfdefine_o  =   inst_selfdefine_r;
     `endif
 
+    `ifdef DEFINE_DIFFTEST
+    assign id2ex_inst_o             =   inst_r;
+    `endif
     assign id2ex_rs1_data_o         =   rs1_data_r;
     assign id2ex_rs2_data_o         =   rs2_data_r;
     assign id2ex_imm_data_o         =   imm_data_r;
@@ -399,6 +417,24 @@ module id2ex(
         end
         else begin
             inst_branch_r <= inst_branch_r;
+        end
+    end
+
+    always @( posedge clk ) begin
+        if( rst ) begin
+            inst_lui_r <= 1'b0;
+        end
+        else if( flush_en ) begin
+            inst_lui_r <= 1'b0;
+        end
+        else if( stall_en ) begin
+            inst_lui_r <= inst_lui_r;
+        end
+        else if( flow_en ) begin
+            inst_lui_r <= id2ex_inst_lui_i;
+        end
+        else begin
+            inst_lui_r <= inst_lui_r;
         end
     end
 
@@ -728,10 +764,10 @@ module id2ex(
 
     always @( posedge clk ) begin
         if( rst ) begin
-            csr_ctrl_r <= 3'b0;   
+            csr_ctrl_r <= 3'b100;   
         end
         else if( flush_en ) begin
-            csr_ctrl_r <= 3'b0;
+            csr_ctrl_r <= 3'b100;
         end
         else if( stall_en ) begin
             csr_ctrl_r <= csr_ctrl_r;
@@ -850,6 +886,26 @@ module id2ex(
         end
         else begin
             inst_selfdefine_r <= inst_selfdefine_r;
+        end
+    end
+    `endif
+
+    `ifdef DEFINE_DIFFTEST
+    always @( posedge clk ) begin
+        if( rst ) begin
+            inst_r <= `INST_NOP;   
+        end
+        else if( flush_en ) begin
+            inst_r <= `INST_NOP;
+        end
+        else if( stall_en ) begin
+            inst_r <= inst_r;
+        end
+        else if( flow_en ) begin
+            inst_r <= id2ex_inst_i;
+        end
+        else begin
+            inst_r <= inst_r;
         end
     end
     `endif

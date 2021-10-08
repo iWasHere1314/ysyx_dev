@@ -25,19 +25,17 @@ module id_top (
     output                      id_top_inst_nop_o,
 
 
-    output                      id_top_id_rs1_src_reg_o,
     output                      id_top_id_rs1_src_id2ex_o,
     output                      id_top_id_rs1_src_ex2mem_o,
-    output                      id_top_id_rs1_src_mem2wb_o,
-    output                      id_top_id_rs2_src_reg_o,
     output                      id_top_id_rs2_src_id2ex_o,
     output                      id_top_id_rs2_src_ex2mem_o,
-    output                      id_top_id_rs2_src_mem2wb_o, 
 
-
+    output                      id_top_rs1_en_o,
+    output                      id_top_rs2_en_o,
     output                      id_top_rd_en_o,
     output                      id_top_inst_jump_o,
     output                      id_top_inst_branch_o,
+    output                      id_top_inst_lui_o,
 
     output                      id_top_inst_word_o,
     output                      id_top_inst_slt_nu_o,
@@ -173,18 +171,17 @@ module id_top (
 
 
 
-    assign id_top_id_rs1_src_reg_o      =   id_forward_id_rs1_src_reg_o;
     assign id_top_id_rs1_src_id2ex_o    =   id_forward_id_rs1_src_id2ex_o;
     assign id_top_id_rs1_src_ex2mem_o   =   id_forward_id_rs1_src_ex2mem_o;
-    assign id_top_id_rs1_src_mem2wb_o   =   id_forward_id_rs1_src_mem2wb_o;
-    assign id_top_id_rs2_src_reg_o      =   id_forward_id_rs2_src_reg_o;
     assign id_top_id_rs2_src_id2ex_o    =   id_forward_id_rs2_src_id2ex_o;
     assign id_top_id_rs2_src_ex2mem_o   =   id_forward_id_rs2_src_ex2mem_o;
-    assign id_top_id_rs2_src_mem2wb_o   =   id_forward_id_rs2_src_mem2wb_o;
 
+    assign id_top_rs1_en_o              =   id_control_rs1_en_o;
+    assign id_top_rs2_en_o              =   id_control_rs2_en_o;
     assign id_top_rd_en_o               =   id_control_rd_en_o;
     assign id_top_inst_jump_o           =   id_control_inst_jump_o;
     assign id_top_inst_branch_o         =   id_control_inst_branch_o;
+    assign id_top_inst_lui_o            =   id_control_inst_lui_o;
 
     assign id_top_inst_word_o           =   id_control_inst_word_o;
     assign id_top_inst_slt_nu_o         =   id_control_inst_slt_nu_o;
@@ -233,7 +230,6 @@ module id_top (
         .clk( clk ),
         .rst( rst ),
 
-        .id_control_inst_valid_i( id_top_inst_valid_i ),
 
         .id_control_inst_i( id_top_inst_i ),
 
@@ -292,8 +288,8 @@ module id_top (
         /* control signals */
         .id_regfile_inst_valid_i( id_top_inst_valid_i ),
         .id_regfile_rd_en_i( id_top_mem2wb_rd_en_i ),
-        .id_regfile_rs1_en_i( id_regfile_rs1_en_i ),
-        .id_regfile_rs2_en_i( id_regfile_rs2_en_i ),
+        .id_regfile_rs1_en_i( id_control_rs1_en_o ),
+        .id_regfile_rs2_en_i( id_control_rs2_en_o ),
         .id_regfile_rd_index_i( id_top_mem2wb_rd_index_i ),
         .id_regfile_rs1_index_i( id_top_inst_i[`RS1_LOC_BUS] ),
         .id_regfile_rs2_index_i( id_top_inst_i[`RS2_LOC_BUS] ),
@@ -327,8 +323,8 @@ module id_top (
         .id_forward_id2ex_rd_en_i( id_top_id2ex_rd_en_i ),
         .id_forward_ex2mem_rd_en_i( id_top_ex2mem_rd_en_i ),
         .id_forward_mem2wb_rd_en_i( id_top_mem2wb_rd_en_i ),
-        .id_forward_id_rs1_index_i( rs1_index  ),
-        .id_forward_id_rs2_index_i( rs2_index ),
+        .id_forward_id_rs1_index_i( id_top_inst_i[`RS1_LOC_BUS]  ),
+        .id_forward_id_rs2_index_i( id_top_inst_i[`RS2_LOC_BUS] ),
         .id_forward_id2ex_rd_index_i( id_top_id2ex_rd_index_i ),
         .id_forward_ex2mem_rd_index_i( id_top_ex2mem_rd_index_i ),
         .id_forward_mem2wb_rd_index_i( id_top_mem2wb_rd_index_i ),

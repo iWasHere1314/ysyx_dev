@@ -1,5 +1,4 @@
 `include "defines.v"
-
 module cpu(
     input                       clock,
     input                       reset,

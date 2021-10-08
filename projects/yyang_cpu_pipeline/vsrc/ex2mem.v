@@ -31,6 +31,7 @@ module ex2mem(
     input                       ex2mem_inst_trap_i,
 
     `ifdef DEFINE_DIFFTEST
+    input   [`INST_BUS]         ex2mem_inst_i,
     input                       ex2mem_inst_nop_i,
     `endif
 
@@ -61,6 +62,7 @@ module ex2mem(
     output                      ex2mem_inst_trap_o,
 
     `ifdef DEFINE_DIFFTEST
+    output  [`INST_BUS]         ex2mem_inst_o,
     output                      ex2mem_inst_nop_o,
     `endif
 
@@ -105,6 +107,7 @@ module ex2mem(
     reg                         inst_trap_r;
 
     `ifdef DEFINE_DIFFTEST
+    reg     [`INST_BUS]         inst_r;
     reg                         inst_nop_r;
     `endif
 
@@ -146,6 +149,7 @@ module ex2mem(
     assign ex2mem_inst_trap_o        =   inst_trap_r;
 
     `ifdef DEFINE_DIFFTEST
+    assign ex2mem_inst_o             =   inst_r;
     assign ex2mem_inst_nop_o         =   inst_nop_r;
     `endif
 
@@ -374,10 +378,10 @@ module ex2mem(
 
     always @( posedge clk ) begin
         if( rst ) begin
-            csr_ctrl_r <= 3'b0;   
+            csr_ctrl_r <= 3'b100;   
         end
         else if( flush_en ) begin
-            csr_ctrl_r <= 3'b0;
+            csr_ctrl_r <= 3'b100;
         end
         else if( flow_en ) begin
             csr_ctrl_r <= ex2mem_csr_ctrl_i;
@@ -447,6 +451,20 @@ module ex2mem(
         end
     end
     `ifdef DEFINE_DIFFTEST
+    always @( posedge clk ) begin
+        if( rst ) begin
+            inst_r <= `INST_NOP;
+        end
+        else if( flush_en ) begin
+            inst_r <= `INST_NOP;
+        end
+        else if( flow_en ) begin
+            inst_r <= ex2mem_inst_i;
+        end
+        else begin
+            inst_r <= inst_r;
+        end      
+    end
     always @( posedge clk ) begin
         if( rst ) begin
             inst_nop_r <= 1'b1;

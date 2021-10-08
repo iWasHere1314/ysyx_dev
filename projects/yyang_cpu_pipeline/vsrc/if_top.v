@@ -7,7 +7,6 @@ module if_top (
     input                       if_top_jumpbranch_en_i,
     input                       if_top_trap_en_i,
     input                       if_top_inst_valid_i,
-    input                       if_top_if_flush_i,
     input                       if_top_dont_fetch_i,
 
     output                      if_top_fetched_ok_o,
@@ -38,10 +37,10 @@ module if_top (
 
     assign if_top_if_addr_o         =   if_top_inst_addr_o;
     assign if_top_if_valid_o        =   ~if_top_dont_fetch_i;
-    assign if_size                  =   `SIZE_W;
+    assign if_top_if_size_o         =   `SIZE_W;
     assign handshake_done           =   if_top_if_valid_o & if_top_if_ready_i;
     assign if_top_if_req_o          =   `REQ_READ;
-    assign if_top_if_inst_o         =   if_top_if_data_read_i[`INST_BUS];
+    assign if_top_inst_o         =   if_top_if_data_read_i[`INST_BUS];
 
     if_pc my_if_pc(
         .clk( clk ),
@@ -49,8 +48,7 @@ module if_top (
 
         /* control signals */
         .if_pc_inst_valid_i( if_top_inst_valid_i ),
-        .if_pc_if_flush_i( if_top_if_flush_i ),
-
+        .if_pc_dont_fetch_i( if_top_dont_fetch_i ),
         /* data_signals */
         .if_pc_nxt_inst_addr_i( nxt_inst_addr ),
         .if_pc_cur_inst_addr_o( if_top_inst_addr_o )

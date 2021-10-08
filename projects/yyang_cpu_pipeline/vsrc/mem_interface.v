@@ -69,17 +69,17 @@ module mem_interface(
     assign load_signed                  =   ( mem_interface_load_type_i[2] == 1'b0 ) && ( mem_interface_load_type_i[1:0] != 2'b0 ); 
 
     assign signed_bit                   =  load_signed & 
-                                            ( 1'b0 | load_lbx & read_data_r[07]
-                                                   | load_lhx & read_data_r[15]
-                                                   | load_lwx & read_data_r[31]
-                                                   | load_ld  & read_data_r[63] 
+                                            ( | load_lbx & read_data_r[07]
+                                              | load_lhx & read_data_r[15]
+                                              | load_lwx & read_data_r[31]
+                                              | load_ld  & read_data_r[63] 
                                             );
 
     assign mask_lbx                     =   64'hff;
     assign mask_lhx                     =   64'hffff;
     assign mask_lwx                     =   64'hffff_ffff;
     assign mask_ld                      =   ~64'h0;
-    assign mask                         =   64'h0 | ( { 64 { load_lbx } } & mask_lbx )
+    assign mask                         =       ( { 64 { load_lbx } } & mask_lbx )
                                               | ( { 64 { load_lhx } } & mask_lhx )
                                               | ( { 64 { load_lwx } } & mask_lwx )
                                               | ( { 64 { load_ld  } } & mask_ld  );

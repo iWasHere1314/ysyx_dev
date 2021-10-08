@@ -33,7 +33,7 @@ module ex_core(
 
     assign { rs1_data, rs2_data }   =   ex_core_inst_word_i? { ex_wordgen_rs1_data_o, ex_wordgen_rs2_data_o }:
                                             { ex_core_rs1_data_i, ex_core_rs2_data_i };
-    assign ex_alu_op1_i          =   ( ex_core_alu_src_pc_i == 1'b0 ) ? ex_core_inst_addr_i: rs1_data;
+    assign ex_alu_op1_i             =   ( ex_core_alu_src_pc_i == 1'b0 ) ? ex_core_inst_addr_i: rs1_data;
     assign ex_alu_op2_i             =   ex_core_alu_src_imm_i? ex_core_imm_data_i: rs2_data;
     assign ex_shifter_shift_num_i   =   ex_core_shift_num_src? ex_core_imm_data_i: ex_core_rs2_data_i;
 

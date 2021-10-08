@@ -8,7 +8,7 @@ module mem_clint_dstb (
     input   [`DATA_ADDR_BUS]    mem_clint_dstb_addr_i,
     input   [1:0]               mem_clint_dstb_size_i,
     output  [1:0]               mem_clint_dstb_resp_o,
-    input                       mem_clint_dstb_req_o,
+    input                       mem_clint_dstb_req_i,
 
     /* mem side */
     output                      mem_clint_dstb_mem_valid_o,
@@ -54,12 +54,12 @@ module mem_clint_dstb (
     assign mem_clint_dstb_mem_data_write_o      =   { `DATA_BUS_SIZE { to_other } } & mem_clint_dstb_data_write_i;
     assign mem_clint_dstb_mem_addr_o            =   { `DATA_BUS_SIZE { to_other } } & mem_clint_dstb_addr_i;
     assign mem_clint_dstb_mem_size_o            =   { 2 { to_other } } & mem_clint_dstb_size_i;
-    assign mem_clint_dstb_mem_req_o             =   to_other & mem_clint_dstb_req_o;
+    assign mem_clint_dstb_mem_req_o             =   to_other & mem_clint_dstb_req_i;
 
     assign mem_clint_dstb_clint_valid_o         =   to_clint & mem_clint_dstb_valid_i;
     assign mem_clint_dstb_clint_data_write_o    =   { `DATA_BUS_SIZE { to_clint } } & mem_clint_dstb_data_write_i;
     assign mem_clint_dstb_clint_addr_o          =   { `DATA_BUS_SIZE { to_clint } } & mem_clint_dstb_addr_i;
     assign mem_clint_dstb_clint_size_o          =   { 2 { to_clint } } & mem_clint_dstb_size_i;
-    assign mem_clint_dstb_clint_req_o           =   to_clint & mem_clint_dstb_req_o;
+    assign mem_clint_dstb_clint_req_o           =   to_clint & mem_clint_dstb_req_i;
 
 endmodule

@@ -32,8 +32,9 @@ module mem_top(
 
     output  [`INST_ADDR_BUS]    mem_top_csr_nxt_pc_o,
     output                      mem_top_intp_en_o,
-    
-    output                      mem_top_access_ok,
+    output                      mem_top_csr_trap_o,
+
+    output                      mem_top_access_ok_o,
     /* data signals */
     input   [`REG_BUS]          mem_top_ex2mem_rs1_data_i,
     input   [`REG_BUS]          mem_top_ex2mem_rs2_data_i,
@@ -137,7 +138,8 @@ module mem_top(
     
     assign mem_top_csr_nxt_pc_o             =   mem_csr_csr_nxt_pc_o;
     assign mem_top_intp_en_o                =   mem_top_intp_en_i;
-    assign mem_top_access_ok                =   mem_interface_access_ok_o;
+    assign mem_top_csr_trap_o               =   mem_csr_csr_trap_o;
+    assign mem_top_access_ok_o              =   mem_interface_access_ok_o;
     assign mem_top_rd_data_o                =     ( { 64 { mem_top_inst_load_i } } &  mem_interface_read_data_o )
                                                 | ( { 64 { mem_top_inst_csr_i } } & mem_csr_csr_read_o )
                                                 | ( { 64 { ~mem_top_inst_load_i & ~mem_top_inst_csr_i } } & mem_top_ex2mem_rd_data_i );
@@ -185,7 +187,7 @@ module mem_top(
         .mem_interface_data_write_o( mem_interface_data_write_o ),
         .mem_interface_addr_o( mem_interface_addr_o ),
         .mem_interface_size_o( mem_interface_size_o ),
-        .mem_interface_resp_i( mem_clint_dstb_resp_o),
+        .mem_interface_resp_i( mem_clint_dstb_resp_o ),
         .mem_interface_req_o( mem_interface_req_o )
     );
 
@@ -233,10 +235,10 @@ mem_clint_dstb my_mem_clint_dstb(
     .mem_clint_dstb_ready_o( mem_clint_dstb_ready_o ),
     .mem_clint_dstb_data_read_o( mem_clint_dstb_data_read_o ),
     .mem_clint_dstb_data_write_i( mem_interface_data_write_o ),
-    .mem_clint_dstb_addr_i( mem_interface_data_write_o ),
+    .mem_clint_dstb_addr_i( mem_interface_addr_o ),
     .mem_clint_dstb_size_i( mem_interface_size_o ),
     .mem_clint_dstb_resp_o( mem_clint_dstb_resp_o ),
-    .mem_clint_dstb_req_o( mem_clint_dstb_req_o ),
+    .mem_clint_dstb_req_i( mem_interface_req_o ),
 
     /* mem side */
     .mem_clint_dstb_mem_valid_o( mem_clint_dstb_mem_valid_o ),
