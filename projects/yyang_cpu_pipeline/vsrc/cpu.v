@@ -138,7 +138,7 @@ module cpu(
     /* ex_top */
     wire                        ex_top_ex_rs1_src_ex2mem_o;
     wire                        ex_top_ex_rs2_src_ex2mem_o;
-    wire                        ex_top_rd_data_o;
+    wire    [`DATA_BUS]         ex_top_rd_data_o;
 
     /* ex2mem */
     wire    [`REG_INDEX_BUS]    ex2mem_rs1_index_o;
