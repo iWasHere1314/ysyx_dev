@@ -383,7 +383,7 @@ module cpu(
         .id2ex_rd_index_i( id_top_rd_index_o ),
 
 
-        .id2ex_inst_nop_i( id2ex_inst_nop_o ),
+        .id2ex_inst_nop_i( if2id_inst_nop_o ),
 
         .id2ex_rs1_en_i( id_top_rs1_en_o ),
         .id2ex_rs2_en_i( id_top_rs2_en_o ),
