@@ -66,7 +66,7 @@ module pipeline_ctrl(
                                                         | pipeline_ctrl_id2ex_inst_branch_i | pipeline_ctrl_id_inst_trap_i | pipeline_ctrl_id2ex_inst_trap_i
                                                         | pipeline_ctrl_ex2mem_inst_trap_i | pipeline_ctrl_mem2wb_inst_trap_i | intp_en;
     assign pipeline_ctrl_id_stall_o                 =   pipeline_ctrl_ex_stall_o | ( id_rsx_src_id2ex & ( pipeline_ctrl_id2ex_inst_arth_lgc_i | pipeline_ctrl_id2ex_inst_auipc_i | id2ex_load_csr ) )
-                                                        | ( ex_rsx_src_ex2mem | ex2mem_load_csr );
+                                                        | ( id_rsx_src_ex2mem & ex2mem_load_csr );
     assign pipeline_ctrl_id_flush_o                 =   intp_en;
     assign pipeline_ctrl_ex_stall_o                 =   ex_rsx_src_ex2mem & ex2mem_load_csr;
     assign pipeline_ctrl_ex_flush_o                 =   intp_en;
