@@ -42,7 +42,7 @@ module ex_top(
     input   [`REG_BUS]          ex_top_mem2wb_rd_data_i,
     input   [`INST_ADDR_BUS]    ex_top_inst_addr_i,
 
-    output                      ex_top_rd_data_o
+    output  [`DATA_BUS]         ex_top_rd_data_o
 );
     wire                        ex_forward_ex_rs1_src_id2ex_o;
     wire                        ex_forward_ex_rs1_src_ex2mem_o;
