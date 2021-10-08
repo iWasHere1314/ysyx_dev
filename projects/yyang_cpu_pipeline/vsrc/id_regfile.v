@@ -57,8 +57,12 @@ module id_regfile(
 	endgenerate
 `endif
 
-    wire [`REG_BUS] rs1_data_pre = id_regfile_rs1_index_i == 5'b0 ? `REG_BUS_SIZE'b0 : regfile_r[id_regfile_rs1_index_i];
-    wire [`REG_BUS] rs2_data_pre = id_regfile_rs2_index_i == 5'b0 ? `REG_BUS_SIZE'b0 : regfile_r[id_regfile_rs2_index_i];
+    wire [`REG_BUS] rs1_data_pre = id_regfile_rs1_index_i == 5'b0 ? `REG_BUS_SIZE'b0 : 
+                                   id_regfile_rs1_index_i == id_regfile_rd_index_i? id_regfile_rd_data_i:
+                                   regfile_r[id_regfile_rs1_index_i];
+    wire [`REG_BUS] rs2_data_pre = id_regfile_rs2_index_i == 5'b0 ? `REG_BUS_SIZE'b0 : 
+                                   id_regfile_rs2_index_i == id_regfile_rd_index_i? id_regfile_rd_data_i:
+                                   regfile_r[id_regfile_rs2_index_i];
 
     assign id_regfile_rs1_data_o = id_regfile_rs1_en_i ? rs1_data_pre: `REG_BUS_SIZE'b0;
     assign id_regfile_rs2_data_o = id_regfile_rs2_en_i ? rs2_data_pre: `REG_BUS_SIZE'b0;
