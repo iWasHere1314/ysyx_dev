@@ -8,7 +8,7 @@ module id_immgen (
     output  [`DATA_BUS]         id_immgen_imm_data_o
 );
     /* rename */
-    wire                        gen_type    =   id_immgen_gen_type_i;
+    wire [`GEN_TYPE_BUS]        gen_type    =   id_immgen_gen_type_i;
     wire [`INST_BUS]            inst        =   id_immgen_inst_i;
     wire [`DATA_BUS]            imm_data;
     

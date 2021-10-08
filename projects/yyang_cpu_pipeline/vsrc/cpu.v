@@ -847,7 +847,7 @@ module cpu(
             {cmt_wen, cmt_wdest, cmt_wdata, cmt_pc, cmt_inst, cmt_valid, trap, trap_code, cycleCnt, instrCnt} <= 0;
         end
         else if (~trap) begin
-            cmt_wen <=  & mem2wb_rd_en_o & pipeline_ctrl_inst_valid_o;
+            cmt_wen <=   mem2wb_rd_en_o & pipeline_ctrl_inst_valid_o;
             cmt_wdest <= {3'd0, mem2wb_rd_index_o};
             cmt_wdata <= mem2wb_rd_data_o;
             cmt_pc <= mem2wb_inst_addr_o;
