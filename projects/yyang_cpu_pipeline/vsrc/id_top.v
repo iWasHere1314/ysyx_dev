@@ -22,8 +22,6 @@ module id_top (
     output  [`REG_INDEX_BUS]    id_top_rd_index_o,
     output  [`CSR_INDEX_BUS]    id_top_csr_index_o,
 
-    output                      id_top_inst_nop_o,
-
 
     output                      id_top_id_rs1_src_id2ex_o,
     output                      id_top_id_rs1_src_ex2mem_o,

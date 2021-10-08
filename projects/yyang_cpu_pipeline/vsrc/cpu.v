@@ -36,7 +36,6 @@ module cpu(
     wire    [`REG_INDEX_BUS]    id_top_rs2_index_o;
     wire    [`REG_INDEX_BUS]    id_top_rd_index_o;
     wire    [`CSR_INDEX_BUS]    id_top_csr_index_o;
-    wire                        id_top_inst_nop_o;
     wire                        id_top_id_rs1_src_id2ex_o;
     wire                        id_top_id_rs1_src_ex2mem_o;
     wire                        id_top_id_rs2_src_id2ex_o;
@@ -307,8 +306,6 @@ module cpu(
         .id_top_rd_index_o( id_top_rd_index_o ),
         .id_top_csr_index_o( id_top_csr_index_o ),
 
-        .id_top_inst_nop_o( id_top_inst_nop_o ),
-
 
         .id_top_id_rs1_src_id2ex_o( id_top_id_rs1_src_id2ex_o ),
         .id_top_id_rs1_src_ex2mem_o( id_top_id_rs1_src_ex2mem_o ),
@@ -386,7 +383,7 @@ module cpu(
         .id2ex_rd_index_i( id_top_rd_index_o ),
 
 
-        .id2ex_inst_nop_i( id_top_inst_nop_o ),
+        .id2ex_inst_nop_i( id2ex_inst_nop_o ),
 
         .id2ex_rs1_en_i( id_top_rs1_en_o ),
         .id2ex_rs2_en_i( id_top_rs2_en_o ),
