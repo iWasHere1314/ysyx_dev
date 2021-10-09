@@ -93,6 +93,10 @@ module ex_top(
     );
     
     ex_forward my_ex_forward(
+        .ex_forward_mem_write_i( ex_top_mem_write_i ),
+        .ex_forward_mem_read_i( ex_top_mem_read_i ),
+        .ex_forward_inst_arth_lgc_i( ex_top_inst_arth_lgc_i ),
+
         .ex_forward_id2ex_rs1_en_i( ex_top_id2ex_rs1_en_i ),
         .ex_forward_id2ex_rs2_en_i( ex_top_id2ex_rs2_en_i ),
         .ex_forward_ex2mem_rd_en_i( ex_top_ex2mem_rd_en_i ),
