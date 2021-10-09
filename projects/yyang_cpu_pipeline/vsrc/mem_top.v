@@ -299,7 +299,7 @@ mem_forward my_mem_forward(
 
     wire temp   = ( mem_top_ex2mem_rd_data_i == 64'h00000000800004c0 );
     always @( posedge clk ) begin
-        if( temp & mem_top_mem_write_i ) begin
+        if( temp & mem_top_mem_write_i & mem_top_inst_valid_i ) begin
             $write("write %h\n", rs2_data );
         end
         if( temp & mem_top_mem_read_i & mem_top_inst_valid_i ) begin
