@@ -138,6 +138,8 @@ module cpu(
     /* ex_top */
     wire                        ex_top_ex_rs1_src_ex2mem_o;
     wire                        ex_top_ex_rs2_src_ex2mem_o;
+    wire                        ex_top_ex_rs1_src_mem2wb_o;
+    wire                        ex_top_ex_rs2_src_mem2wb_o;
     wire    [`DATA_BUS]         ex_top_rs1_data_o;
     wire    [`DATA_BUS]         ex_top_rs2_data_o;
     wire    [`DATA_BUS]         ex_top_rd_data_o;
@@ -230,7 +232,10 @@ module cpu(
     wire                        pipeline_ctrl_ex_stall_o;
     wire                        pipeline_ctrl_ex_flush_o;
     wire                        pipeline_ctrl_intp_en_o;
-
+    wire                        pipeline_ctrl_ex_rs1_src_buffer_o;
+    wire                        pipeline_ctrl_ex_rs2_src_buffer_o;
+    wire                        pipeline_ctrl_ex_rs1_buffered_o;
+    wire                        pipeline_ctrl_ex_rs2_buffered_o;
     /* wb */
     wire                        wb_trap_en_o;
 
@@ -497,7 +502,12 @@ module cpu(
         .rst( reset ),
 
         /* control signals */
+        .ex_top_inst_valid_i( pipeline_ctrl_inst_valid_o ),
 
+        .ex_top_rs1_buffered_i( pipeline_ctrl_ex_rs1_buffered_o ),
+        .ex_top_rs2_buffered_i( pipeline_ctrl_ex_rs2_buffered_o ),
+        .ex_top_rs1_src_buffer_i( pipeline_ctrl_ex_rs1_src_buffer_o ),
+        .ex_top_rs2_src_buffer_i( pipeline_ctrl_ex_rs2_src_buffer_o ),
         .ex_top_id2ex_rs1_en_i( id2ex_rs1_en_o ),
         .ex_top_id2ex_rs2_en_i( id2ex_rs2_en_o ),
         .ex_top_ex2mem_rd_en_i( ex2mem_rd_en_o ),
@@ -525,7 +535,8 @@ module cpu(
 
         .ex_top_ex_rs1_src_ex2mem_o( ex_top_ex_rs1_src_ex2mem_o ),
         .ex_top_ex_rs2_src_ex2mem_o( ex_top_ex_rs2_src_ex2mem_o ),
-
+        .ex_top_ex_rs1_src_mem2wb_o( ex_top_ex_rs1_src_mem2wb_o ),
+        .ex_top_ex_rs2_src_mem2wb_o( ex_top_ex_rs2_src_mem2wb_o ),
         /* data signals */
         .ex_top_imm_data_i( id2ex_imm_data_o ),
         .ex_top_id2ex_rs1_data_i( id2ex_rs1_data_o ),
@@ -762,6 +773,9 @@ module cpu(
     );
 
     pipeline_ctrl my_pipeline_ctrl(
+        .clk( clock ),
+        .rst( reset ),
+
         .pipeline_ctrl_fetched_ok_i( if_top_fetched_ok_o ),
 
         .pipeline_ctrl_id_inst_branch_i( id_top_inst_branch_o ),
@@ -782,6 +796,8 @@ module cpu(
         .pipeline_ctrl_id2ex_inst_auipc_i( id2ex_inst_auipc_o ),
         .pipeline_ctrl_ex_rs1_src_ex2mem_i( ex_top_ex_rs1_src_ex2mem_o ),
         .pipeline_ctrl_ex_rs2_src_ex2mem_i( ex_top_ex_rs2_src_ex2mem_o ),
+        .pipeline_ctrl_ex_rs1_src_mem2wb_i( ex_top_ex_rs2_src_mem2wb_o ),
+        .pipeline_ctrl_ex_rs2_src_mem2wb_i( ex_top_ex_rs2_src_mem2wb_o ),
 
         .pipeline_ctrl_access_ok_i( mem_top_access_ok_o ),
         .pipeline_ctrl_mem_csr_trap_i( mem_top_csr_trap_o ),
@@ -803,7 +819,10 @@ module cpu(
         .pipeline_ctrl_id_flush_o( pipeline_ctrl_id_flush_o ),
         .pipeline_ctrl_ex_stall_o( pipeline_ctrl_ex_stall_o ),
         .pipeline_ctrl_ex_flush_o( pipeline_ctrl_ex_flush_o ),
-
+        .pipeline_ctrl_ex_rs1_src_buffer_o( pipeline_ctrl_ex_rs1_src_buffer_o ),
+        .pipeline_ctrl_ex_rs2_src_buffer_o( pipeline_ctrl_ex_rs2_src_buffer_o ),
+        .pipeline_ctrl_ex_rs1_buffered_o( pipeline_ctrl_ex_rs1_buffered_o ),
+        .pipeline_ctrl_ex_rs2_buffered_o( pipeline_ctrl_ex_rs2_buffered_o ),  
         .pipeline_ctrl_intp_en_o( pipeline_ctrl_intp_en_o ) 
     );
 
