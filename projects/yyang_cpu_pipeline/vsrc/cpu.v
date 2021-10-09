@@ -502,7 +502,7 @@ module cpu(
         .ex_top_id2ex_rs2_en_i( id2ex_rs2_en_o ),
         .ex_top_ex2mem_rd_en_i( ex2mem_rd_en_o ),
         .ex_top_mem2wb_rd_en_i( mem2wb_rd_en_o ),
-
+        .ex_top_inst_csr_i( id2ex_inst_csr_o ),
         .ex_top_inst_word_i( id2ex_inst_word_o ),
         .ex_top_inst_slt_nu_i( id2ex_inst_slt_nu_o ),
         .ex_top_inst_slt_u_i( id2ex_inst_slt_u_o ),
