@@ -316,7 +316,8 @@ module id_top (
 
     id_forward my_id_forward(
         /* control signals */
-        .id_forward_inst_lui_i( id_top_id2ex_inst_lui_i ),
+        .id_forward_inst_jump_i( id_control_inst_jump_o ),
+        .id_forward_inst_branch_i( id_control_inst_branch_o ),
         .id_forward_id_rs1_en_i( id_control_rs1_en_o ),
         .id_forward_id_rs2_en_i( id_control_rs2_en_o ),
         .id_forward_id2ex_rd_en_i( id_top_id2ex_rd_en_i ),
