@@ -69,6 +69,7 @@ module id_top (
     /* data signals */
     input   [`INST_BUS]         id_top_inst_i,
     input   [`INST_ADDR_BUS]    id_top_inst_addr_i,
+    input   [`INST_ADDR_BUS]    id_top_nxt_inst_addr_i,
     input   [`DATA_BUS]         id_top_id2ex_rd_data_i,
     input   [`DATA_BUS]         id_top_ex2mem_rd_data_i,
     input   [`DATA_BUS]         id_top_mem2wb_rd_data_i,
@@ -217,7 +218,7 @@ module id_top (
     assign id_top_rs1_data_o            =   id_regfile_rs1_data_o;
     assign id_top_rs2_data_o            =   id_regfile_rs2_data_o;
     assign id_top_imm_data_o            =   id_immgen_imm_data_o;
-    assign id_top_rd_data_o             =   id_control_inst_lui_o? id_immgen_imm_data_o: id_top_inst_addr_i;
+    assign id_top_rd_data_o             =   id_control_inst_lui_o? id_immgen_imm_data_o: id_top_nxt_inst_addr_i;
     assign id_top_inst_addr_o           =   id_top_inst_addr_i;
     assign id_top_jumpbranch_addr_o     =   jumpbranch_base + id_immgen_imm_data_o;
     `ifdef DEFINE_DIFFTEST  

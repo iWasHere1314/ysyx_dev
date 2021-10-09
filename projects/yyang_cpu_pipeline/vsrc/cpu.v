@@ -353,6 +353,7 @@ module cpu(
         /* data signals */
         .id_top_inst_i( if2id_inst_o ),
         .id_top_inst_addr_i( if2id_inst_addr_o ),
+        .id_top_nxt_inst_addr_i( if_top_inst_addr_o ),
         .id_top_id2ex_rd_data_i( id2ex_rd_data_o ),
         .id_top_ex2mem_rd_data_i( ex2mem_rd_data_o ),
         .id_top_mem2wb_rd_data_i( mem2wb_rd_data_o ),
