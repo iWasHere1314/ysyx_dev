@@ -5,7 +5,9 @@ module if_pc (
 
     /* control signals */
     input                       if_pc_inst_valid_i,
-
+    input                       if_pc_dont_fetch_i,
+    input                       if_pc_jumpbranch_en_i,
+    input                       if_pc_trap_en_i,
     /* data_signals */
     input   [`INST_ADDR_BUS]    if_pc_nxt_inst_addr_i,
     output  [`INST_ADDR_BUS]    if_pc_cur_inst_addr_o
@@ -17,7 +19,7 @@ module if_pc (
         if( rst ) begin
             cur_inst_addr_r <= `PC_START;
         end
-        else if( if_pc_inst_valid_i )begin
+        else if( if_pc_inst_valid_i & ( ~if_pc_dont_fetch_i | if_pc_jumpbranch_en_i | if_pc_trap_en_i ) )begin
             cur_inst_addr_r <= if_pc_nxt_inst_addr_i;
         end
         else begin
