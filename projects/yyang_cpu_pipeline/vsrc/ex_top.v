@@ -42,6 +42,8 @@ module ex_top(
     input   [`REG_BUS]          ex_top_mem2wb_rd_data_i,
     input   [`INST_ADDR_BUS]    ex_top_inst_addr_i,
 
+    output  [`DATA_BUS]         ex_top_rs1_data_o,
+    output  [`DATA_BUS]         ex_top_rs2_data_o,
     output  [`DATA_BUS]         ex_top_rd_data_o
 );
     wire                        ex_forward_ex_rs1_src_id2ex_o;
@@ -62,6 +64,8 @@ module ex_top(
                                             | ( { 64 { ex_forward_ex_rs2_src_ex2mem_o } } & ex_top_ex2mem_rd_data_i)
                                             | ( { 64 { ex_forward_ex_rs2_src_mem2wb_o } } & ex_top_mem2wb_rd_data_i );
 
+    assign ex_top_rs1_data_o            =   rs1_data;
+    assign ex_top_rs2_data_o            =   rs2_data;
     assign ex_top_rd_data_o             =   ( ex_top_inst_arth_lgc_i | ex_top_inst_auipc_i | ex_top_mem_read_i | ex_top_mem_write_i ) ?
                                             ex_core_res_data_o: ex_top_id2ex_rd_data_i; 
     

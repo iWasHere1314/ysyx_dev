@@ -215,8 +215,8 @@ module id_top (
 
     /* data signals */
 
-    assign id_top_rs1_data_o            =   id_regfile_rs1_data_o;
-    assign id_top_rs2_data_o            =   id_regfile_rs2_data_o;
+    assign id_top_rs1_data_o            =   id_rs1_data;
+    assign id_top_rs2_data_o            =   id_rs2_data;
     assign id_top_imm_data_o            =   id_immgen_imm_data_o;
     assign id_top_rd_data_o             =   id_control_inst_lui_o? id_immgen_imm_data_o: id_top_nxt_inst_addr_i;
     assign id_top_inst_addr_o           =   id_top_inst_addr_i;
