@@ -297,8 +297,10 @@ mem_forward my_mem_forward(
     .mem_forward_ex_rs2_src_mem2wb_o( mem_forward_ex_rs2_src_mem2wb_o )
 );
 
-    wire temp   = ( mem_top_ex2mem_rd_data_i == 64'h00000000800004c0 ) & mem_top_mem_write_i;
+    wire temp   = ( mem_top_ex2mem_rd_data_i == 64'h00000000800004c0 );
     always @( posedge temp ) begin
-        $write("%h\n", rs2_data );
+        if( mem_top_mem_write_i )
+            $write("read %h\n", rs2_data );
+
     end
 endmodule
