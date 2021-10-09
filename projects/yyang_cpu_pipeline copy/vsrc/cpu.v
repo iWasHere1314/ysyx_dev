@@ -138,6 +138,8 @@ module cpu(
     /* ex_top */
     wire                        ex_top_ex_rs1_src_ex2mem_o;
     wire                        ex_top_ex_rs2_src_ex2mem_o;
+    wire    [`DATA_BUS]         ex_top_rs1_data_o;
+    wire    [`DATA_BUS]         ex_top_rs2_data_o;
     wire    [`DATA_BUS]         ex_top_rd_data_o;
 
     /* ex2mem */
@@ -353,6 +355,7 @@ module cpu(
         /* data signals */
         .id_top_inst_i( if2id_inst_o ),
         .id_top_inst_addr_i( if2id_inst_addr_o ),
+        .id_top_nxt_inst_addr_i( if_top_inst_addr_o ),
         .id_top_id2ex_rd_data_i( id2ex_rd_data_o ),
         .id_top_ex2mem_rd_data_i( ex2mem_rd_data_o ),
         .id_top_mem2wb_rd_data_i( mem2wb_rd_data_o ),
@@ -531,7 +534,8 @@ module cpu(
         .ex_top_ex2mem_rd_data_i( ex2mem_rd_data_o ),
         .ex_top_mem2wb_rd_data_i( mem2wb_rd_data_o ),
         .ex_top_inst_addr_i( id2ex_inst_addr_o ),
-
+        .ex_top_rs1_data_o( ex_top_rs1_data_o),
+        .ex_top_rs2_data_o( ex_top_rs2_data_o),
         .ex_top_rd_data_o( ex_top_rd_data_o )
     );
 
@@ -607,8 +611,8 @@ module cpu(
         `endif
 
         /* data signals */
-        .ex2mem_rs1_data_i( id2ex_rs1_data_o ),
-        .ex2mem_rs2_data_i( id2ex_rs2_data_o ),
+        .ex2mem_rs1_data_i( ex_top_rs1_data_o ),
+        .ex2mem_rs2_data_i( ex_top_rs2_data_o ),
         .ex2mem_imm_data_i( id2ex_imm_data_o ),
         .ex2mem_rd_data_i( ex_top_rd_data_o ),
         .ex2mem_inst_addr_i( id2ex_inst_addr_o ),

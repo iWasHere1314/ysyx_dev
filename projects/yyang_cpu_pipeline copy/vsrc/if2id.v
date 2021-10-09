@@ -67,7 +67,7 @@ module if2id(
     end
 
     always @( posedge clk ) begin
-        if( rst | if2id_if_flush_i ) begin
+        if( rst | flush_en ) begin
             inst_r  <= `INST_NOP;
         end
         else if( stall_en ) begin
