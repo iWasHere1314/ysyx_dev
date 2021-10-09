@@ -126,8 +126,8 @@ module mem_top(
     wire                        mem_forward_ex_rs2_src_ex2mem_o;
     wire                        mem_forward_ex_rs2_src_mem2wb_o;
 
-    wire                        rs1_data;
-    wire                        rs2_data;
+    wire    [`DATA_BUS]         rs1_data;
+    wire    [`DATA_BUS]         rs2_data;
 
     wire    [`INST_ADDR_BUS]    inst_addr;
     assign rs1_data                         =     ( { 64 { mem_forward_ex_rs1_src_ex2mem_o } } & mem_top_ex2mem_rs1_data_i )
