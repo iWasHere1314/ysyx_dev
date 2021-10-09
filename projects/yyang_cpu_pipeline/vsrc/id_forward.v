@@ -83,16 +83,16 @@ module id_forward (
     assign id_rs2_src_mem2wb_n              =   ~id_rs2_src_mem2wb;
     
     assign id_rs1_src_reg                   =   id_rs1_src_id2ex_n & id_rs1_src_ex2mem_n & id_rs1_src_mem2wb_n;
-    assign id_rs1_src_id2ex                 =     ( id2ex_rd_index != `REG_INDEX_SIZE'b0 )
-                                                & ( id_rs1_index == id2ex_rd_index ) & id_rs1_en & id2ex_rd_en;
+    assign id_rs1_src_id2ex                 =   ( id2ex_rd_index != `REG_INDEX_SIZE'b0 ) & ( id_rs1_index == id2ex_rd_index )
+                                                & id_rs1_en & id2ex_rd_en;
     assign id_rs1_src_ex2mem                =   id_rs1_src_id2ex_n & ( ex2mem_rd_index != `REG_INDEX_SIZE'b0 )
                                                 & ( id_rs1_index == ex2mem_rd_index )& id_rs1_en & ex2mem_rd_en;
     assign id_rs1_src_mem2wb                =   id_rs1_src_id2ex_n & id_rs1_src_ex2mem_n & ( mem2wb_rd_index != `REG_INDEX_SIZE'b0 )
                                                 & ( id_rs1_index == mem2wb_rd_index )& id_rs1_en & mem2wb_rd_en;
     
     assign id_rs2_src_reg                   =   id_rs2_src_id2ex_n & id_rs2_src_ex2mem_n & id_rs2_src_mem2wb_n;
-    assign id_rs2_src_id2ex                 =     ( id2ex_rd_index != `REG_INDEX_SIZE'b0 )
-                                                & ( id_rs2_index == id2ex_rd_index ) & id_rs2_en & id2ex_rd_en;
+    assign id_rs2_src_id2ex                 =   ( id2ex_rd_index != `REG_INDEX_SIZE'b0 ) & ( id_rs2_index == id2ex_rd_index ) 
+                                                & id_rs2_en & id2ex_rd_en;
     assign id_rs2_src_ex2mem                =   id_rs2_src_id2ex_n & ( ex2mem_rd_index != `REG_INDEX_SIZE'b0 )
                                                 & ( id_rs2_index == ex2mem_rd_index )& id_rs2_en & ex2mem_rd_en;
     assign id_rs2_src_mem2wb                =   id_rs2_src_id2ex_n & id_rs2_src_ex2mem_n & ( mem2wb_rd_index != `REG_INDEX_SIZE'b0 )
