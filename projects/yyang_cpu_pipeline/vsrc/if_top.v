@@ -48,7 +48,6 @@ module if_top (
 
         /* control signals */
         .if_pc_inst_valid_i( if_top_inst_valid_i ),
-        .if_pc_dont_fetch_i( if_top_dont_fetch_i ),
         /* data_signals */
         .if_pc_nxt_inst_addr_i( nxt_inst_addr ),
         .if_pc_cur_inst_addr_o( if_top_inst_addr_o )
