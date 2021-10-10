@@ -853,7 +853,7 @@ module cpu(
             cmt_wdata <= mem2wb_rd_data_o;
             cmt_pc <= mem2wb_inst_addr_o;
             cmt_inst <= mem2wb_inst_o;
-            cmt_valid <= pipeline_ctrl_inst_valid_o & ~mem2wb_inst_nop_o;
+            cmt_valid <= pipeline_ctrl_inst_valid_o & ~mem2wb_inst_nop_o & ~intp_r;
         
         	    regs_diff <= id_top_regs_o;
 
@@ -877,9 +877,9 @@ module cpu(
             intp_r <= mem2wb_intp_en_o;
             einst_r <= ex2mem_inst_o;
             epc_r <= ex2mem_inst_addr_o;
-            cmt_intrNO <= pipeline_ctrl_inst_valid_o & mem2wb_intp_en_o ? 7: 0 ;
-            cmt_einst <= pipeline_ctrl_inst_valid_o & mem2wb_intp_en_o? ex2mem_inst_o: 0;
-            cmt_epc <= pipeline_ctrl_inst_valid_o & mem2wb_intp_en_o? ex2mem_inst_addr_o: 0;
+            cmt_intrNO <= pipeline_ctrl_inst_valid_o & intp_r ? 7: 0 ;
+            cmt_einst <= pipeline_ctrl_inst_valid_o & intp_r? einst_r: 0;
+            cmt_epc <= pipeline_ctrl_inst_valid_o & intp_r? epc_r: 0;
         end
     end
     DifftestInstrCommit DifftestInstrCommit(
