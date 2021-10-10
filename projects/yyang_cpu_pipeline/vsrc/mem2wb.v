@@ -97,6 +97,7 @@ module mem2wb(
     reg     [`INST_ADDR_BUS]    csr_nxt_pc_r;
 
     wire                        flow_en;
+    wire                        intp_en;
 
     assign mem2wb_rd_index_o         =   rd_index_r;
     
@@ -129,9 +130,10 @@ module mem2wb(
     assign mem2wb_csr_nxt_pc_o       =   csr_nxt_pc_r;
 
     assign flow_en                   =   mem2wb_inst_valid_i;
+    assign intp_en                   =   mem2wb_inst_valid_i & mem2wb_intp_en_i;
 
     always @( posedge clk ) begin
-        if( rst ) begin
+        if( rst | intp_en ) begin
             rd_index_r <= `REG_INDEX_SIZE'b0;
         end
         else if( flow_en ) begin
@@ -143,7 +145,7 @@ module mem2wb(
     end
     
     always @( posedge clk ) begin
-        if( rst ) begin
+        if( rst | intp_en ) begin
             rd_en_r <= 1'b0;        
         end
         else if( flow_en ) begin
@@ -155,7 +157,7 @@ module mem2wb(
     end
 
     always @( posedge clk ) begin
-        if( rst ) begin
+        if( rst | intp_en ) begin
             inst_trap_r <= 1'b0;        
         end
         else if( flow_en ) begin
@@ -180,7 +182,7 @@ module mem2wb(
 
     `ifdef DEFINE_DIFFTEST
     always @( posedge clk ) begin
-        if( rst ) begin
+        if( rst | intp_en ) begin
             inst_csr_r <= 1'b0;
         end
         else if( flow_en ) begin
@@ -191,7 +193,7 @@ module mem2wb(
         end
     end
     always @( posedge clk ) begin
-        if( rst ) begin
+        if( rst | intp_en ) begin
             inst_r <= `INST_NOP;
         end
         else if( flow_en ) begin
@@ -202,8 +204,8 @@ module mem2wb(
         end
     end
     always @( posedge clk ) begin
-        if( rst ) begin
-            inst_addr_r <= 54'b0;
+        if( rst | intp_en ) begin
+            inst_addr_r <= 64'b0;
         end
         else if( flow_en ) begin
             inst_addr_r <= mem2wb_inst_addr_i;
@@ -213,7 +215,7 @@ module mem2wb(
         end
     end
     always @( posedge clk ) begin
-        if( rst ) begin
+        if( rst | intp_en ) begin
             inst_nop_r <= 1'b1;
         end
         else if( flow_en ) begin
@@ -224,7 +226,7 @@ module mem2wb(
         end
     end
     always @( posedge clk ) begin
-        if( rst ) begin
+        if( rst | intp_en ) begin
             csr_skip_r <= 1'b0;
         end
         else if( flow_en ) begin
@@ -326,7 +328,7 @@ module mem2wb(
 
     `ifdef DEFINE_PUTCH
     always @( posedge clk ) begin
-        if( rst ) begin
+        if( rst | intp_en ) begin
             inst_selfdefine_r <= 1'b0;   
         end
         else if( flow_en ) begin
@@ -339,7 +341,7 @@ module mem2wb(
     `endif
 
     always @( posedge clk ) begin
-        if( rst ) begin
+        if( rst | intp_en ) begin
             rd_data_r <= 64'b0;   
         end
         else if( flow_en ) begin
@@ -363,7 +365,7 @@ module mem2wb(
     end
 
     always @( posedge clk ) begin
-        if( rst ) begin
+        if( rst | intp_en ) begin
             clint_dstb_skip_r <= 1'b0;   
         end
         else if( flow_en ) begin

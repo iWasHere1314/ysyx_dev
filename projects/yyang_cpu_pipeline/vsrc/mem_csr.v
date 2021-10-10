@@ -56,6 +56,7 @@ module mem_csr(
     wire                            inst_csrrwx;
     wire                            inst_csrrsx;
     wire                            inst_csrrcx;
+    wire                            change_en;
     wire                            trap_en;
     wire                            ret_en; 
     wire    [`DATA_BUS]             mcycle_nxt;
@@ -106,6 +107,7 @@ module mem_csr(
     assign inst_csrrwx              =   mem_csr_csr_ctrl_i[1:0] == 2'b01;
     assign inst_csrrsx              =   mem_csr_csr_ctrl_i[1:0] == 2'b10;
     assign inst_csrrcx              =   mem_csr_csr_ctrl_i[1:0] == 2'b11;
+    assign change_en                =   mem_csr_inst_valid_i & ~mem_csr_intp_en_i;
     assign trap_en                  =   mem_csr_inst_valid_i & trap_nmret;
     assign ret_en                   =   mem_csr_inst_valid_i & mem_csr_inst_mret_i;
     assign minstret_nxt             =   minstret_r + `DATA_BUS_SIZE'h1;
@@ -139,7 +141,7 @@ module mem_csr(
         if( rst ) begin
             mcycle_r <= `DATA_BUS_SIZE'b0;
         end
-        else  if( index_mcycle & mem_csr_inst_valid_i )begin
+        else  if( index_mcycle & change_en )begin
             mcycle_r <= csr_nxt;
         end
         else begin
@@ -164,7 +166,7 @@ module mem_csr(
         if( rst ) begin
             mstatus_r <=  `DATA_BUS_SIZE'b0;
         end
-        else if( index_mstatus & mem_csr_inst_valid_i ) begin
+        else if( index_mstatus & change_en ) begin
             mstatus_r <= { ( csr_nxt[16:15] == 2'b11 ) | ( csr_nxt[14:13] == 2'b11 ) ,csr_nxt[62:0] } /* & `DATA_BUS_SIZE'h1888 */;
         end
         else if( trap_en ) begin
@@ -187,7 +189,7 @@ module mem_csr(
         if( rst ) begin
             mtvec_r <= `DATA_BUS_SIZE'h0;
         end
-        else if( index_mtvec & mem_csr_inst_valid_i ) begin
+        else if( index_mtvec & change_en ) begin
             mtvec_r <= csr_nxt & ~64'h3;
         end
         else begin
@@ -200,7 +202,7 @@ module mem_csr(
         if( rst ) begin
             mepc_r <= `DATA_BUS_SIZE'h0;
         end
-        else if( index_mepc & mem_csr_inst_valid_i ) begin
+        else if( index_mepc & change_en ) begin
             mepc_r <= csr_nxt;
         end
         else if( trap_en ) begin
@@ -216,13 +218,13 @@ module mem_csr(
         if( rst ) begin
             mcause_r <= `DATA_BUS_SIZE'h0;
         end
-        else if( mem_csr_inst_valid_i & index_mcause ) begin
+        else if( change_en & index_mcause ) begin
             mcause_r <= csr_nxt;
         end
-        else if( mem_csr_inst_ecall_i & mem_csr_inst_valid_i ) begin
+        else if( mem_csr_inst_ecall_i & change_en ) begin
             mcause_r <= `DATA_BUS_SIZE'd11; 
         end
-        else if( mem_csr_inst_ebreak_i & mem_csr_inst_valid_i ) begin
+        else if( mem_csr_inst_ebreak_i & change_en ) begin
             mcause_r <= `DATA_BUS_SIZE'd3;
         end
         else if( trap_en ) begin//确定不是ecall和break
@@ -238,7 +240,7 @@ module mem_csr(
         if( rst ) begin
             mip_r <= `DATA_BUS_SIZE'h0;
         end
-        else if( index_mip & mem_csr_inst_valid_i ) begin
+        else if( index_mip & change_en ) begin
             mip_r <= csr_nxt & `DATA_BUS_SIZE'h80;
         end
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -255,7 +257,7 @@ module mem_csr(
         if( rst ) begin
             mie_r <= `DATA_BUS_SIZE'h0;
         end
-        else if( index_mie & mem_csr_inst_valid_i ) begin
+        else if( index_mie & change_en ) begin
             mie_r <= csr_nxt & `DATA_BUS_SIZE'h80;
         end
         else begin
@@ -268,7 +270,7 @@ module mem_csr(
         if( rst ) begin
             mscratch_r <= `DATA_BUS_SIZE'h0;
         end
-        else if( index_mscratch & mem_csr_inst_valid_i ) begin
+        else if( index_mscratch & change_en ) begin
             mscratch_r <= csr_nxt;
         end
         else begin
@@ -281,10 +283,10 @@ module mem_csr(
         if( rst ) begin
             minstret_r <= `DATA_BUS_SIZE'h0;
         end
-        else if( index_minstret & mem_csr_inst_valid_i ) begin
+        else if( index_minstret & change_en ) begin
             minstret_r <= csr_nxt;
         end
-        else if( mem_csr_inst_valid_i ) begin
+        else if( change_en ) begin
             minstret_r <= minstret_nxt;
         end
         else begin
@@ -314,24 +316,24 @@ module mem_csr(
     `ifdef DEFINE_DIFFTEST
 
     assign mem_csr_csr_skip_o       =   ~( index_mstatus | index_mtvec | index_mepc | index_mepc | index_mcause /* | index_mip */ | index_mie | index_mscratch | mem_csr_inst_ecall_i | mem_csr_inst_ebreak_i | mem_csr_inst_mret_i );
-    assign mem_csr_mstatus_o        =   index_mstatus? { ( csr_nxt[16:15] == 2'b11 ) | ( csr_nxt[14:13] == 2'b11 ) ,csr_nxt[62:0] } /* & `DATA_BUS_SIZE'h1888 */: 
+    assign mem_csr_mstatus_o        =   index_mstatus & ~mem_csr_intp_en_i? { ( csr_nxt[16:15] == 2'b11 ) | ( csr_nxt[14:13] == 2'b11 ) ,csr_nxt[62:0] } /* & `DATA_BUS_SIZE'h1888 */: 
                                             trap_en? {mstatus_r[63:13], 2'b11, mstatus_r[10:8], mstatus_r[3],mstatus_r[6:4],1'b0,mstatus_r[2:0]}:
                                             ret_en? {mstatus_r[63:13], 2'b00, mstatus_r[10:8], 1'b1,mstatus_r[6:4],mstatus_r[7],mstatus_r[2:0]}:
                                             mstatus_r;
-    assign mem_csr_mtvec_o          =   index_mtvec? csr_nxt & ~64'h3: mtvec_r;
-    assign mem_csr_mepc_o           =   index_mepc? csr_nxt:
+    assign mem_csr_mtvec_o          =   index_mtvec & ~mem_csr_intp_en_i? csr_nxt & ~64'h3: mtvec_r;
+    assign mem_csr_mepc_o           =   index_mepc & ~mem_csr_intp_en_i? csr_nxt:
                                             trap_nmret? mem_csr_inst_addr_i:
                                             mepc_r ;
-    assign mem_csr_mcause_o         =   index_mcause? csr_nxt: 
+    assign mem_csr_mcause_o         =   index_mcause & ~mem_csr_intp_en_i? csr_nxt: 
                                             mem_csr_inst_ecall_i? `DATA_BUS_SIZE'd11: 
                                             mem_csr_inst_ebreak_i? `DATA_BUS_SIZE'd3:
                                             trap_nmret? ( `DATA_BUS_SIZE'h1<<(`DATA_BUS_SIZE-1) ) + `DATA_BUS_SIZE'h7: 
                                             mcause_r;
-    assign mem_csr_mip_o            =   index_mip? csr_nxt & `DATA_BUS_SIZE'h80:
+    assign mem_csr_mip_o            =   index_mip & ~mem_csr_intp_en_i? csr_nxt & `DATA_BUS_SIZE'h80:
                                             mem_csr_clint_mtip_i? { mip_r[63:8], 1'b1, mip_r[6:0] }:
                                             mip_r;
-    assign mem_csr_mie_o            =   index_mie? csr_nxt & `DATA_BUS_SIZE'h80: mie_r;
-    assign mem_csr_mscratch_o       =   index_mscratch? csr_nxt: mscratch_r;
+    assign mem_csr_mie_o            =   index_mie & ~mem_csr_intp_en_i? csr_nxt & `DATA_BUS_SIZE'h80: mie_r;
+    assign mem_csr_mscratch_o       =   index_mscratch & ~mem_csr_intp_en_i? csr_nxt: mscratch_r;
     assign mem_csr_cause_o          =   { mem_csr_mcause_o[`DATA_BUS_SIZE-1], mem_csr_mcause_o[30:0] }; 
 
     `endif

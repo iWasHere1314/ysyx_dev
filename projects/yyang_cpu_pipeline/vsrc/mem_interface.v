@@ -3,6 +3,7 @@ module mem_interface(
     input                       clk,
     input                       rst,
 
+    input                       mem_interface_intp_en_i,
     output                      mem_interface_access_ok_o,
 
     /* cpu side */
@@ -88,7 +89,7 @@ module mem_interface(
                                          : read_data_r;
 
 
-    assign mem_interface_valid_o        =   ( mem_interface_mem_write_i | mem_interface_mem_read_i ) & ~mem_finished;
+    assign mem_interface_valid_o        =   ( mem_interface_mem_write_i | mem_interface_mem_read_i ) & ~mem_finished & mem_interface_intp_en_i;
     assign mem_interface_data_write_o   =   mem_interface_write_data_i <<( { 3'b0, mem_interface_data_addr_i[2:0] } << 3 );
     assign mem_interface_addr_o         =   mem_interface_data_addr_i;
     assign mem_interface_size_o         =     { 2 { store_sb | load_lbx } } & `SIZE_B 
@@ -97,7 +98,7 @@ module mem_interface(
                                             | { 2 { store_sd | load_ld  } } & `SIZE_D ;
     assign mem_interface_req_o          =   ( mem_interface_mem_read_i & `REQ_READ ) | ( mem_interface_mem_write_i & `REQ_WRITE );  
     assign handshake_done               =   mem_interface_valid_o & mem_interface_ready_i;
-    assign mem_interface_access_ok_o    =   mem_finished;
+    assign mem_interface_access_ok_o    =   mem_finished | mem_interface_intp_en_i;
 
     always @( posedge clk ) begin
         if( rst ) begin

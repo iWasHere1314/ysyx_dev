@@ -164,7 +164,7 @@ module mem_top(
     mem_interface my_mem_interface(
         .clk( clk ),
         .rst( rst ),
-
+        .mem_interface_intp_en_i( mem_top_intp_en_i ),
         .mem_interface_access_ok_o( mem_interface_access_ok_o ),
 
         /* cpu side */
