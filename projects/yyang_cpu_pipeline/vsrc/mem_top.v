@@ -41,7 +41,6 @@ module mem_top(
     input   [`DATA_BUS]         mem_top_imm_data_i,
     input   [`DATA_BUS]         mem_top_ex2mem_rd_data_i,
     input   [`DATA_BUS]         mem_top_mem2wb_rd_data_i,
-    input   [`INST_ADDR_BUS]    mem_top_id2ex_inst_addr_i,
     input   [`INST_ADDR_BUS]    mem_top_ex2mem_inst_addr_i,
 
     output  [`DATA_BUS]         mem_top_rd_data_o,
@@ -129,12 +128,10 @@ module mem_top(
     wire    [`DATA_BUS]         rs1_data;
     wire    [`DATA_BUS]         rs2_data;
 
-    wire    [`INST_ADDR_BUS]    inst_addr;
     assign rs1_data                         =     ( { 64 { mem_forward_ex_rs1_src_ex2mem_o } } & mem_top_ex2mem_rs1_data_i )
                                                 | ( { 64 { mem_forward_ex_rs1_src_mem2wb_o } } & mem_top_mem2wb_rd_data_i );
     assign rs2_data                         =     ( { 64 { mem_forward_ex_rs2_src_ex2mem_o } } & mem_top_ex2mem_rs2_data_i )
                                                 | ( { 64 { mem_forward_ex_rs2_src_mem2wb_o } } & mem_top_mem2wb_rd_data_i );
-    assign inst_addr                        =   mem_top_intp_en_i? mem_top_id2ex_inst_addr_i: mem_top_ex2mem_inst_addr_i;
     
     assign mem_top_csr_nxt_pc_o             =   mem_csr_csr_nxt_pc_o;
     assign mem_top_intp_en_o                =   mem_top_intp_en_i;
@@ -203,7 +200,7 @@ module mem_top(
         .mem_csr_rs1_data_i( rs1_data ),
         .mem_csr_imm_csr_i( mem_top_imm_data_i ),
         .mem_csr_csr_ctrl_i( mem_top_csr_ctrl_i ),
-        .mem_csr_inst_addr_i( inst_addr ),
+        .mem_csr_inst_addr_i( mem_top_ex2mem_inst_addr_i ),
         .mem_csr_csr_src_i( mem_top_csr_src_i ),
         .mem_csr_inst_trap_i( mem_top_inst_trap_i ),
         .mem_csr_inst_mret_i( mem_top_inst_mret_i ),

@@ -16,7 +16,6 @@ module pipeline_ctrl(
     input                       pipeline_ctrl_id2ex_inst_branch_i,
     input                       pipeline_ctrl_id2ex_inst_jump_i,
     input                       pipeline_ctrl_id2ex_inst_trap_i,
-    input                       pipeline_ctrl_id2ex_inst_nop_i,
     input                       pipeline_ctrl_id2ex_inst_load_i,
     input                       pipeline_ctrl_id2ex_inst_csr_i,
     input                       pipeline_ctrl_id2ex_inst_arth_lgc_i,
@@ -28,6 +27,7 @@ module pipeline_ctrl(
 
     input                       pipeline_ctrl_access_ok_i,
     input                       pipeline_ctrl_mem_csr_trap_i,
+    input                       pipeline_ctrl_ex2mem_inst_nop_i,
     input                       pipeline_ctrl_ex2mem_inst_trap_i,
     input                       pipeline_ctrl_ex2mem_inst_load_i,
     input                       pipeline_ctrl_ex2mem_mem_read_i,
@@ -89,7 +89,7 @@ module pipeline_ctrl(
     assign pipeline_ctrl_ex_rs1_src_buffer_o        =   ex_rs1_src_buffered_r;
     assign pipeline_ctrl_ex_rs2_src_buffer_o        =   ex_rs2_src_buffered_r;           
 
-    assign pipeline_ctrl_intp_en_o                  =   pipeline_ctrl_mem_csr_trap_i & ~pipeline_ctrl_ex2mem_inst_trap_i & ~pipeline_ctrl_id2ex_inst_nop_i;
+    assign pipeline_ctrl_intp_en_o                  =   pipeline_ctrl_mem_csr_trap_i & ~pipeline_ctrl_ex2mem_inst_trap_i & ~pipeline_ctrl_ex2mem_inst_nop_i;
 
     assign pipeline_ctrl_ex_rs1_buffered_o          =   pipeline_ctrl_ex_rs1_src_mem2wb_i & pipeline_ctrl_ex_stall_o;
     assign pipeline_ctrl_ex_rs2_buffered_o          =   pipeline_ctrl_ex_rs2_src_mem2wb_i & pipeline_ctrl_ex_stall_o;

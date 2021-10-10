@@ -676,7 +676,6 @@ module cpu(
         .mem_top_imm_data_i( ex2mem_imm_data_o ),
         .mem_top_ex2mem_rd_data_i( ex2mem_rd_data_o ),
         .mem_top_mem2wb_rd_data_i( mem2wb_rd_data_o ),
-        .mem_top_id2ex_inst_addr_i( id2ex_inst_addr_o ),
         .mem_top_ex2mem_inst_addr_i( ex2mem_inst_addr_o ),
 
         .mem_top_rd_data_o( mem_top_rd_data_o ),
@@ -789,7 +788,6 @@ module cpu(
         .pipeline_ctrl_id2ex_inst_branch_i( id2ex_inst_branch_o ),
         .pipeline_ctrl_id2ex_inst_jump_i( id2ex_inst_jump_o ),
         .pipeline_ctrl_id2ex_inst_trap_i( id2ex_inst_trap_o ),
-        .pipeline_ctrl_id2ex_inst_nop_i( id2ex_inst_nop_o ),
         .pipeline_ctrl_id2ex_inst_load_i( id2ex_inst_load_o ),
         .pipeline_ctrl_id2ex_inst_csr_i( id2ex_inst_csr_o ),
         .pipeline_ctrl_id2ex_inst_arth_lgc_i( id2ex_inst_arth_lgc_o ),
@@ -801,6 +799,7 @@ module cpu(
 
         .pipeline_ctrl_access_ok_i( mem_top_access_ok_o ),
         .pipeline_ctrl_mem_csr_trap_i( mem_top_csr_trap_o ),
+        .pipeline_ctrl_ex2mem_inst_nop_i( ex2mem_inst_nop_o ),
         .pipeline_ctrl_ex2mem_inst_trap_i( ex2mem_inst_trap_o ),
         .pipeline_ctrl_ex2mem_inst_load_i( ex2mem_inst_load_o ),
         .pipeline_ctrl_ex2mem_mem_read_i( ex2mem_mem_read_o ),
@@ -848,13 +847,13 @@ module cpu(
     reg [`REG_BUS] regs_diff [ 31:0 ];
     reg cmt_skip;
     // output                          csr_skip
-    reg [`REG_BUS]  cmt_mstatus;
-    reg [`REG_BUS]  cmt_mtvec;
-    reg [`REG_BUS]  cmt_mepc;
-    reg [`REG_BUS]  cmt_mcause;
-    reg [`REG_BUS]  cmt_mip;
-    reg [`REG_BUS]  cmt_mie;
-    reg [`REG_BUS]  cmt_mscratch;
+    // reg [`REG_BUS]  cmt_mstatus;
+    // reg [`REG_BUS]  cmt_mtvec;
+    // reg [`REG_BUS]  cmt_mepc;
+    // reg [`REG_BUS]  cmt_mcause;
+    // reg [`REG_BUS]  cmt_mip;
+    // reg [`REG_BUS]  cmt_mie;
+    // reg [`REG_BUS]  cmt_mscratch;
     reg [31:0]      cmt_intrNO;
     reg [`REG_BUS]  cmt_einst;
     reg [`REG_BUS]  cmt_epc;
@@ -872,7 +871,7 @@ module cpu(
             cmt_wdata <= mem2wb_rd_data_o;
             cmt_pc <= mem2wb_inst_addr_o;
             cmt_inst <= mem2wb_inst_o;
-            cmt_valid <= pipeline_ctrl_inst_valid_o & ~mem2wb_inst_nop_o ;
+            cmt_valid <= pipeline_ctrl_inst_valid_o & ~mem2wb_inst_nop_o & ~mem2wb_intp_en_o;
         
         	    regs_diff <= id_top_regs_o;
 
@@ -893,12 +892,9 @@ module cpu(
             // cmt_mip <= mip;
             // cmt_mie <= mie;
             // cmt_mscratch <= mscratch;
-            intp_r <= mem2wb_intp_en_o;
-            einst_r <= ex2mem_inst_o;
-            epc_r <= ex2mem_inst_addr_o;
             cmt_intrNO <= pipeline_ctrl_inst_valid_o & mem2wb_intp_en_o ? 7: 0 ;
-            cmt_einst <= pipeline_ctrl_inst_valid_o & mem2wb_intp_en_o? ex2mem_inst_o: 0;
-            cmt_epc <= pipeline_ctrl_inst_valid_o & mem2wb_intp_en_o? ex2mem_inst_addr_o: 0;
+            cmt_einst <= pipeline_ctrl_inst_valid_o & mem2wb_intp_en_o? mem2wb_inst_o: 0;
+            cmt_epc <= pipeline_ctrl_inst_valid_o & mem2wb_intp_en_o? mem2wb_inst_addr_o: 0;
         end
     end
     DifftestInstrCommit DifftestInstrCommit(
