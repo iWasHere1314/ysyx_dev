@@ -64,8 +64,7 @@ module pipeline_ctrl(
     wire                        if_jumpbranch_flush;
     reg                         ex_rs1_src_buffered_r;
     reg                         ex_rs2_src_buffered_r;
-    reg                         intp_en_r;
-
+    
     assign mem_access                               =   pipeline_ctrl_ex2mem_mem_read_i | pipeline_ctrl_ex2mem_mem_write_i;
     assign id_rsx_src_id2ex                         =   pipeline_ctrl_id_rs1_src_id2ex_i | pipeline_ctrl_id_rs2_src_id2ex_i;
     assign id_rsx_src_ex2mem                        =   pipeline_ctrl_id_rs1_src_ex2mem_i | pipeline_ctrl_id_rs2_src_ex2mem_i;
@@ -80,7 +79,7 @@ module pipeline_ctrl(
                                                         | pipeline_ctrl_id2ex_inst_branch_i;
 
     assign pipeline_ctrl_inst_valid_o               =   pipeline_ctrl_fetched_ok_i & ( ~mem_access | ( mem_access & pipeline_ctrl_access_ok_i ) );
-    assign pipeline_ctrl_dont_fetch_o               =   pipeline_ctrl_if_flush_o | pipeline_ctrl_id_stall_o;
+    assign pipeline_ctrl_dont_fetch_o               =    ( pipeline_ctrl_if_flush_o & ~pipeline_ctrl_intp_en_o) | pipeline_ctrl_id_stall_o;
     assign pipeline_ctrl_if_flush_o                 =   if_trap_flush | ( if_jumpbranch_flush & ~pipeline_ctrl_id_stall_o );
     assign pipeline_ctrl_id_stall_o                 =   pipeline_ctrl_ex_stall_o | ( id_rsx_src_id2ex & ( pipeline_ctrl_id2ex_inst_arth_lgc_i | pipeline_ctrl_id2ex_inst_auipc_i | id2ex_load_csr ) )
                                                         | ( id_rsx_src_ex2mem & ex2mem_load_csr );
@@ -90,24 +89,12 @@ module pipeline_ctrl(
     assign pipeline_ctrl_ex_rs1_src_buffer_o        =   ex_rs1_src_buffered_r;
     assign pipeline_ctrl_ex_rs2_src_buffer_o        =   ex_rs2_src_buffered_r;           
 
-    assign pipeline_ctrl_intp_en_o                  =   intp_en_r;
+    assign pipeline_ctrl_intp_en_o                  =   pipeline_ctrl_mem_csr_trap_i & ~pipeline_ctrl_ex2mem_inst_trap_i & ~pipeline_ctrl_ex2mem_inst_nop_i;
 
     assign pipeline_ctrl_ex_rs1_buffered_o          =   pipeline_ctrl_ex_rs1_src_mem2wb_i & pipeline_ctrl_ex_stall_o;
     assign pipeline_ctrl_ex_rs2_buffered_o          =   pipeline_ctrl_ex_rs2_src_mem2wb_i & pipeline_ctrl_ex_stall_o;
 
 
-    always @( posedge clk ) begin
-        if( rst ) begin
-            intp_en_r <= 1'b0;
-        end
-        else if( pipeline_ctrl_inst_valid_o ) begin
-            intp_en_r <= pipeline_ctrl_mem_csr_trap_i & ~pipeline_ctrl_ex2mem_inst_trap_i & ~pipeline_ctrl_ex2mem_inst_nop_i;
-        end
-        else begin
-            intp_en_r <= intp_en_r;
-        end
-    end
-    
     always @( posedge clk ) begin
         if( rst ) begin
             ex_rs1_src_buffered_r <= 1'b0;
