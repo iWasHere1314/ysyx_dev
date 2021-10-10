@@ -785,6 +785,7 @@ module cpu(
         .pipeline_ctrl_id_rs2_src_id2ex_i( id_top_id_rs2_src_id2ex_o ),
         .pipeline_ctrl_id_rs2_src_ex2mem_i( id_top_id_rs2_src_ex2mem_o ),
 
+        .pipeline_ctrl_id2ex_inst_nop_i( id2ex_inst_nop_o ),
         .pipeline_ctrl_id2ex_inst_branch_i( id2ex_inst_branch_o ),
         .pipeline_ctrl_id2ex_inst_jump_i( id2ex_inst_jump_o ),
         .pipeline_ctrl_id2ex_inst_trap_i( id2ex_inst_trap_o ),
@@ -799,7 +800,6 @@ module cpu(
 
         .pipeline_ctrl_access_ok_i( mem_top_access_ok_o ),
         .pipeline_ctrl_mem_csr_trap_i( mem_top_csr_trap_o ),
-        .pipeline_ctrl_ex2mem_inst_nop_i( ex2mem_inst_nop_o ),
         .pipeline_ctrl_ex2mem_inst_trap_i( ex2mem_inst_trap_o ),
         .pipeline_ctrl_ex2mem_inst_load_i( ex2mem_inst_load_o ),
         .pipeline_ctrl_ex2mem_mem_read_i( ex2mem_mem_read_o ),
