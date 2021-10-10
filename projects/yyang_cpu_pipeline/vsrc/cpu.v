@@ -795,7 +795,7 @@ module cpu(
         .pipeline_ctrl_id2ex_inst_auipc_i( id2ex_inst_auipc_o ),
         .pipeline_ctrl_ex_rs1_src_ex2mem_i( ex_top_ex_rs1_src_ex2mem_o ),
         .pipeline_ctrl_ex_rs2_src_ex2mem_i( ex_top_ex_rs2_src_ex2mem_o ),
-        .pipeline_ctrl_ex_rs1_src_mem2wb_i( ex_top_ex_rs2_src_mem2wb_o ),
+        .pipeline_ctrl_ex_rs1_src_mem2wb_i( ex_top_ex_rs1_src_mem2wb_o ),
         .pipeline_ctrl_ex_rs2_src_mem2wb_i( ex_top_ex_rs2_src_mem2wb_o ),
 
         .pipeline_ctrl_access_ok_i( mem_top_access_ok_o ),
