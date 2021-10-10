@@ -4,7 +4,7 @@ module cpu(
     input                       reset,
     
     input                       if_ready,
-    input   [`INST_BUS]         if_data_read,
+    input   [`DATA_BUS]         if_data_read,
     input   [1:0]               if_resp,
     output                      if_valid,
     output  [`INST_ADDR_BUS]    if_addr,

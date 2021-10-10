@@ -354,6 +354,7 @@ module axi_rw # (
     assign axi_ar_lock_o    = 1'b0;
     assign axi_ar_cache_o   = `AXI_ARCACHE_NORMAL_NON_CACHEABLE_NON_BUFFERABLE;
     assign axi_ar_qos_o     = 4'h0;
+    assign axi_ar_region_o  = 4'h0;
 
     // Read data channel signals
     assign axi_r_ready_o    = r_state_read;// 确实！
