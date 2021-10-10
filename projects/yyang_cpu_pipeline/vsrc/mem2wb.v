@@ -182,7 +182,7 @@ module mem2wb(
 
     `ifdef DEFINE_DIFFTEST
     always @( posedge clk ) begin
-        if( rst | intp_en ) begin
+        if( rst ) begin
             inst_csr_r <= 1'b0;
         end
         else if( flow_en ) begin
@@ -193,7 +193,7 @@ module mem2wb(
         end
     end
     always @( posedge clk ) begin
-        if( rst | intp_en ) begin
+        if( rst ) begin
             inst_r <= `INST_NOP;
         end
         else if( flow_en ) begin
@@ -204,7 +204,7 @@ module mem2wb(
         end
     end
     always @( posedge clk ) begin
-        if( rst | intp_en ) begin
+        if( rst ) begin
             inst_addr_r <= 64'b0;
         end
         else if( flow_en ) begin
@@ -215,7 +215,7 @@ module mem2wb(
         end
     end
     always @( posedge clk ) begin
-        if( rst | intp_en ) begin
+        if( rst ) begin
             inst_nop_r <= 1'b1;
         end
         else if( flow_en ) begin
@@ -226,7 +226,7 @@ module mem2wb(
         end
     end
     always @( posedge clk ) begin
-        if( rst | intp_en ) begin
+        if( rst ) begin
             csr_skip_r <= 1'b0;
         end
         else if( flow_en ) begin
