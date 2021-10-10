@@ -89,7 +89,7 @@ module mem_interface(
                                          : read_data_r;
 
 
-    assign mem_interface_valid_o        =   ( mem_interface_mem_write_i | mem_interface_mem_read_i ) & ~mem_finished & mem_interface_intp_en_i;
+    assign mem_interface_valid_o        =   ( mem_interface_mem_write_i | mem_interface_mem_read_i ) & ~mem_finished & ~mem_interface_intp_en_i;
     assign mem_interface_data_write_o   =   mem_interface_write_data_i <<( { 3'b0, mem_interface_data_addr_i[2:0] } << 3 );
     assign mem_interface_addr_o         =   mem_interface_data_addr_i;
     assign mem_interface_size_o         =     { 2 { store_sb | load_lbx } } & `SIZE_B 
