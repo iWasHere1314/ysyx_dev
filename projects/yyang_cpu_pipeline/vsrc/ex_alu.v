@@ -36,7 +36,8 @@ module ex_alu(
     wire    [`DATA_EXTEND_BUS]  alu_xor_res;
     wire    [`DATA_EXTEND_BUS]  alu_or_res;
     wire    [`DATA_EXTEND_BUS]  alu_and_res;
-    
+    wire    [`DATA_EXTEND_BUS]  alu_res_data_pre;
+
     /* rename */
     assign alu_op               =   ex_alu_alu_op_i;
     assign inst_slt_nu          =   ex_alu_inst_slt_nu_i;
@@ -64,10 +65,11 @@ module ex_alu(
     assign alu_or_res           =   extended_op1 | extended_op2;
     assign alu_and_res          =   extended_op1 & extended_op2;
 
-    assign alu_res_data         =   `DATA_EXTEND_SIZE'b0
+    assign alu_res_data_pre     =   `DATA_EXTEND_SIZE'b0
                                     | { `DATA_EXTEND_SIZE { alu_add | ( alu_sub & ~inst_sltxx ) } } & alu_arh_res
                                     | { `DATA_EXTEND_SIZE { alu_xor } } & alu_xor_res
                                     | { `DATA_EXTEND_SIZE { alu_or } } & alu_or_res
                                     | { `DATA_EXTEND_SIZE { alu_and } } & alu_and_res
-                                    | { `DATA_EXTEND_SIZE { inst_sltxx  } } & { 63'b0, alu_arh_res[64]==1'b1 }; 
+                                    | { `DATA_EXTEND_SIZE { inst_sltxx  } } & { 64'b0, alu_arh_res[64]==1'b1 }; 
+    assign alu_res_data         =   alu_res_data_pre[63:0];
 endmodule

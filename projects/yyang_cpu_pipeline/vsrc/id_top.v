@@ -226,8 +226,6 @@ module id_top (
     `endif
 
     id_control my_id_control(
-        .clk( clk ),
-        .rst( rst ),
 
 
         .id_control_inst_i( id_top_inst_i ),

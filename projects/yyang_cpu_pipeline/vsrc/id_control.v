@@ -1,8 +1,5 @@
 `include "defines.v"
 module id_control (
-    input                       clk,
-    input                       rst,
-
 
     input   [`INST_BUS]         id_control_inst_i,
 

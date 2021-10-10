@@ -324,6 +324,17 @@ module mem2wb(
             cause_r <= cause_r;
         end
     end
+    always @( posedge clk ) begin
+        if( rst ) begin
+            clint_dstb_skip_r <= 1'b0;   
+        end
+        else if( flow_en ) begin
+            clint_dstb_skip_r <= mem2wb_clint_dstb_skip_i;
+        end
+        else begin
+            clint_dstb_skip_r <= clint_dstb_skip_r;
+        end
+    end
     `endif
 
     `ifdef DEFINE_PUTCH
@@ -361,18 +372,6 @@ module mem2wb(
         end
         else begin
             csr_nxt_pc_r <= csr_nxt_pc_r;
-        end
-    end
-
-    always @( posedge clk ) begin
-        if( rst | intp_en ) begin
-            clint_dstb_skip_r <= 1'b0;   
-        end
-        else if( flow_en ) begin
-            clint_dstb_skip_r <= mem2wb_clint_dstb_skip_i;
-        end
-        else begin
-            clint_dstb_skip_r <= clint_dstb_skip_r;
         end
     end
 
