@@ -60,6 +60,7 @@ module mem_csr(
     wire                            ret_en; 
     wire    [`DATA_BUS]             mcycle_nxt;
     wire    [`DATA_BUS]             minstret_nxt;
+    wire                            inst_trap_nmret;
 
     wire    [`DATA_BUS]             csr_nxt;
     wire    [`DATA_BUS]             csr_org;
@@ -100,10 +101,12 @@ module mem_csr(
     assign index_mscratch           =   mem_csr_csr_index_i == `CSR_MSCRATCH_INDEX;    
     assign index_minstret           =   mem_csr_csr_index_i == `CSR_MINSTRET_INDEX;
 
+    assign inst_trap_nmret          =   (mem_csr_inst_trap_i & ~mem_csr_inst_mret_i) | mem_csr_intp_en_i;
+
     assign inst_csrrwx              =   mem_csr_csr_ctrl_i[1:0] == 2'b01;
     assign inst_csrrsx              =   mem_csr_csr_ctrl_i[1:0] == 2'b10;
     assign inst_csrrcx              =   mem_csr_csr_ctrl_i[1:0] == 2'b11;
-    assign trap_en                  =   mem_csr_inst_valid_i & ( mem_csr_inst_trap_i | mem_csr_intp_en_i );
+    assign trap_en                  =   mem_csr_inst_valid_i & inst_trap_nmret;
     assign ret_en                   =   mem_csr_inst_valid_i & mem_csr_inst_mret_i;
     assign minstret_nxt             =   minstret_r + `DATA_BUS_SIZE'h1;
     assign mcycle_nxt               =   mcycle_r + `DATA_BUS_SIZE'h1;
@@ -292,7 +295,7 @@ module mem_csr(
 
     //output
     assign mem_csr_csr_trap_o       =   mstatus_r[3] & ( mie_r[7] & mip_r[7] );
-    assign mem_csr_csr_nxt_pc_o     =   mem_csr_inst_trap_i ? mtvec_r: mepc_r;
+    assign mem_csr_csr_nxt_pc_o     =   inst_trap_nmret ? mtvec_r: mepc_r;
     assign mem_csr_csr_read_o       =    { `DATA_BUS_SIZE { index_mcycle } } & ( mcycle_r )
                                        | { `DATA_BUS_SIZE{ index_misa } } & ( misa_r )
                                        | { `DATA_BUS_SIZE{ index_mvendorid } } & ( mvendorid_r )
@@ -317,12 +320,12 @@ module mem_csr(
                                             mstatus_r;
     assign mem_csr_mtvec_o          =   index_mtvec? csr_nxt & ~64'h3: mtvec_r;
     assign mem_csr_mepc_o           =   index_mepc? csr_nxt:
-                                            mem_csr_inst_trap_i? mem_csr_inst_addr_i:
+                                            inst_trap_nmret? mem_csr_inst_addr_i:
                                             mepc_r ;
     assign mem_csr_mcause_o         =   index_mcause? csr_nxt: 
                                             mem_csr_inst_ecall_i? `DATA_BUS_SIZE'd11: 
                                             mem_csr_inst_ebreak_i? `DATA_BUS_SIZE'd3:
-                                            mem_csr_inst_trap_i? ( `DATA_BUS_SIZE'h1<<(`DATA_BUS_SIZE-1) ) + `DATA_BUS_SIZE'h7: 
+                                            inst_trap_nmret? ( `DATA_BUS_SIZE'h1<<(`DATA_BUS_SIZE-1) ) + `DATA_BUS_SIZE'h7: 
                                             mcause_r;
     assign mem_csr_mip_o            =   index_mip? csr_nxt & `DATA_BUS_SIZE'h80:
                                             mem_csr_clint_mtip_i? { mip_r[63:8], 1'b1, mip_r[6:0] }:
