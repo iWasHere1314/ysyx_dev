@@ -112,10 +112,13 @@ module pipeline_ctrl(
             ex_rs1_src_buffered_r <= 1'b0;
         end
         else if( pipeline_ctrl_inst_valid_o ) begin
-            if( pipeline_ctrl_ex_rs1_buffered_o ) begin
+            if( pipeline_ctrl_intp_en_o ) begin
+                ex_rs1_src_buffered_r <= 1'b0;
+            end
+            else if( pipeline_ctrl_ex_rs1_buffered_o ) begin
                 ex_rs1_src_buffered_r <= 1'b1;
             end
-            else if( ex_rs1_src_buffered_r | pipeline_ctrl_intp_en_o  ) begin
+            else if( ex_rs1_src_buffered_r ) begin
                 ex_rs1_src_buffered_r <= 1'b0;
             end
             else begin
@@ -132,10 +135,13 @@ module pipeline_ctrl(
             ex_rs2_src_buffered_r <= 1'b0;
         end
         else if( pipeline_ctrl_inst_valid_o ) begin
-            if( pipeline_ctrl_ex_rs2_buffered_o ) begin
+            if( pipeline_ctrl_intp_en_o ) begin
+                ex_rs2_src_buffered_r <= 1'b0;
+            end
+            else if( pipeline_ctrl_ex_rs2_buffered_o ) begin
                 ex_rs2_src_buffered_r <= 1'b1;
             end
-            else if( ex_rs2_src_buffered_r | pipeline_ctrl_intp_en_o ) begin
+            else if( ex_rs2_src_buffered_r ) begin
                 ex_rs2_src_buffered_r <= 1'b0;
             end
             else begin
