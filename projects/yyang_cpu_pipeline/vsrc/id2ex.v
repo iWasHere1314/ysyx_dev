@@ -19,8 +19,7 @@ module id2ex(
     input                       id2ex_rs2_en_i,
     input                       id2ex_rd_en_i,
     input                       id2ex_inst_jump_i,
-    input                       id2ex_inst_branch_i,
-    input                       id2ex_inst_lui_i,    
+    input                       id2ex_inst_branch_i,  
 
     input                       id2ex_inst_word_i,
     input                       id2ex_inst_slt_nu_i,
@@ -69,7 +68,6 @@ module id2ex(
     output                      id2ex_rd_en_o,
     output                      id2ex_inst_jump_o,
     output                      id2ex_inst_branch_o,
-    output                      id2ex_inst_lui_o,
 
     output                      id2ex_inst_word_o,
     output                      id2ex_inst_slt_nu_o,
@@ -134,7 +132,6 @@ module id2ex(
     reg                         rd_en_r;
     reg                         inst_jump_r;
     reg                         inst_branch_r;
-    reg                         inst_lui_r;
 
     reg                         inst_word_r;
     reg                         inst_slt_nu_r;
@@ -193,7 +190,6 @@ module id2ex(
     assign id2ex_rd_en_o            =   rd_en_r;
     assign id2ex_inst_jump_o        =   inst_jump_r;
     assign id2ex_inst_branch_o      =   inst_branch_r;
-    assign id2ex_inst_lui_o         =   inst_lui_r;
 
     assign id2ex_inst_word_o        =   inst_word_r;
     assign id2ex_inst_slt_nu_o      =   inst_slt_nu_r;
@@ -417,24 +413,6 @@ module id2ex(
         end
         else begin
             inst_branch_r <= inst_branch_r;
-        end
-    end
-
-    always @( posedge clk ) begin
-        if( rst ) begin
-            inst_lui_r <= 1'b0;
-        end
-        else if( flush_en ) begin
-            inst_lui_r <= 1'b0;
-        end
-        else if( stall_en ) begin
-            inst_lui_r <= inst_lui_r;
-        end
-        else if( flow_en ) begin
-            inst_lui_r <= id2ex_inst_lui_i;
-        end
-        else begin
-            inst_lui_r <= inst_lui_r;
         end
     end
 

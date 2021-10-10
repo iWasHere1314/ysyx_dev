@@ -43,7 +43,6 @@ module cpu(
     wire                        id_top_rs1_en_o;
     wire                        id_top_rs2_en_o;
     wire                        id_top_rd_en_o;
-    wire                        id_top_inst_lui_o;
     wire                        id_top_inst_jump_o;
     wire                        id_top_inst_branch_o;
     wire                        id_top_inst_word_o;
@@ -97,7 +96,6 @@ module cpu(
     wire                        id2ex_rd_en_o;
     wire                        id2ex_inst_jump_o;
     wire                        id2ex_inst_branch_o;
-    wire                        id2ex_inst_lui_o;
     wire                        id2ex_inst_word_o;
     wire                        id2ex_inst_slt_nu_o;
     wire                        id2ex_inst_slt_u_o;
@@ -316,7 +314,6 @@ module cpu(
         .id_top_id_rs2_src_id2ex_o( id_top_id_rs2_src_id2ex_o ),
         .id_top_id_rs2_src_ex2mem_o( id_top_id_rs2_src_ex2mem_o ),
 
-        .id_top_inst_lui_o( id_top_inst_lui_o ),
         .id_top_rs1_en_o( id_top_rs1_en_o ),
         .id_top_rs2_en_o( id_top_rs2_en_o ),
         .id_top_rd_en_o( id_top_rd_en_o ),
@@ -395,7 +392,6 @@ module cpu(
         .id2ex_rd_en_i( id_top_rd_en_o ),
         .id2ex_inst_jump_i( id_top_inst_jump_o ),
         .id2ex_inst_branch_i( id_top_inst_branch_o ),
-        .id2ex_inst_lui_i( id_top_inst_lui_o ), 
 
         .id2ex_inst_word_i( id_top_inst_word_o ),
         .id2ex_inst_slt_nu_i( id_top_inst_slt_nu_o ),
@@ -443,7 +439,6 @@ module cpu(
         .id2ex_rd_en_o( id2ex_rd_en_o ),
         .id2ex_inst_jump_o( id2ex_inst_jump_o ),
         .id2ex_inst_branch_o( id2ex_inst_branch_o ),
-        .id2ex_inst_lui_o( id2ex_inst_lui_o ),
 
         .id2ex_inst_word_o( id2ex_inst_word_o ),
         .id2ex_inst_slt_nu_o( id2ex_inst_slt_nu_o ),

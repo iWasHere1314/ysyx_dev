@@ -30,7 +30,6 @@ module id_top (
     output                      id_top_rd_en_o,
     output                      id_top_inst_jump_o,
     output                      id_top_inst_branch_o,
-    output                      id_top_inst_lui_o,
 
     output                      id_top_inst_word_o,
     output                      id_top_inst_slt_nu_o,
@@ -177,7 +176,6 @@ module id_top (
     assign id_top_rd_en_o               =   id_control_rd_en_o;
     assign id_top_inst_jump_o           =   id_control_inst_jump_o;
     assign id_top_inst_branch_o         =   id_control_inst_branch_o;
-    assign id_top_inst_lui_o            =   id_control_inst_lui_o;
 
     assign id_top_inst_word_o           =   id_control_inst_word_o;
     assign id_top_inst_slt_nu_o         =   id_control_inst_slt_nu_o;
