@@ -101,7 +101,7 @@ module pipeline_ctrl(
         end
         else if( pipeline_ctrl_inst_valid_o ) begin
             intp_en_r <= pipeline_ctrl_mem_csr_trap_i & ~pipeline_ctrl_ex2mem_inst_trap_i 
-                        & ~pipeline_ctrl_id2ex_inst_nop_i;
+                        & ~pipeline_ctrl_id2ex_inst_nop_i & ~intp_en_r;
         end
         else begin
             intp_en_r <= intp_en_r;
