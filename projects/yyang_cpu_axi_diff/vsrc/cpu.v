@@ -457,13 +457,13 @@ module cpu(
                         `endif
                         | clint_skip
                         ;
-            cmt_mstatus <= mstatus;
-            cmt_mtvec <= mtvec;
-            cmt_mepc <= mepc;
-            cmt_mcause <= mcause;
-            cmt_mip <= mip;
-            cmt_mie <= mie;
-            cmt_mscratch <= mscratch;
+            // cmt_mstatus <= mstatus;
+            // cmt_mtvec <= mtvec;
+            // cmt_mepc <= mepc;
+            // cmt_mcause <= mcause;
+            // cmt_mip <= mip;
+            // cmt_mie <= mie;
+            // cmt_mscratch <= mscratch;
             cmt_intrNO <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? 7: 0 ;
             cmt_einst <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? inst: 0;
             cmt_epc <= inst_valid & inst_trap & ~inst_ebreak & ~inst_ecall? inst_addr: 0;
