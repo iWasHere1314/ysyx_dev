@@ -6,9 +6,6 @@ module id_top (
     /* control signals */
     input                       id_top_inst_valid_i,
     
-
-    input                       id_top_id2ex_inst_lui_i,
-
     input                       id_top_id2ex_rd_en_i,
     input                       id_top_ex2mem_rd_en_i,
     input                       id_top_mem2wb_rd_en_i,

@@ -297,9 +297,6 @@ module cpu(
         /* control signals */
         .id_top_inst_valid_i( pipeline_ctrl_inst_valid_o ),
 
-
-        .id_top_id2ex_inst_lui_i( id2ex_inst_lui_o ),
-
         .id_top_id2ex_rd_en_i( id2ex_rd_en_o ),
         .id_top_ex2mem_rd_en_i( ex2mem_rd_en_o ),
         .id_top_mem2wb_rd_en_i( mem2wb_rd_en_o ),

@@ -1,11 +1,7 @@
 `include "defines.v"
 module if_mem_arbiter  # (
     parameter RW_DATA_WIDTH     = 64,
-    parameter RW_ADDR_WIDTH     = 64,
-    parameter AXI_DATA_WIDTH    = 64,
-    parameter AXI_ADDR_WIDTH    = 64,
-    parameter AXI_ID_WIDTH      = 4,
-    parameter AXI_USER_WIDTH    = 1
+    parameter AXI_DATA_WIDTH    = 64
 )
 (
     /* if */
