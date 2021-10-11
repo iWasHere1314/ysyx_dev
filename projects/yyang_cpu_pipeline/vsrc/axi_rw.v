@@ -39,14 +39,14 @@
 `define AXI_AWCACHE_WRITE_BACK_WRITE_ALLOCATE               4'b1111
 `define AXI_AWCACHE_WRITE_BACK_READ_AND_WRITE_ALLOCATE      4'b1111
 
-`define AXI_SIZE_BYTES_1                                    3'b000
-`define AXI_SIZE_BYTES_2                                    3'b001
-`define AXI_SIZE_BYTES_4                                    3'b010
-`define AXI_SIZE_BYTES_8                                    3'b011
-`define AXI_SIZE_BYTES_16                                   3'b100
-`define AXI_SIZE_BYTES_32                                   3'b101
-`define AXI_SIZE_BYTES_64                                   3'b110
-`define AXI_SIZE_BYTES_128                                  3'b111
+`define MEM_AXI_SIZE_BYTES_1                                    3'b000
+`define MEM_AXI_SIZE_BYTES_2                                    3'b001
+`define MEM_AXI_SIZE_BYTES_4                                    3'b010
+`define MEM_AXI_SIZE_BYTES_8                                    3'b011
+`define MEM_AXI_SIZE_BYTES_16                                   3'b100
+`define MEM_AXI_SIZE_BYTES_32                                   3'b101
+`define MEM_AXI_SIZE_BYTES_64                                   3'b110
+`define MEM_AXI_SIZE_BYTES_128                                  3'b111
 
 
 module axi_rw # (
@@ -125,6 +125,7 @@ module axi_rw # (
     input  [AXI_USER_WIDTH-1:0]         axi_r_user_i
 );
 
+    wire to_mem     = rw_addr_i >= 64'h8000_0000;
 
     wire w_trans    = rw_req_i == `REQ_WRITE;
     wire r_trans    = rw_req_i == `REQ_READ;
@@ -146,7 +147,7 @@ module axi_rw # (
     // ------------------State Machine------------------
     parameter [1:0] W_STATE_IDLE = 2'b00, W_STATE_ADDR = 2'b01, W_STATE_WRITE = 2'b10, W_STATE_RESP = 2'b11;
     parameter [1:0] R_STATE_IDLE = 2'b00, R_STATE_ADDR = 2'b01, R_STATE_READ  = 2'b10;
-
+    reg rw_ready;
     reg [1:0] w_state, r_state;
     wire w_state_idle = w_state == W_STATE_IDLE, w_state_addr = w_state == W_STATE_ADDR, w_state_write = w_state == W_STATE_WRITE, w_state_resp = w_state == W_STATE_RESP;
     wire r_state_idle = r_state == R_STATE_IDLE, r_state_addr = r_state == R_STATE_ADDR, r_state_read  = r_state == R_STATE_READ;
@@ -188,6 +189,10 @@ module axi_rw # (
 
     // ------------------Number of transmission------------------
     reg [7:0] len; // 正在写的是第几beat
+    wire [7:0] mem_axi_len;
+    wire [7:0] per_axi_len;
+    wire [7:0] axi_len;
+    assign axi_len      = to_mem? mem_axi_len: per_axi_len;
     wire len_reset      = reset | (w_trans & w_state_idle) | (r_trans & r_state_idle);
     wire len_incr_en    = (len != axi_len) & (w_hs | r_hs);
     always @(posedge clock) begin
@@ -201,51 +206,93 @@ module axi_rw # (
     // 此处实现仅支持len为1的读，之所以要设置len时因为单非对齐时，会要求读两次
 
     // ------------------Process Data------------------
-    parameter ALIGNED_WIDTH = $clog2(AXI_DATA_WIDTH / 8);// 首先计算总线一次传输的字节数，字节数log2就知道对齐的是对应地址中的哪几位
-    parameter OFFSET_WIDTH  = $clog2(AXI_DATA_WIDTH);// 偏移量，也就是非对齐访问的数据在对齐访问返回的信息中所在位置的偏移
-    parameter AXI_SIZE      = $clog2(AXI_DATA_WIDTH / 8);// 用于size信号
-    parameter MASK_WIDTH    = AXI_DATA_WIDTH * 2; // 为啥乘2？因为最多跨越两个lane（非对齐时），乘2方便形成mask
-    parameter TRANS_LEN     = RW_DATA_WIDTH / AXI_DATA_WIDTH;
-    parameter BLOCK_TRANS   = TRANS_LEN > 1 ? 1'b1 : 1'b0;// 这是大于，不是右移，呆比！！
+    parameter MEM_ALIGNED_WIDTH = $clog2(AXI_DATA_WIDTH / 8);// 首先计算总线一次传输的字节数，字节数log2就知道对齐的是对应地址中的哪几位
+    parameter MEM_OFFSET_WIDTH  = $clog2(AXI_DATA_WIDTH);// 偏移量，也就是非对齐访问的数据在对齐访问返回的信息中所在位置的偏移
+    parameter MEM_AXI_SIZE      = $clog2(AXI_DATA_WIDTH / 8);// 用于size信号
+    parameter MEM_MASK_WIDTH    = AXI_DATA_WIDTH * 2; // 为啥乘2？因为最多跨越两个lane（非对齐时），乘2方便形成mem_mask
+    parameter MEM_TRANS_LEN     = RW_DATA_WIDTH / AXI_DATA_WIDTH;
+    parameter MEM_BLOCK_TRANS   = MEM_TRANS_LEN > 1 ? 1'b1 : 1'b0;// 这是大于，不是右移，呆比！！
+    
+    parameter PER_AXI_DATA_WIDTH = 32;
+    parameter PER_ALIGNED_WIDTH = $clog2(PER_AXI_DATA_WIDTH / 8);
+    parameter PER_OFFSET_WIDTH  = $clog2(PER_AXI_DATA_WIDTH );// 偏移量，也就是非对齐访问的数据在对齐访问返回的信息中所在位置的偏移
+    parameter PER_AXI_SIZE      = $clog2(PER_AXI_DATA_WIDTH / 8);// 用于size信号
+    parameter PER_MASK_WIDTH    = PER_AXI_DATA_WIDTH * 2; // 为啥乘2？因为最多跨越两个lane（非对齐时），乘2方便形成mem_mask
+    parameter PER_TRANS_LEN     = RW_DATA_WIDTH / ( PER_AXI_DATA_WIDTH ) ;
+    parameter PER_BLOCK_TRANS   = PER_TRANS_LEN > 1 ? 1'b1 : 1'b0;// 这是大于，不是右移，呆比！！
         // 同一事物不允许插入其他事物
 
-    wire aligned            = BLOCK_TRANS | rw_addr_i[ALIGNED_WIDTH-1:0] == 0;// 就默认block（需要传输的次数大于1）就对齐把，具体原因未知，时间有限来不及看了
+
+    wire mem_aligned        = MEM_BLOCK_TRANS | rw_addr_i[MEM_ALIGNED_WIDTH-1:0] == 0;// 就默认block（需要传输的次数大于1）就对齐把，具体原因未知，时间有限来不及看了
+    wire per_aligned        = PER_BLOCK_TRANS | rw_addr_i[PER_ALIGNED_WIDTH-1:0] == 0;
+    wire aligned            = to_mem? mem_aligned: per_aligned;
+
     wire size_b             = rw_size_i == `SIZE_B;
     wire size_h             = rw_size_i == `SIZE_H;
     wire size_w             = rw_size_i == `SIZE_W;
     wire size_d             = rw_size_i == `SIZE_D;
-    wire [3:0] addr_op1     = {{4-ALIGNED_WIDTH{1'b0}}, rw_addr_i[ALIGNED_WIDTH-1:0]};
+    wire [3:0] mem_addr_op1     = {{4-MEM_ALIGNED_WIDTH{1'b0}}, rw_addr_i[MEM_ALIGNED_WIDTH-1:0]};
                                 // 高位补零，低位为地址对齐位
-    wire [3:0] addr_op2     = ({4{size_b}} & {4'b0})
+    wire [3:0] mem_addr_op2     = ({4{size_b}} & {4'b0})
                                 | ({4{size_h}} & {4'b1})
                                 | ({4{size_w}} & {4'b11})
                                 | ({4{size_d}} & {4'b111})
                                 ;
-    wire [3:0] addr_end     = addr_op1 + addr_op2;// 结束的那个字节的地址
-    wire overstep           = addr_end[3:ALIGNED_WIDTH] != 0;// 最高位未计算前为0，计算之后，出现了进位，说明跨越了一个lane
+    wire [3:0] per_addr_op1     = {{4-PER_ALIGNED_WIDTH{1'b0}}, rw_addr_i[PER_ALIGNED_WIDTH-1:0]};
+                                // 高位补零，低位为地址对齐位
+    wire [3:0] per_addr_op2     = ({4{size_b}} & {4'b0})
+                                | ({4{size_h}} & {4'b1})
+                                | ({4{size_w}} & {4'b11})
+                                ;
+    wire [3:0] mem_addr_end     = mem_addr_op1 + mem_addr_op2;// 结束的那个字节的地址
+    wire [3:0] per_addr_end     = per_addr_op1 + per_addr_op2;
 
-    wire [7:0] axi_len      = aligned ? TRANS_LEN - 1 : {{7{1'b0}}, overstep};// 根据上文，非对齐一定有TRANS_LEN==1,非对齐且越界，则一定要两次
-    wire [2:0] axi_size     = (rw_addr_i >= 64'h8000_0000 )? AXI_SIZE[2:0] :{ 1'b0, rw_size_i[1:0] };
-    
-    wire [AXI_ADDR_WIDTH-1:0] axi_addr          = {rw_addr_i[AXI_ADDR_WIDTH-1:ALIGNED_WIDTH], {ALIGNED_WIDTH{1'b0}}};// 转化为对齐访问
-    wire [OFFSET_WIDTH-1:0] aligned_offset_l    = {{OFFSET_WIDTH-ALIGNED_WIDTH{1'b0}}, {rw_addr_i[ALIGNED_WIDTH-1:0]}} << 3;// 非对齐低地址lane偏移
-    wire [OFFSET_WIDTH:0]   aligned_offset_h_pre= AXI_DATA_WIDTH - aligned_offset_l;// 非对齐高地址lane偏移
-    wire [OFFSET_WIDTH-1:0] aligned_offset_h    = aligned_offset_h_pre[OFFSET_WIDTH-1:0];
-    wire [MASK_WIDTH-1:0] mask                  = (({MASK_WIDTH{size_b}} & {{MASK_WIDTH-8{1'b0}}, 8'hff})
-                                                    | ({MASK_WIDTH{size_h}} & {{MASK_WIDTH-16{1'b0}}, 16'hffff})
-                                                    | ({MASK_WIDTH{size_w}} & {{MASK_WIDTH-32{1'b0}}, 32'hffff_ffff})
-                                                    | ({MASK_WIDTH{size_d}} & {{MASK_WIDTH-64{1'b0}}, 64'hffff_ffff_ffff_ffff})
-                                                    ) << aligned_offset_l;// 对应的各种mask，用128位方便移位吧。。。
-    wire [AXI_DATA_WIDTH-1:0] mask_l            = mask[AXI_DATA_WIDTH-1:0];
-    wire [AXI_DATA_WIDTH-1:0] mask_h            = mask[MASK_WIDTH-1:AXI_DATA_WIDTH];// l，h对应关系同理
+    wire mem_overstep           = mem_addr_end[3:MEM_ALIGNED_WIDTH] != 0;// 最高位未计算前为0，计算之后，出现了进位，说明跨越了一个lane
+    wire per_overstep           = per_addr_end[3:MEM_ALIGNED_WIDTH] != 0;
+    wire overstep               = to_mem? mem_overstep: per_overstep;
 
+    assign mem_axi_len      = mem_aligned ? MEM_TRANS_LEN - 1 : {{7{1'b0}}, mem_overstep};// 根据上文，非对齐一定有MEM_TRANS_LEN==1,非对齐且越界，则一定要两次
+    assign per_axi_len      = per_aligned ? PER_TRANS_LEN - 1 : {{7{1'b0}}, per_overstep};
+    // assign axi_len          = to_mem? mem_axi_len: per_axi_len;
+
+    wire [2:0] mem_axi_size     = MEM_AXI_SIZE[2:0];
+    wire [2:0] per_axi_size     = PER_AXI_SIZE[2:0];
+    wire [2:0] axi_size         = to_mem? mem_axi_size: per_axi_size;
+
+    wire [AXI_ADDR_WIDTH-1:0] mem_axi_addr          = {rw_addr_i[AXI_ADDR_WIDTH-1:MEM_ALIGNED_WIDTH], {MEM_ALIGNED_WIDTH{1'b0}}};// 转化为对齐访问
+    wire [MEM_OFFSET_WIDTH-1:0] mem_aligned_offset_l    = {{MEM_OFFSET_WIDTH-MEM_ALIGNED_WIDTH{1'b0}}, {rw_addr_i[MEM_ALIGNED_WIDTH-1:0]}} << 3;// 非对齐低地址lane偏移
+    wire [MEM_OFFSET_WIDTH:0]   mem_aligned_offset_h_pre= AXI_DATA_WIDTH - mem_aligned_offset_l;// 非对齐高地址lane偏移
+    wire [MEM_OFFSET_WIDTH-1:0] mem_aligned_offset_h    = mem_aligned_offset_h_pre[MEM_OFFSET_WIDTH-1:0];
+    wire [MEM_MASK_WIDTH-1:0] mem_mask                  = (({MEM_MASK_WIDTH{size_b}} & {{MEM_MASK_WIDTH-8{1'b0}}, 8'hff})
+                                                    | ({MEM_MASK_WIDTH{size_h}} & {{MEM_MASK_WIDTH-16{1'b0}}, 16'hffff})
+                                                    | ({MEM_MASK_WIDTH{size_w}} & {{MEM_MASK_WIDTH-32{1'b0}}, 32'hffff_ffff})
+                                                    | ({MEM_MASK_WIDTH{size_d}} & {{MEM_MASK_WIDTH-64{1'b0}}, 64'hffff_ffff_ffff_ffff})
+                                                    ) << mem_aligned_offset_l;// 对应的各种mem_mask，用128位方便移位吧。。。
+    wire [AXI_DATA_WIDTH-1:0] mem_mask_l            = mem_mask[AXI_DATA_WIDTH-1:0];
+    wire [AXI_DATA_WIDTH-1:0] mem_mask_h            = mem_mask[MEM_MASK_WIDTH-1:AXI_DATA_WIDTH];// l，h对应关系同理
+
+    wire [AXI_ADDR_WIDTH-1:0] per_axi_addr          = {rw_addr_i[AXI_ADDR_WIDTH-1:PER_ALIGNED_WIDTH], {PER_ALIGNED_WIDTH{1'b0}}};// 转化为对齐访问
+    wire [PER_OFFSET_WIDTH-1:0] per_aligned_offset_l    = {{PER_OFFSET_WIDTH-PER_ALIGNED_WIDTH{1'b0}}, {rw_addr_i[PER_ALIGNED_WIDTH-1:0]}} << 3;// 非对齐低地址lane偏移
+    wire [PER_OFFSET_WIDTH:0]   per_aligned_offset_h_pre= PER_AXI_DATA_WIDTH - per_aligned_offset_l;
+    wire [PER_OFFSET_WIDTH-1:0] per_aligned_offset_h    = per_aligned_offset_h_pre[PER_OFFSET_WIDTH-1:0];
+    wire [PER_MASK_WIDTH-1:0] per_mask                  = (({PER_MASK_WIDTH{size_b}} & {{PER_MASK_WIDTH-8{1'b0}}, 8'hff})
+                                                    | ({PER_MASK_WIDTH{size_h}} & {{PER_MASK_WIDTH-16{1'b0}}, 16'hffff})
+                                                    | ({PER_MASK_WIDTH{size_w}} & {{PER_MASK_WIDTH-32{1'b0}}, 32'hffff_ffff})
+                                                    ) << per_aligned_offset_l;
+    wire [PER_AXI_DATA_WIDTH-1:0] per_mask_l            = per_mask[PER_AXI_DATA_WIDTH-1:0];
+    wire [PER_AXI_DATA_WIDTH-1:0] per_mask_h            = per_mask[PER_MASK_WIDTH-1:PER_AXI_DATA_WIDTH];// l，h对应关系同理
+
+    wire [AXI_DATA_WIDTH-1:0] mask_l            = to_mem? mem_mask_l: {32'b0, per_mask_l};
+    wire [AXI_DATA_WIDTH-1:0] mask_h            = to_mem? mem_mask_h: {32'b0, per_mask_h};
+    wire [MEM_OFFSET_WIDTH-1:0] aligned_offset_l= to_mem? mem_aligned_offset_l: { 1'b0, per_aligned_offset_l};
+    wire [MEM_OFFSET_WIDTH-1:0] aligned_offset_h= to_mem? mem_aligned_offset_h: { 1'b0, per_aligned_offset_h};
+    wire [AXI_ADDR_WIDTH-1:0] axi_addr          = to_mem? mem_axi_addr: per_axi_addr;
     wire [AXI_USER_WIDTH-1:0] axi_user          = {AXI_USER_WIDTH{1'b0}};// 用户自定义，不使用
 
 
     /* 这一部分是针对cpu端的 */
-    reg rw_ready;
     wire rw_ready_nxt = trans_done;// 对的，因为不会同时读写
-    wire rw_ready_en      = trans_done | rw_ready;
+    wire rw_ready_en  = trans_done | rw_ready;
         // 最初ready为0，单tans完成后，trans_done有效，ready有效
         // 之后，master在收到信号之后会关闭valid，握手结束，tans_done无效，而ready还有效，则ready会清零
     always @(posedge clock) begin
@@ -294,8 +341,8 @@ module axi_rw # (
     assign axi_aw_region_o  = 4'h0;
 
     //w
-    reg [AXI_ADDR_WIDTH-1:0] axi_w_data_r;
-    reg [AXI_ADDR_WIDTH/8-1:0] axi_w_strb_r;
+    reg [AXI_DATA_WIDTH-1:0] axi_w_data_r;
+    reg [AXI_DATA_WIDTH/8-1:0] axi_w_strb_r;
     
     assign axi_w_valid_o    = w_state_write;
     assign axi_w_data_o     = axi_w_data_r;
@@ -304,7 +351,7 @@ module axi_rw # (
     assign axi_w_user_o     = axi_user;
 
     generate
-        for( genvar i=0; i < TRANS_LEN; i = i + 1 ) begin
+        for( genvar i=0; i < MEM_TRANS_LEN; i = i + 1 ) begin
             always @( posedge clock ) begin
                 if( reset ) begin
                     axi_w_data_r <= 0;
@@ -314,7 +361,7 @@ module axi_rw # (
                     // 写需要一周期，也合理
                     if( len[0] ) begin
                         axi_w_data_r <= data_write_i & mask_l;
-                        axi_w_strb_r <= { mask_l[56], mask_l[48], mask_l[40], mask_l[32], mask_l[24], mask_l[16], mask_l[8], mask_l[0] } ;
+                        axi_w_strb_r <= { mask_l[56],mask_l[48], mask_l[40], mask_l[32], mask_l[24], mask_l[16], mask_l[8], mask_l[0] } ;
                     end
                     else begin
                         axi_w_data_r <= ( data_write_i >> aligned_offset_l )& mask_h;
@@ -322,7 +369,8 @@ module axi_rw # (
                     end
                 end
                 else if( len == i )begin
-                    axi_w_data_r <= data_write_i[i*AXI_DATA_WIDTH +: AXI_DATA_WIDTH ] & mask_l;
+                    axi_w_data_r <= ( to_mem? data_write_i[i*AXI_DATA_WIDTH +: AXI_DATA_WIDTH ]: data_write_i[i*PER_AXI_DATA_WIDTH +: PER_AXI_DATA_WIDTH]) 
+                                    & mask_l;
                     axi_w_strb_r <= { mask_l[56], mask_l[48], mask_l[40], mask_l[32], mask_l[24], mask_l[16], mask_l[8], mask_l[0] } ;
                 end
             end
@@ -361,16 +409,21 @@ module axi_rw # (
     wire [AXI_DATA_WIDTH-1:0] axi_r_data_h  = (axi_r_data_i & mask_h) << aligned_offset_h;// 分别移动， 使得两者可以相或就可以直接得到最终数据  
 
     generate
-        for (genvar i = 0; i < TRANS_LEN; i = i + 1) begin // verilog真不支持+=，我记得，这是sv啊
-            // TRANS_LEN的含义是读完一次RW所需的位数需要的总线事务数
+        for (genvar i = 0; i < MEM_TRANS_LEN; i = i + 1) begin // verilog真不支持+=，我记得，这是sv啊
+            // MEM_TRANS_LEN的含义是读完一次RW所需的位数需要的总线事务数
             // 
             always @(posedge clock) begin
                 if (reset) begin
-                    data_read_o[i*AXI_DATA_WIDTH+:AXI_DATA_WIDTH] <= 0;
+                    if( to_mem ) begin
+                        data_read_o[i*AXI_DATA_WIDTH+:AXI_DATA_WIDTH] <= 0;
+                    end
+                    else begin
+                        data_read_o[i*PER_AXI_DATA_WIDTH+:PER_AXI_DATA_WIDTH] <= 0;
+                    end
                 end
-                    //非对齐且跨越，一定读两次，不用管TRANS_LEN
+                    //非对齐且跨越，一定读两次，不用管MEM_TRANS_LEN
                 else if ( r_hs ) begin // 这不就是hs吗？这样浪费一个门啊
-                    if (~aligned & overstep) begin
+                    if (~mem_aligned & mem_overstep) begin
                         if (len[0]) begin// 奇数位把高位或进来
                             data_read_o[AXI_DATA_WIDTH-1:0] <= data_read_o[AXI_DATA_WIDTH-1:0] | axi_r_data_h;
                         end
@@ -381,7 +434,13 @@ module axi_rw # (
                     // 非对齐且不跨越，只读一次，按对应位处理即可
                     // 普通读多次，就正常处理即可
                     else if (len == i) begin
-                        data_read_o[i*AXI_DATA_WIDTH+:AXI_DATA_WIDTH] <= axi_r_data_l;
+                        if( to_mem ) begin
+                            data_read_o[i*AXI_DATA_WIDTH+:AXI_DATA_WIDTH] <= axi_r_data_l;
+                        end
+                        else begin
+                            data_read_o[i*PER_AXI_DATA_WIDTH+:PER_AXI_DATA_WIDTH] <= axi_r_data_l;
+                        end
+
                     end
                 end
             end
