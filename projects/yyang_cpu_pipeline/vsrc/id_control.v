@@ -122,8 +122,8 @@ module id_control (
     wire                            inst_alxx;
     wire                            inst_al_ni;
     wire                            inst_al_i;
-    wire                            inst_al_nw;
-    wire                            inst_al_w;
+    // wire                            inst_al_nw;
+    // wire                            inst_al_w;
     wire                            inst_addxx;
     wire                            inst_subxx;
     wire                            inst_xorxx;
@@ -132,7 +132,7 @@ module id_control (
     wire                            inst_xuix;
 
     wire                            inst_csr_ni;
-    wire                            inst_csr_i;
+    // wire                            inst_csr_i;
     wire                            inst_expt;
     /* all instructions */
 
@@ -270,8 +270,8 @@ module id_control (
     assign inst_alxx                    =   inst_al_i | inst_al_ni;
     assign inst_al_ni                   =   inst_al | inst_alw;
     assign inst_al_i                    =   inst_ali | inst_aliw;
-    assign inst_al_nw                   =   inst_al | inst_ali;
-    assign inst_al_w                    =   inst_alw | inst_aliw;
+    // assign inst_al_nw                   =   inst_al | inst_ali;
+    // assign inst_al_w                    =   inst_alw | inst_aliw;
     assign inst_addxx                   =   inst_add | inst_addi | inst_addw | inst_addiw;
     assign inst_subxx                   =   inst_sub | inst_subw;
     assign inst_xorxx                   =   inst_xor | inst_xori;
@@ -281,7 +281,7 @@ module id_control (
     assign inst_slt_nu                  =   inst_slt | inst_slti;
     assign inst_slt_u                   =   inst_sltu | inst_sltiu;
     assign inst_csr_ni                  =   inst_csr & ( funct3[2] == 1'b0 ) & funct3[1:0] != 2'b00;
-    assign inst_csr_i                   =   inst_csr & ( funct3[2] == 1'b1 ) & funct3[1:0] != 2'b00;
+    // assign inst_csr_i                   =   inst_csr & ( funct3[2] == 1'b1 ) & funct3[1:0] != 2'b00;
     assign inst_expt                    =   inst_csr & inst[`INST_19_7] == 13'b0;
     assign inst_trap                    =   inst_ecall | inst_ebreak | inst_mret;
     /* all instructions' assignments */
