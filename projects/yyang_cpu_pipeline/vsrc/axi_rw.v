@@ -256,7 +256,7 @@ module axi_rw # (
     // assign axi_len          = to_mem? mem_axi_len: per_axi_len;
 
     wire [2:0] mem_axi_size     = MEM_AXI_SIZE[2:0];
-    wire [2:0] per_axi_size     = rw_size_i;
+    wire [2:0] per_axi_size     = {1'b0, rw_size_i};
     wire [2:0] axi_size         = to_mem? mem_axi_size: per_axi_size;
 
     wire [AXI_ADDR_WIDTH-1:0] mem_axi_addr          = {rw_addr_i[AXI_ADDR_WIDTH-1:MEM_ALIGNED_WIDTH], {MEM_ALIGNED_WIDTH{1'b0}}};// 转化为对齐访问
