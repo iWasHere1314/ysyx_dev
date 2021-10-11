@@ -37,7 +37,7 @@ module if_top (
 
     assign if_top_if_addr_o         =   if_top_inst_addr_o;
     assign if_top_if_valid_o        =   ~if_top_dont_fetch_i;
-    assign if_top_if_size_o         =   `SIZE_W;
+    assign if_top_if_size_o         =   `SIZE_D;
     assign handshake_done           =   if_top_if_valid_o & if_top_if_ready_i;
     assign if_top_if_req_o          =   `REQ_READ;
     assign if_top_inst_o            =   if_top_if_data_read_i[`INST_BUS];
