@@ -120,7 +120,7 @@ module mem_csr(
                                         // | { `DATA_BUS_SIZE{ index_misa } } & ( misa_r )
                                         // | { `DATA_BUS_SIZE{ index_mvendorid } } & ( mvendorid_r )
                                         // | { `DATA_BUS_SIZE{ index_marchid } } & ( marchid_r )
-                                        // | { `DATA_BUS_SIZE{ index_mimpid } } & ( mstatus_r )
+                                        // | { `DATA_BUS_SIZE{ index_mimpid } } & ( mimpid_r )
                                         // | { `DATA_BUS_SIZE{ index_mhartid } } & ( mhartid_r )
                                         | { `DATA_BUS_SIZE{ index_mstatus } } & ( mstatus_r )
                                         | { `DATA_BUS_SIZE{ index_mtvec } } & ( mtvec_r )
@@ -160,6 +160,8 @@ module mem_csr(
     //mhartid   
     assign mhartid_r                =   `DATA_BUS_SIZE'b0;
 
+    //mimpid
+    assign mimpid_r                 =   `DATA_BUS_SIZE'b1;
     //mem_csr_mstatus_o
     always @( posedge clk ) begin
         if( rst ) begin
@@ -301,7 +303,7 @@ module mem_csr(
                                        | { `DATA_BUS_SIZE{ index_misa } } & ( misa_r )
                                        | { `DATA_BUS_SIZE{ index_mvendorid } } & ( mvendorid_r )
                                        | { `DATA_BUS_SIZE{ index_marchid } } & ( marchid_r )
-                                       | { `DATA_BUS_SIZE{ index_mimpid } } & ( mstatus_r )
+                                       | { `DATA_BUS_SIZE{ index_mimpid } } & ( mimpid_r )
                                        | { `DATA_BUS_SIZE{ index_mhartid } } & ( mhartid_r )
                                        | { `DATA_BUS_SIZE{ index_mstatus } } & ( mstatus_r )
                                        | { `DATA_BUS_SIZE{ index_mtvec } } & ( mtvec_r )
