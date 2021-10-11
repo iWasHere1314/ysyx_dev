@@ -250,9 +250,11 @@ module axi_rw # (
                                                     | ({MEM_MASK_WIDTH{size_w}} & {{MEM_MASK_WIDTH-32{1'b0}}, 32'hffff_ffff})
                                                     | ({MEM_MASK_WIDTH{size_d}} & {{MEM_MASK_WIDTH-64{1'b0}}, 64'hffff_ffff_ffff_ffff})
                                                     ) << mem_aligned_offset_l;// 对应的各种mem_mask，用128位方便移位吧。。。
-    wire [AXI_DATA_WIDTH-1:0] per_mask                  = ({AXI_DATA_WIDTH{size_b}} & {{AXI_DATA_WIDTH-8{1'b0}}, 8'hff})
+    wire [AXI_DATA_WIDTH-1:0] per_mask                  = ( ({AXI_DATA_WIDTH{size_b}} & {{AXI_DATA_WIDTH-8{1'b0}}, 8'hff})
                                                     | ({AXI_DATA_WIDTH{size_h}} & {{AXI_DATA_WIDTH-16{1'b0}}, 16'hffff})
-                                                    | ({AXI_DATA_WIDTH{size_w}} & {{AXI_DATA_WIDTH-32{1'b0}}, 32'hffff_ffff});
+                                                    | ({AXI_DATA_WIDTH{size_w}} & {{AXI_DATA_WIDTH-32{1'b0}}, 32'hffff_ffff}) )
+                                                      << ( { 3'b0, rw_addr_i[2:0] } << 3 );
+
     wire [AXI_DATA_WIDTH-1:0] mem_mask_l            = mem_mask[AXI_DATA_WIDTH-1:0];
     wire [AXI_DATA_WIDTH-1:0] mem_mask_h            = mem_mask[MEM_MASK_WIDTH-1:AXI_DATA_WIDTH];// l，h对应关系同理
     wire [AXI_DATA_WIDTH-1:0] mask_l            = mem_mask_l;
@@ -428,7 +430,7 @@ module axi_rw # (
             per_read_r <= 0;
         end
         else begin
-            per_read_r <= axi_r_data_i & per_mask;
+            per_read_r <= ( axi_r_data_i & per_mask ) >> ( { 3'b0, rw_addr_i[2:0] } << 3 );
         end
     end
 
