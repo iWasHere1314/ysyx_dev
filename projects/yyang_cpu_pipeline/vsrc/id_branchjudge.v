@@ -28,7 +28,6 @@ module id_branchjudge (
     wire                        branchjudge_neq_res;
     wire                        branchjudge_lt_res;
     wire                        branchjudge_ge_res;
-    wire                        branchjudge_res_pre;
     
     /* rename */
     assign comp_type                    =   id_branchjudge_comp_type_i;
