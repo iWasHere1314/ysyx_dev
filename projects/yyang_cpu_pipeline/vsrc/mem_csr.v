@@ -12,7 +12,6 @@ module mem_csr(
     input   [`DATA_BUS]             mem_csr_imm_csr_i,
     input   [`CSR_CTRL_BUS]         mem_csr_csr_ctrl_i,
     input   [`INST_ADDR_BUS]        mem_csr_inst_addr_i,
-    input                           mem_csr_csr_src_i,
     input                           mem_csr_inst_trap_i,
     input                           mem_csr_inst_mret_i,
     input                           mem_csr_clint_mtip_i,
@@ -131,7 +130,7 @@ module mem_csr(
                                         | { `DATA_BUS_SIZE{ index_mscratch } } & ( mscratch_r )
                                         | { `DATA_BUS_SIZE{ index_minstret } } & ( minstret_nxt ); 
 
-    assign csr_writereference       =   mem_csr_csr_src_i ? mem_csr_imm_csr_i: mem_csr_rs1_data_i;
+    assign csr_writereference       =   mem_csr_csr_ctrl_i[2] ? mem_csr_imm_csr_i: mem_csr_rs1_data_i;
     assign csrrwx_res               =   csr_writereference;
     assign csrrsx_res               =   csr_org | csr_writereference;    
     assign csrrcx_res               =   csr_org & ~csr_writereference;

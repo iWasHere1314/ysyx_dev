@@ -62,7 +62,6 @@ module cpu(
     wire                        id_top_mem_read_o;
     wire    [`STORE_TYPE_BUS]   id_top_store_type_o;
     wire    [`LOAD_TYPE_BUS]    id_top_load_type_o;
-    wire                        id_top_csr_src_o;
     wire    [`CSR_CTRL_BUS]     id_top_csr_ctrl_o;
     wire                        id_top_inst_ecall_o;
     wire                        id_top_inst_ebreak_o;
@@ -113,7 +112,6 @@ module cpu(
     wire                        id2ex_mem_read_o;
     wire    [`STORE_TYPE_BUS]   id2ex_store_type_o;
     wire    [`LOAD_TYPE_BUS]    id2ex_load_type_o;
-    wire                        id2ex_csr_src_o;
     wire    [`CSR_CTRL_BUS]     id2ex_csr_ctrl_o;
     wire                        id2ex_inst_ecall_o;
     wire                        id2ex_inst_ebreak_o;
@@ -156,7 +154,6 @@ module cpu(
     wire                        ex2mem_mem_read_o;
     wire    [`STORE_TYPE_BUS]   ex2mem_store_type_o;
     wire    [`LOAD_TYPE_BUS]    ex2mem_load_type_o;
-    wire                        ex2mem_csr_src_o;
     wire    [`CSR_CTRL_BUS]     ex2mem_csr_ctrl_o;
     wire                        ex2mem_inst_ecall_o;
     wire                        ex2mem_inst_ebreak_o;
@@ -338,7 +335,6 @@ module cpu(
         .id_top_mem_read_o( id_top_mem_read_o ),
         .id_top_store_type_o( id_top_store_type_o ),
         .id_top_load_type_o( id_top_load_type_o ),
-        .id_top_csr_src_o( id_top_csr_src_o ),
         .id_top_csr_ctrl_o( id_top_csr_ctrl_o ),
         .id_top_inst_ecall_o( id_top_inst_ecall_o ),
         .id_top_inst_ebreak_o( id_top_inst_ebreak_o ),
@@ -412,7 +408,6 @@ module cpu(
         .id2ex_mem_read_i( id_top_mem_read_o ),
         .id2ex_store_type_i( id_top_store_type_o ),
         .id2ex_load_type_i( id_top_load_type_o ),
-        .id2ex_csr_src_i( id_top_csr_src_o ),
         .id2ex_csr_ctrl_i( id_top_csr_ctrl_o ),
         .id2ex_inst_ecall_i( id_top_inst_ecall_o ),
         .id2ex_inst_ebreak_i( id_top_inst_ebreak_o ),
@@ -458,7 +453,6 @@ module cpu(
         .id2ex_mem_read_o( id2ex_mem_read_o ),
         .id2ex_store_type_o( id2ex_store_type_o ),
         .id2ex_load_type_o( id2ex_load_type_o ),
-        .id2ex_csr_src_o( id2ex_csr_src_o ),
         .id2ex_csr_ctrl_o( id2ex_csr_ctrl_o ),
         .id2ex_inst_ecall_o( id2ex_inst_ecall_o ),
         .id2ex_inst_ebreak_o( id2ex_inst_ebreak_o ),
@@ -566,7 +560,6 @@ module cpu(
         .ex2mem_mem_read_i( id2ex_mem_read_o ),
         .ex2mem_store_type_i( id2ex_store_type_o ),
         .ex2mem_load_type_i( id2ex_load_type_o ),
-        .ex2mem_csr_src_i( id2ex_csr_src_o ),
         .ex2mem_csr_ctrl_i( id2ex_csr_ctrl_o ),
         .ex2mem_inst_ecall_i( id2ex_inst_ecall_o ),
         .ex2mem_inst_ebreak_i( id2ex_inst_ebreak_o ),
@@ -597,7 +590,6 @@ module cpu(
         .ex2mem_mem_read_o( ex2mem_mem_read_o ),
         .ex2mem_store_type_o( ex2mem_store_type_o ),
         .ex2mem_load_type_o( ex2mem_load_type_o ),
-        .ex2mem_csr_src_o( ex2mem_csr_src_o ),
         .ex2mem_csr_ctrl_o( ex2mem_csr_ctrl_o ),
         .ex2mem_inst_ecall_o( ex2mem_inst_ecall_o ),
         .ex2mem_inst_ebreak_o( ex2mem_inst_ebreak_o ),
@@ -647,7 +639,6 @@ module cpu(
         .mem_top_mem_read_i( ex2mem_mem_read_o ),
         .mem_top_store_type_i( ex2mem_store_type_o ),
         .mem_top_load_type_i( ex2mem_load_type_o ),
-        .mem_top_csr_src_i( ex2mem_csr_src_o ),
         .mem_top_csr_ctrl_i( ex2mem_csr_ctrl_o ),
         .mem_top_inst_ecall_i( ex2mem_inst_ecall_o ),
         .mem_top_inst_ebreak_i( ex2mem_inst_ebreak_o ),

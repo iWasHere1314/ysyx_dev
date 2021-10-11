@@ -38,7 +38,6 @@ module id_control (
     output                      id_control_mem_read_o,
     output  [`STORE_TYPE_BUS]   id_control_store_type_o,
     output  [`LOAD_TYPE_BUS]    id_control_load_type_o,
-    output                      id_control_csr_src_o,
     output  [`CSR_CTRL_BUS]     id_control_csr_ctrl_o,
     output                      id_control_inst_ecall_o,
     output                      id_control_inst_ebreak_o,
@@ -86,7 +85,6 @@ module id_control (
     wire                        mem_read;
     wire    [`STORE_TYPE_BUS]   store_type;
     wire    [`LOAD_TYPE_BUS]    load_type;
-    wire                        csr_src;
     wire    [`CSR_CTRL_BUS]     csr_ctrl;
     wire                        inst_ecall;
     wire                        inst_ebreak;
@@ -241,7 +239,6 @@ module id_control (
     assign id_control_mem_read_o        =   mem_read;
     assign id_control_store_type_o      =   store_type;
     assign id_control_load_type_o       =   load_type;
-    assign id_control_csr_src_o         =   csr_src;
     assign id_control_csr_ctrl_o        =   csr_ctrl;
     assign id_control_inst_ecall_o      =   inst_ecall;
     assign id_control_inst_ebreak_o     =   inst_ebreak;
@@ -413,5 +410,4 @@ module id_control (
                                            | ( { 3 { inst_ld } } & 3'b100 );
 
     assign csr_ctrl                     =   inst_csr? funct3: 3'b100;
-    assign csr_src                      =   funct3[2];
 endmodule

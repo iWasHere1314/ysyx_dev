@@ -49,7 +49,6 @@ module id_top (
     output                      id_top_mem_read_o,
     output  [`STORE_TYPE_BUS]   id_top_store_type_o,
     output  [`LOAD_TYPE_BUS]    id_top_load_type_o,
-    output                      id_top_csr_src_o,
     output  [`CSR_CTRL_BUS]     id_top_csr_ctrl_o,
     output                      id_top_inst_ecall_o,
     output                      id_top_inst_ebreak_o,
@@ -108,7 +107,6 @@ module id_top (
     wire                        id_control_mem_read_o;
     wire    [`STORE_TYPE_BUS]   id_control_store_type_o;
     wire    [`LOAD_TYPE_BUS]    id_control_load_type_o;
-    wire                        id_control_csr_src_o;
     wire    [`CSR_CTRL_BUS]     id_control_csr_ctrl_o;
     wire                        id_control_inst_ecall_o;
     wire                        id_control_inst_ebreak_o;
@@ -195,7 +193,6 @@ module id_top (
     assign id_top_mem_read_o            =   id_control_mem_read_o;
     assign id_top_store_type_o          =   id_control_store_type_o;
     assign id_top_load_type_o           =   id_control_load_type_o;
-    assign id_top_csr_src_o             =   id_control_csr_src_o;
     assign id_top_csr_ctrl_o            =   id_control_csr_ctrl_o;
     assign id_top_inst_ecall_o          =   id_control_inst_ecall_o;
     assign id_top_inst_ebreak_o         =   id_control_inst_ebreak_o;
@@ -260,7 +257,6 @@ module id_top (
         .id_control_mem_read_o( id_control_mem_read_o ),
         .id_control_store_type_o( id_control_store_type_o ),
         .id_control_load_type_o( id_control_load_type_o ),
-        .id_control_csr_src_o( id_control_csr_src_o ),
         .id_control_csr_ctrl_o( id_control_csr_ctrl_o ),
         .id_control_inst_ecall_o( id_control_inst_ecall_o ),
         .id_control_inst_ebreak_o( id_control_inst_ebreak_o ),

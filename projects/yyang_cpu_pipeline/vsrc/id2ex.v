@@ -40,7 +40,6 @@ module id2ex(
     input                       id2ex_mem_read_i,
     input  [`STORE_TYPE_BUS]    id2ex_store_type_i,
     input  [`LOAD_TYPE_BUS]     id2ex_load_type_i,
-    input                       id2ex_csr_src_i,
     input  [`CSR_CTRL_BUS]      id2ex_csr_ctrl_i,
     input                       id2ex_inst_ecall_i,
     input                       id2ex_inst_ebreak_i,
@@ -87,7 +86,6 @@ module id2ex(
     output                      id2ex_mem_read_o,
     output  [`STORE_TYPE_BUS]   id2ex_store_type_o,
     output  [`LOAD_TYPE_BUS]    id2ex_load_type_o,
-    output                      id2ex_csr_src_o,
     output  [`CSR_CTRL_BUS]     id2ex_csr_ctrl_o,
     output                      id2ex_inst_ecall_o,
     output                      id2ex_inst_ebreak_o,
@@ -151,7 +149,6 @@ module id2ex(
     reg                         mem_read_r;
     reg     [`STORE_TYPE_BUS]   store_type_r;
     reg     [`LOAD_TYPE_BUS]    load_type_r;
-    reg                         csr_src_r;
     reg     [`CSR_CTRL_BUS]     csr_ctrl_r;
     reg                         inst_ecall_r;
     reg                         inst_ebreak_r;
@@ -209,7 +206,6 @@ module id2ex(
     assign id2ex_mem_read_o         =   mem_read_r;
     assign id2ex_store_type_o       =   store_type_r;
     assign id2ex_load_type_o        =   load_type_r;
-    assign id2ex_csr_src_o          =   csr_src_r;
     assign id2ex_csr_ctrl_o         =   csr_ctrl_r;
     assign id2ex_inst_ecall_o       =   inst_ecall_r;
     assign id2ex_inst_ebreak_o      =   inst_ebreak_r;
@@ -719,24 +715,6 @@ module id2ex(
         end
         else begin
             load_type_r <= load_type_r;
-        end
-    end
-
-    always @( posedge clk ) begin
-        if( rst ) begin
-            csr_src_r <= 1'b0;   
-        end
-        else if( flush_en ) begin
-            csr_src_r <= 1'b0;
-        end
-        else if( stall_en ) begin
-            csr_src_r <= csr_src_r;
-        end
-        else if( flow_en ) begin
-            csr_src_r <= id2ex_csr_src_i;
-        end
-        else begin
-            csr_src_r <= csr_src_r;
         end
     end
 
