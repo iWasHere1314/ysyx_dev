@@ -225,7 +225,7 @@ module axi_rw # (
     wire overstep           = addr_end[3:ALIGNED_WIDTH] != 0;// 最高位未计算前为0，计算之后，出现了进位，说明跨越了一个lane
 
     wire [7:0] axi_len      = aligned ? TRANS_LEN - 1 : {{7{1'b0}}, overstep};// 根据上文，非对齐一定有TRANS_LEN==1,非对齐且越界，则一定要两次
-    wire [2:0] axi_size     = { 1'b0, rw_size_i[1:0] };
+    wire [2:0] axi_size     = (rw_addr_i >= 64'h8000_0000 )? AXI_SIZE[2:0] :{ 1'b0, rw_size_i[1:0] };
     
     wire [AXI_ADDR_WIDTH-1:0] axi_addr          = {rw_addr_i[AXI_ADDR_WIDTH-1:ALIGNED_WIDTH], {ALIGNED_WIDTH{1'b0}}};// 转化为对齐访问
     wire [OFFSET_WIDTH-1:0] aligned_offset_l    = {{OFFSET_WIDTH-ALIGNED_WIDTH{1'b0}}, {rw_addr_i[ALIGNED_WIDTH-1:0]}} << 3;// 非对齐低地址lane偏移
