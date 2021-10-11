@@ -62,7 +62,7 @@ module axi_rw # (
 	input                               rw_valid_i,
 	output                              rw_ready_o,
     input                               rw_req_i,
-    output reg [RW_DATA_WIDTH-1:0]      data_read_o,
+    output [RW_DATA_WIDTH-1:0]          data_read_o,
     input  [RW_DATA_WIDTH-1:0]          data_write_i,
     input  [AXI_DATA_WIDTH-1:0]         rw_addr_i,
     input  [1:0]                        rw_size_i,
@@ -341,12 +341,14 @@ module axi_rw # (
     assign axi_aw_region_o  = 4'h0;
 
     //w
-    reg [AXI_DATA_WIDTH-1:0] axi_w_data_r;
-    reg [AXI_DATA_WIDTH/8-1:0] axi_w_strb_r;
-    
+    reg [AXI_DATA_WIDTH-1:0] mem_axi_w_data_r;
+    reg [AXI_DATA_WIDTH/8-1:0] mem_axi_w_strb_r;
+    reg [AXI_DATA_WIDTH-1:0] per_axi_w_data_r;
+    reg [AXI_DATA_WIDTH/8-1:0] per_axi_w_strb_r;
+
     assign axi_w_valid_o    = w_state_write;
-    assign axi_w_data_o     = axi_w_data_r;
-    assign axi_w_strb_o     = axi_w_strb_r;
+    assign axi_w_data_o     = to_mem? mem_axi_w_data_r: per_axi_w_data_r;
+    assign axi_w_strb_o     = to_mem? mem_axi_w_strb_r: per_axi_w_strb_r;
     assign axi_w_last_o     = axi_len == len;
     assign axi_w_user_o     = axi_user;
 
@@ -354,29 +356,53 @@ module axi_rw # (
         for( genvar i=0; i < MEM_TRANS_LEN; i = i + 1 ) begin
             always @( posedge clock ) begin
                 if( reset ) begin
-                    axi_w_data_r <= 0;
+                    mem_axi_w_data_r <= 0;
                 end
                 else if( ~aligned & overstep ) begin
                     // 这种写法的唯一保障在于接收方接收到后ready立马置低，即写至少需要额外一周期
                     // 写需要一周期，也合理
                     if( len[0] ) begin
-                        axi_w_data_r <= data_write_i & mask_l;
-                        axi_w_strb_r <= { mask_l[56],mask_l[48], mask_l[40], mask_l[32], mask_l[24], mask_l[16], mask_l[8], mask_l[0] } ;
+                        mem_axi_w_data_r <= data_write_i & mask_l;
+                        mem_axi_w_strb_r <= { mask_l[56],mask_l[48], mask_l[40], mask_l[32], mask_l[24], mask_l[16], mask_l[8], mask_l[0] } ;
                     end
                     else begin
-                        axi_w_data_r <= ( data_write_i >> aligned_offset_l )& mask_h;
-                        axi_w_strb_r <= { mask_h[56], mask_h[48], mask_h[40], mask_h[32], mask_h[24], mask_h[16], mask_h[8], mask_h[0] } ;
+                        mem_axi_w_data_r <= ( data_write_i >> aligned_offset_l )& mask_h;
+                        mem_axi_w_strb_r <= { mask_h[56], mask_h[48], mask_h[40], mask_h[32], mask_h[24], mask_h[16], mask_h[8], mask_h[0] } ;
                     end
                 end
                 else if( len == i )begin
-                    axi_w_data_r <= ( to_mem? data_write_i[i*AXI_DATA_WIDTH +: AXI_DATA_WIDTH ]: data_write_i[i*PER_AXI_DATA_WIDTH +: PER_AXI_DATA_WIDTH]) 
-                                    & mask_l;
-                    axi_w_strb_r <= { mask_l[56], mask_l[48], mask_l[40], mask_l[32], mask_l[24], mask_l[16], mask_l[8], mask_l[0] } ;
+                    mem_axi_w_data_r <= data_write_i[i*AXI_DATA_WIDTH +: AXI_DATA_WIDTH ] & mask_l;
+                    mem_axi_w_strb_r <= { mask_l[56], mask_l[48], mask_l[40], mask_l[32], mask_l[24], mask_l[16], mask_l[8], mask_l[0] } ;
                 end
             end
         end
     endgenerate
-    
+
+    generate
+        for( genvar i=0; i < PER_TRANS_LEN; i = i + 1 ) begin
+            always @( posedge clock ) begin
+                if( reset ) begin
+                    per_axi_w_data_r <= 0;
+                end
+                else if( ~aligned & overstep ) begin
+                    // 这种写法的唯一保障在于接收方接收到后ready立马置低，即写至少需要额外一周期
+                    // 写需要一周期，也合理
+                    if( len[0] ) begin
+                        per_axi_w_data_r <= data_write_i & mask_l;
+                        per_axi_w_strb_r <= { mask_l[56],mask_l[48], mask_l[40], mask_l[32], mask_l[24], mask_l[16], mask_l[8], mask_l[0] } ;
+                    end
+                    else begin
+                        per_axi_w_data_r <= ( data_write_i >> aligned_offset_l )& mask_h;
+                        per_axi_w_strb_r <= { mask_h[56], mask_h[48], mask_h[40], mask_h[32], mask_h[24], mask_h[16], mask_h[8], mask_h[0] } ;
+                    end
+                end
+                else if( len == i )begin
+                    per_axi_w_data_r <= data_write_i[i*PER_AXI_DATA_WIDTH +: PER_AXI_DATA_WIDTH ] & mask_l;
+                    per_axi_w_strb_r <= { mask_l[56], mask_l[48], mask_l[40], mask_l[32], mask_l[24], mask_l[16], mask_l[8], mask_l[0] } ;
+                end
+            end
+        end
+    endgenerate
     
 
 
@@ -408,39 +434,60 @@ module axi_rw # (
     wire [AXI_DATA_WIDTH-1:0] axi_r_data_l  = (axi_r_data_i & mask_l) >> aligned_offset_l;
     wire [AXI_DATA_WIDTH-1:0] axi_r_data_h  = (axi_r_data_i & mask_h) << aligned_offset_h;// 分别移动， 使得两者可以相或就可以直接得到最终数据  
 
+    reg [RW_DATA_WIDTH-1:0] mem_read_r;
+    reg [RW_DATA_WIDTH-1:0] per_read_r;
+    assign data_read_o = to_mem? mem_read_r: per_read_r;
+
     generate
         for (genvar i = 0; i < MEM_TRANS_LEN; i = i + 1) begin // verilog真不支持+=，我记得，这是sv啊
             // MEM_TRANS_LEN的含义是读完一次RW所需的位数需要的总线事务数
             // 
             always @(posedge clock) begin
                 if (reset) begin
-                    if( to_mem ) begin
-                        data_read_o[i*AXI_DATA_WIDTH+:AXI_DATA_WIDTH] <= 0;
-                    end
-                    else begin
-                        data_read_o[i*PER_AXI_DATA_WIDTH+:PER_AXI_DATA_WIDTH] <= 0;
-                    end
+                    mem_read_r[i*AXI_DATA_WIDTH+:AXI_DATA_WIDTH] <= 0;
                 end
                     //非对齐且跨越，一定读两次，不用管MEM_TRANS_LEN
                 else if ( r_hs ) begin // 这不就是hs吗？这样浪费一个门啊
-                    if (~mem_aligned & mem_overstep) begin
+                    if (~aligned & overstep) begin
                         if (len[0]) begin// 奇数位把高位或进来
-                            data_read_o[AXI_DATA_WIDTH-1:0] <= data_read_o[AXI_DATA_WIDTH-1:0] | axi_r_data_h;
+                            mem_read_r[AXI_DATA_WIDTH-1:0] <= mem_read_r[AXI_DATA_WIDTH-1:0] | axi_r_data_h;
                         end
                         else begin// 偶数位直接相等
-                            data_read_o[AXI_DATA_WIDTH-1:0] <= axi_r_data_l;
+                            mem_read_r[AXI_DATA_WIDTH-1:0] <= mem_read_r;
                         end
                     end
                     // 非对齐且不跨越，只读一次，按对应位处理即可
                     // 普通读多次，就正常处理即可
                     else if (len == i) begin
-                        if( to_mem ) begin
-                            data_read_o[i*AXI_DATA_WIDTH+:AXI_DATA_WIDTH] <= axi_r_data_l;
-                        end
-                        else begin
-                            data_read_o[i*PER_AXI_DATA_WIDTH+:PER_AXI_DATA_WIDTH] <= axi_r_data_l;
-                        end
+                        mem_read_r[i*AXI_DATA_WIDTH+:AXI_DATA_WIDTH] <= axi_r_data_l;
+                    end
+                end
+            end
+        end
+    endgenerate
 
+    generate
+        for (genvar i = 0; i < PER_TRANS_LEN; i = i + 1) begin // verilog真不支持+=，我记得，这是sv啊
+            // MEM_TRANS_LEN的含义是读完一次RW所需的位数需要的总线事务数
+            // 
+            always @(posedge clock) begin
+                if (reset) begin
+                    per_read_r[i*PER_AXI_DATA_WIDTH+:PER_AXI_DATA_WIDTH] <= 0;
+                end
+                    //非对齐且跨越，一定读两次，不用管MEM_TRANS_LEN
+                else if ( r_hs ) begin // 这不就是hs吗？这样浪费一个门啊
+                    if (~aligned & overstep) begin
+                        if (len[0]) begin// 奇数位把高位或进来
+                            per_read_r[AXI_DATA_WIDTH-1:0] <= per_read_r[AXI_DATA_WIDTH-1:0] | axi_r_data_h;
+                        end
+                        else begin// 偶数位直接相等
+                            per_read_r[AXI_DATA_WIDTH-1:0] <= axi_r_data_l;
+                        end
+                    end
+                    // 非对齐且不跨越，只读一次，按对应位处理即可
+                    // 普通读多次，就正常处理即可
+                    else if (len == i) begin
+                            per_read_r[i*PER_AXI_DATA_WIDTH+:PER_AXI_DATA_WIDTH] <= axi_r_data_l;
                     end
                 end
             end
