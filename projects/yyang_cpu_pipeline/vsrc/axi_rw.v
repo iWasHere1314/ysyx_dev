@@ -229,9 +229,8 @@ module axi_rw # (
     
     wire [AXI_ADDR_WIDTH-1:0] axi_addr          = {rw_addr_i[AXI_ADDR_WIDTH-1:ALIGNED_WIDTH], {ALIGNED_WIDTH{1'b0}}};// 转化为对齐访问
     wire [OFFSET_WIDTH-1:0] aligned_offset_l    = {{OFFSET_WIDTH-ALIGNED_WIDTH{1'b0}}, {rw_addr_i[ALIGNED_WIDTH-1:0]}} << 3;// 非对齐低地址lane偏移
-    /* verilator lint_off WIDTH */
-    wire [OFFSET_WIDTH-1:0] aligned_offset_h    = AXI_DATA_WIDTH - aligned_offset_l;// 非对齐高地址lane偏移
-    /* verilator lint_on WIDTH */
+    wire [OFFSET_WIDTH:0]   aligned_offset_h_pre= AXI_DATA_WIDTH - aligned_offset_l;// 非对齐高地址lane偏移
+    wire [OFFSET_WIDTH-1:0] aligned_offset_h    = aligned_offset_h_pre[OFFSET_WIDTH-1:0];
     wire [MASK_WIDTH-1:0] mask                  = (({MASK_WIDTH{size_b}} & {{MASK_WIDTH-8{1'b0}}, 8'hff})
                                                     | ({MASK_WIDTH{size_h}} & {{MASK_WIDTH-16{1'b0}}, 16'hffff})
                                                     | ({MASK_WIDTH{size_w}} & {{MASK_WIDTH-32{1'b0}}, 32'hffff_ffff})
