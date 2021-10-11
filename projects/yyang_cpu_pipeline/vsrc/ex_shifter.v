@@ -24,7 +24,7 @@ module ex_shifter(
     wire                        shift_srxx;
     wire                        shift_srax;
     wire                        shift_srlx;
-    wire                        shift_srl;
+    // wire                        shift_srl;
     wire                        shift_srlw;
 
     wire    [`IMM_SHIFT_BUS]    shift_num_eff;
@@ -50,7 +50,7 @@ module ex_shifter(
     assign shift_srxx               =   shift_type[2]  == 1'b1;
     assign shift_srax               =   shift_srxx & ( shift_type[0] == 1'b0 ); 
     assign shift_srlx               =   shift_srxx & ( shift_type[0] == 1'b1 );
-    assign shift_srl                =   shift_srlx & ~shift_word;
+    // assign shift_srl                =   shift_srlx & ~shift_word;
     assign shift_srlw               =   shift_srlx & shift_word;
 
     assign shift_num_eff            =   shift_word? { 1'b0, shift_num[4:0] }: shift_num[5:0];
