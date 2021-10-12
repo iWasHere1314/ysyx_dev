@@ -292,6 +292,7 @@ mem_forward my_mem_forward(
     .mem_forward_ex_rs2_src_mem2wb_o( mem_forward_ex_rs2_src_mem2wb_o )
 );
 
+`ifdef DEFINE_DIFFTESET
     always @( posedge clk ) begin
         if( mem_top_mem_write_i & mem_top_inst_valid_i ) begin
             $write("%hwrite %h at %h\n", mem_top_ex2mem_inst_addr_i, rs2_data , mem_top_ex2mem_rd_data_i);
@@ -300,4 +301,5 @@ mem_forward my_mem_forward(
             $write("%hread %h from %h\n", mem_top_ex2mem_inst_addr_i, mem_top_rd_data_o, mem_top_ex2mem_rd_data_i );
         end
     end
+`endif
 endmodule
