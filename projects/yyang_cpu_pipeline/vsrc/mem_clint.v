@@ -72,14 +72,14 @@ module mem_clint(
 
     assign mem_clint_clint_mtip_o           =   mtime_r >= mtimecmp_r;
     assign mem_clint_clint_update_o         =   clint_update_r;
-`ifdef DEFINE_DIFFTEST
-    always @( posedge clk ) begin
-        if( mtime_en & clint_write  ) begin
-            $write("write mtime: size:%h, data%h\n", mem_clint_clint_size_i, mem_clint_clint_data_write_i );
-        end
-        if( mtimecmp_en & clint_write ) begin
-            $write("write mtimecmp: size:%h, data%h\n", mem_clint_clint_size_i, mem_clint_clint_data_write_i );
-        end
-    end
-`endif 
+// `ifdef DEFINE_DIFFTEST
+//     always @( posedge clk ) begin
+//         if( mtime_en & clint_write  ) begin
+//             $write("write mtime: size:%h, data%h\n", mem_clint_clint_size_i, mem_clint_clint_data_write_i );
+//         end
+//         if( mtimecmp_en & clint_write ) begin
+//             $write("write mtimecmp: size:%h, data%h\n", mem_clint_clint_size_i, mem_clint_clint_data_write_i );
+//         end
+//     end
+// `endif 
 endmodule

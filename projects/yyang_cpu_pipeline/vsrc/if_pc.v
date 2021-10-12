@@ -28,13 +28,13 @@ module if_pc (
     end
 
     assign if_pc_cur_inst_addr_o    = cur_inst_addr_r;
-`ifdef DEFINE_DIFFTEST
-    always @( posedge clk ) begin
-        if( if_pc_inst_valid_i ) begin
-            if( cur_inst_addr_r >=64'h800042b8 && cur_inst_addr_r <=64'h80004420 ) begin
-                $write("%h\n", cur_inst_addr_r );
-            end
-        end 
-    end
-`endif
+// `ifdef DEFINE_DIFFTEST
+//     always @( posedge clk ) begin
+//         if( if_pc_inst_valid_i ) begin
+//             if( cur_inst_addr_r >=64'h800042b8 && cur_inst_addr_r <=64'h80004420 ) begin
+//                 $write("%h\n", cur_inst_addr_r );
+//             end
+//         end 
+//     end
+// `endif
 endmodule
