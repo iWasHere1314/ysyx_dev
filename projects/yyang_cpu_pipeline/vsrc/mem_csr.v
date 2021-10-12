@@ -106,7 +106,7 @@ module mem_csr(
     assign inst_csrrwx              =   mem_csr_csr_ctrl_i[1:0] == 2'b01;
     assign inst_csrrsx              =   mem_csr_csr_ctrl_i[1:0] == 2'b10;
     assign inst_csrrcx              =   mem_csr_csr_ctrl_i[1:0] == 2'b11;
-    assign change_en                =   mem_csr_csr_ctrl_i[2] & mem_csr_inst_valid_i & ~mem_csr_intp_en_i;
+    assign change_en                =   (mem_csr_csr_ctrl_i[2:0]!=3'b100) & mem_csr_inst_valid_i & ~mem_csr_intp_en_i;
     assign trap_en                  =   mem_csr_inst_valid_i & trap_nmret;
     assign ret_en                   =   mem_csr_inst_valid_i & mem_csr_inst_mret_i;
     assign minstret_nxt             =   minstret_r + `DATA_BUS_SIZE'h1;
