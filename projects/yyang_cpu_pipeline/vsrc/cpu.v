@@ -875,9 +875,9 @@ module cpu(
             // cmt_mip <= mip;
             // cmt_mie <= mie;
             // cmt_mscratch <= mscratch;
-            cmt_intrNO <= pipeline_ctrl_inst_valid_o & mem2wb_intp_en_o ? 7: 0 ;
-            cmt_einst <= pipeline_ctrl_inst_valid_o & mem2wb_intp_en_o? mem2wb_inst_o: 0;
-            cmt_epc <= pipeline_ctrl_inst_valid_o & mem2wb_intp_en_o? mem2wb_inst_addr_o: 0;
+            // cmt_intrNO <= pipeline_ctrl_inst_valid_o & mem2wb_intp_en_o ? 7: 0 ;
+            // cmt_einst <= pipeline_ctrl_inst_valid_o & mem2wb_intp_en_o? mem2wb_inst_o: 0;
+            // cmt_epc <= pipeline_ctrl_inst_valid_o & mem2wb_intp_en_o? mem2wb_inst_addr_o: 0;
         end
     end
     always @( posedge clock ) begin
