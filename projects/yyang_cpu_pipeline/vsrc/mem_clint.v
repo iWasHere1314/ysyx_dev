@@ -15,11 +15,11 @@ module mem_clint(
     output  [`DATA_BUS]         mem_clint_clint_data_read_o,
     output  [1:0]               mem_clint_clint_resp_o
 );
-
     reg     [`DATA_BUS]         mtime_r;
     reg     [`DATA_BUS]         mtimecmp_r;
     reg                         clint_update_r;
     reg     [3:0]               small_clk;
+    wire                        small_clk_en;
     wire                        clint_read;
     wire                        clint_write;
     wire                        mtime_en;
@@ -38,7 +38,7 @@ module mem_clint(
             small_clk <= small_clk + 4'b1;
         end
     end
-
+    assign small_clk_en = small_clk == 4'b0;
     always @( posedge clk ) begin
         if( rst ) begin
             mtime_r <= `DATA_BUS_SIZE'b0;
@@ -46,7 +46,7 @@ module mem_clint(
         else if( mtime_en & clint_write ) begin
             mtime_r <= mem_clint_clint_data_write_i;
         end
-        else if( small_clk )begin
+        else if( small_clk_en )begin
             mtime_r <= mtime_r + `DATA_BUS_SIZE'b1;
         end
         else begin
