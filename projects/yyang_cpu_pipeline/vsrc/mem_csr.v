@@ -338,11 +338,11 @@ module mem_csr(
     assign mem_csr_cause_o          =   { mem_csr_mcause_o[`DATA_BUS_SIZE-1], mem_csr_mcause_o[30:0] }; 
 
     `endif
-`ifdef DEFINE_DIFFTEST
-    always @( posedge clk ) begin
-        if( mem_csr_inst_valid_i & mem_csr_intp_en_i ) begin
-            $write("intp at %h\n", mem_csr_inst_addr_i );
-        end
-    end
-`endif
+// `ifdef DEFINE_DIFFTEST
+//     always @( posedge clk ) begin
+//         if( mem_csr_inst_valid_i & mem_csr_intp_en_i ) begin
+//             $write("intp at %h\n", mem_csr_inst_addr_i );
+//         end
+//     end
+// `endif
 endmodule

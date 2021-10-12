@@ -880,6 +880,11 @@ module cpu(
             cmt_epc <= pipeline_ctrl_inst_valid_o & mem2wb_intp_en_o? mem2wb_inst_addr_o: 0;
         end
     end
+    always @( posedge clock ) begin
+        if( cmt_skip & cmt_valid ) begin
+            $write("addr:%h inst:%h\n", cmt_pc, cmt_inst );
+        end
+    end
     DifftestInstrCommit DifftestInstrCommit(
       .clock              (clock),
       .coreid             (0),
