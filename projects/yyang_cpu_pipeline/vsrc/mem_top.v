@@ -294,10 +294,10 @@ mem_forward my_mem_forward(
 
 `ifdef DEFINE_DIFFTEST
     always @( posedge clk ) begin
-        if( mem_top_mem_write_i & mem_top_inst_valid_i ) begin
+        if( mem_top_mem_write_i & mem_top_inst_valid_i & ( mem_top_ex2mem_rd_data_i == 64'h80028078 ) ) begin
             $write("%hwrite %h at %h\n", mem_top_ex2mem_inst_addr_i, rs2_data , mem_top_ex2mem_rd_data_i);
         end
-        if( mem_top_mem_read_i & mem_top_inst_valid_i ) begin
+        if( mem_top_mem_read_i & mem_top_inst_valid_i & ( mem_top_ex2mem_rd_data_i == 64'h80028078 ) ) begin
             $write("%hread %h from %h\n", mem_top_ex2mem_inst_addr_i, mem_top_rd_data_o, mem_top_ex2mem_rd_data_i );
         end
     end
