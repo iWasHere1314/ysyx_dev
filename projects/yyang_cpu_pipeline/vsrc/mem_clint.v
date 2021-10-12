@@ -81,10 +81,10 @@ module mem_clint(
             // $write("write mtimecmp: size:%h, data%h\n", mem_clint_clint_size_i, mem_clint_clint_data_write_i );
         // end
         if( mtime_en & clint_read  ) begin
-            $write("read mtime: size:%h, data%h\n", mem_clint_clint_size_i, mem_clint_clint_data_write_i );
+            $write("read mtime: size:%h, data%h\n", mem_clint_clint_size_i, mem_clint_clint_data_read_o );
         end
         if( mtimecmp_en & clint_read ) begin
-            $write("read mtimecmp: size:%h, data%h\n", mem_clint_clint_size_i, mem_clint_clint_data_write_i );
+            $write("read mtimecmp: size:%h, data%h\n", mem_clint_clint_size_i, mem_clint_clint_data_read_o );
         end
     end
 `endif 
