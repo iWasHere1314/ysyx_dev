@@ -257,6 +257,8 @@ mem_clint_dstb my_mem_clint_dstb(
     
     `ifdef DEFINE_DIFFTEST
     ,
+    .mem_clint_dstb_mem_write_i( mem_top_mem_write_i ),
+    .mem_clint_dstb_mem_read_i( mem_top_mem_read_i ),  
     .mem_clint_dstb_skip_o( mem_clint_dstb_skip_o )
     `endif
 );
