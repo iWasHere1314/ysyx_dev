@@ -39,7 +39,7 @@ module mem_clint(
         end
     end
     assign small_clk_en = small_clk == 2'b0;
-    
+
     always @( posedge clk ) begin
         if( rst ) begin
             mtime_r <= `DATA_BUS_SIZE'b0;
