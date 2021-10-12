@@ -257,12 +257,12 @@ module axi_rw # (
 
     wire [AXI_DATA_WIDTH-1:0] mem_mask_l            = mem_mask[AXI_DATA_WIDTH-1:0];
     wire [AXI_DATA_WIDTH-1:0] mem_mask_h            = mem_mask[MEM_MASK_WIDTH-1:AXI_DATA_WIDTH];// l，h对应关系同理
-    wire [AXI_DATA_WIDTH-1:0] mask_l            = mem_mask_l;
-    wire [AXI_DATA_WIDTH-1:0] mask_h            = mem_mask_h;
-    wire [MEM_OFFSET_WIDTH-1:0] aligned_offset_l= mem_aligned_offset_l;
-    wire [MEM_OFFSET_WIDTH-1:0] aligned_offset_h= mem_aligned_offset_h;
-    wire [AXI_ADDR_WIDTH-1:0] axi_addr          = mem_axi_addr;
-    wire [AXI_USER_WIDTH-1:0] axi_user          = {AXI_USER_WIDTH{1'b0}};// 用户自定义，不使用
+    wire [AXI_DATA_WIDTH-1:0] mask_l                = mem_mask_l;
+    wire [AXI_DATA_WIDTH-1:0] mask_h                = mem_mask_h;
+    wire [MEM_OFFSET_WIDTH-1:0] aligned_offset_l    = mem_aligned_offset_l;
+    wire [MEM_OFFSET_WIDTH-1:0] aligned_offset_h    = mem_aligned_offset_h;
+    wire [AXI_ADDR_WIDTH-1:0] axi_addr              = mem_axi_addr;
+    wire [AXI_USER_WIDTH-1:0] axi_user              = {AXI_USER_WIDTH{1'b0}};// 用户自定义，不使用
 
 
     /* 这一部分是针对cpu端的 */
