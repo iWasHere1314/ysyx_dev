@@ -43,7 +43,7 @@ module mem_clint_dstb (
     assign to_other                             =   ~to_clint;
     
     `ifdef DEFINE_DIFFTEST
-    assign mem_clint_dstb_skip_o                =   to_clint;
+    assign mem_clint_dstb_skip_o                =   to_clint && mem_clint_dstb_valid_i;
     `endif
 
     assign mem_clint_dstb_ready_o               =   to_clint? mem_clint_dstb_clint_ready_i: mem_clint_dstb_mem_ready_i;
