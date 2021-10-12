@@ -18,8 +18,8 @@ module mem_clint(
     reg     [`DATA_BUS]         mtime_r;
     reg     [`DATA_BUS]         mtimecmp_r;
     reg                         clint_update_r;
-    // reg     [1:0]               small_clk;
-    // wire                        small_clk_en;
+    reg     [1:0]               small_clk;
+    wire                        small_clk_en;
     wire                        clint_read;
     wire                        clint_write;
     wire                        mtime_en;
@@ -30,15 +30,15 @@ module mem_clint(
     assign mtime_en             =   mem_clint_clint_valid_i & ( mem_clint_clint_addr_i == `MTIME_ADDR );
     assign mtimecmp_en          =   mem_clint_clint_valid_i & ( mem_clint_clint_addr_i == `MTIMECMP_ADDR );
 
-    // always @( posedge clk ) begin
-    //     if( rst ) begin
-    //         small_clk <= 2'b0;
-    //     end
-    //     else begin
-    //         small_clk <= small_clk + 2'b1;
-    //     end
-    // end
-    // assign small_clk_en = small_clk == 2'b0;
+    always @( posedge clk ) begin
+        if( rst ) begin
+            small_clk <= 2'b0;
+        end
+        else begin
+            small_clk <= small_clk + 2'b1;
+        end
+    end
+    assign small_clk_en = small_clk == 2'b0;
 
     always @( posedge clk ) begin
         if( rst ) begin
@@ -47,11 +47,11 @@ module mem_clint(
         else if( mtime_en & clint_write ) begin
             mtime_r <= mem_clint_clint_data_write_i;
         end
-        // else if( small_clk_en )begin
-        //     mtime_r <= mtime_r + `DATA_BUS_SIZE'b1;
-        // end
-        else begin
+        else if( small_clk_en )begin
             mtime_r <= mtime_r + `DATA_BUS_SIZE'b1;
+        end
+        else begin
+            mtime_r <= mtime_r;
         end
     end
 
