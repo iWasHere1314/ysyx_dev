@@ -36,7 +36,7 @@ module if_mem_arbiter  # (
     output  [3:0]                   rw_id
 );
 
-    parameter STATE_IF = 1'b0, STATE_MEM = 1'b1;
+    localparam  STATE_IF = 1'b0, STATE_MEM = 1'b1;
     wire                        state_cur;
     wire                        state_cur_if;
     wire                        state_cur_mem;

@@ -327,8 +327,9 @@ module axi_rw # (
     assign axi_w_last_o     = axi_len == len;
     assign axi_w_user_o     = axi_user;
 
+    genvar i;
     generate
-        for( genvar i=0; i < MEM_TRANS_LEN; i = i + 1 ) begin
+        for( i=0; i < MEM_TRANS_LEN; i = i + 1 ) begin
             always @( posedge clock ) begin
                 if( reset ) begin
                     mem_axi_w_data_r <= 0;
@@ -398,7 +399,7 @@ module axi_rw # (
     assign data_read_o = to_mem? mem_read_r: per_read_r;
 
     generate
-        for (genvar i = 0; i < MEM_TRANS_LEN; i = i + 1) begin // verilog真不支持+=，我记得，这是sv啊
+        for ( i = 0; i < MEM_TRANS_LEN; i = i + 1) begin // verilog真不支持+=，我记得，这是sv啊
             // MEM_TRANS_LEN的含义是读完一次RW所需的位数需要的总线事务数
             // 
             always @(posedge clock) begin
