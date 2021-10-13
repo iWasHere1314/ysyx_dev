@@ -145,8 +145,8 @@ module axi_rw # (
 
     
     // ------------------State Machine------------------
-    parameter [1:0] W_STATE_IDLE = 2'b00, W_STATE_ADDR = 2'b01, W_STATE_WRITE = 2'b10, W_STATE_RESP = 2'b11;
-    parameter [1:0] R_STATE_IDLE = 2'b00, R_STATE_ADDR = 2'b01, R_STATE_READ  = 2'b10;
+    localparam [1:0] W_STATE_IDLE = 2'b00, W_STATE_ADDR = 2'b01, W_STATE_WRITE = 2'b10, W_STATE_RESP = 2'b11;
+    localparam [1:0] R_STATE_IDLE = 2'b00, R_STATE_ADDR = 2'b01, R_STATE_READ  = 2'b10;
     reg rw_ready;
     reg [1:0] w_state, r_state;
     wire w_state_idle = w_state == W_STATE_IDLE, w_state_addr = w_state == W_STATE_ADDR, w_state_write = w_state == W_STATE_WRITE, w_state_resp = w_state == W_STATE_RESP;
@@ -329,7 +329,7 @@ module axi_rw # (
 
     genvar i;
     generate
-        for( i=0; i < MEM_TRANS_LEN; i = i + 1 ) begin
+        for( i=0; i < MEM_TRANS_LEN; i = i + 1 ) begin: axi_w_for
             always @( posedge clock ) begin
                 if( reset ) begin
                     mem_axi_w_data_r <= 0;
@@ -399,7 +399,7 @@ module axi_rw # (
     assign data_read_o = to_mem? mem_read_r: per_read_r;
 
     generate
-        for ( i = 0; i < MEM_TRANS_LEN; i = i + 1) begin // verilog真不支持+=，我记得，这是sv啊
+        for ( i = 0; i < MEM_TRANS_LEN; i = i + 1) begin: mem_read_for // verilog真不支持+=，我记得，这是sv啊
             // MEM_TRANS_LEN的含义是读完一次RW所需的位数需要的总线事务数
             // 
             always @(posedge clock) begin
