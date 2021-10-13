@@ -205,12 +205,12 @@ module axi_rw # (
     // 此处实现仅支持len为1的读，之所以要设置len时因为单非对齐时，会要求读两次
 
     // ------------------Process Data------------------
-    parameter MEM_ALIGNED_WIDTH = $clog2(AXI_DATA_WIDTH / 8);// 首先计算总线一次传输的字节数，字节数log2就知道对齐的是对应地址中的哪几位
-    parameter MEM_OFFSET_WIDTH  = $clog2(AXI_DATA_WIDTH);// 偏移量，也就是非对齐访问的数据在对齐访问返回的信息中所在位置的偏移
-    parameter MEM_AXI_SIZE      = $clog2(AXI_DATA_WIDTH / 8);// 用于size信号
-    parameter MEM_MASK_WIDTH    = AXI_DATA_WIDTH * 2; // 为啥乘2？因为最多跨越两个lane（非对齐时），乘2方便形成mem_mask
-    parameter MEM_TRANS_LEN     = RW_DATA_WIDTH / AXI_DATA_WIDTH;
-    parameter MEM_BLOCK_TRANS   = MEM_TRANS_LEN > 1 ? 1'b1 : 1'b0;// 这是大于，不是右移，呆比！！
+    localparam MEM_ALIGNED_WIDTH = $clog2(AXI_DATA_WIDTH / 8);// 首先计算总线一次传输的字节数，字节数log2就知道对齐的是对应地址中的哪几位
+    localparam MEM_OFFSET_WIDTH  = $clog2(AXI_DATA_WIDTH);// 偏移量，也就是非对齐访问的数据在对齐访问返回的信息中所在位置的偏移
+    localparam MEM_AXI_SIZE      = $clog2(AXI_DATA_WIDTH / 8);// 用于size信号
+    localparam MEM_MASK_WIDTH    = AXI_DATA_WIDTH * 2; // 为啥乘2？因为最多跨越两个lane（非对齐时），乘2方便形成mem_mask
+    localparam MEM_TRANS_LEN     = RW_DATA_WIDTH / AXI_DATA_WIDTH;
+    localparam MEM_BLOCK_TRANS   = MEM_TRANS_LEN > 1 ? 1'b1 : 1'b0;// 这是大于，不是右移，呆比！！
         // 同一事物不允许插入其他事物
 
 
