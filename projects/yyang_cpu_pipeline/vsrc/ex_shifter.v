@@ -55,7 +55,7 @@ module ex_shifter(
 
     assign shift_num_eff            =   shift_word? { 1'b0, shift_num[4:0] }: shift_num[5:0];
 
-    assign shift_src_pre            =   ( shift_srlw && ( shift_num_eff != 6'b0 ) )? { 32'b0, shifted_data[31:0] }: shifted_data;
+    assign shift_src_pre            =   ( shift_srlw & ( shift_num_eff != 6'b0 ) )? { 32'b0, shifted_data[31:0] }: shifted_data;
         // shifter的输入已经进行了字扩展， 只有进行srlw操作且位数不为0时才会出现扩展位一定是0的情况。
         // 其他情况下符号位一定与扩展出的高位一致，而最高位的问题将由后续的字扩展解决。
     // 此处实现参考了E203   

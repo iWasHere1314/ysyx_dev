@@ -36,7 +36,7 @@ module id_regfile(
                 if( rst ) begin
                     regfile_r[i] <= `REG_BUS_SIZE'b0;
                 end
-                else if( id_regfile_inst_valid_i & ( id_regfile_rd_index_i == i && id_regfile_rd_en_i ) ) begin
+                else if( id_regfile_inst_valid_i & ( ( id_regfile_rd_index_i == i ) & id_regfile_rd_en_i ) ) begin
                     regfile_r[i] <= id_regfile_rd_data_i;    
                 end
                 else begin

@@ -67,7 +67,7 @@ module mem_interface(
     assign load_lhx                     =   mem_interface_load_type_i[1:0] == 2'b10;
     assign load_lwx                     =   mem_interface_load_type_i[1:0] == 2'b11;
     assign load_ld                      =   mem_interface_load_type_i[2:0] == 3'b100;
-    assign load_signed                  =   ( mem_interface_load_type_i[2] == 1'b0 ) && ( mem_interface_load_type_i[1:0] != 2'b0 ); 
+    assign load_signed                  =   ( mem_interface_load_type_i[2] == 1'b0 ) & ( mem_interface_load_type_i[1:0] != 2'b0 ); 
 
     assign signed_bit                   =  load_signed & 
                                             ( | load_lbx & read_data_r[07]
