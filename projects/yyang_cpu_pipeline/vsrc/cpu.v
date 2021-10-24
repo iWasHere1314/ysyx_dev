@@ -550,7 +550,7 @@ module cpu(
         .ex2mem_rd_index_i( id2ex_rd_index_o ),
 
         .ex2mem_rs1_en_i( id2ex_rs1_en_o ),
-        .ex2mem_rs2_en_i( id2ex_rs1_en_o ),
+        .ex2mem_rs2_en_i( id2ex_rs2_en_o ),
         .ex2mem_rd_en_i( id2ex_rd_en_o ),
 
         .ex2mem_csr_index_i( id2ex_csr_index_o ),
