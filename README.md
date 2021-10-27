@@ -115,8 +115,8 @@ Enter the test cycle:
 ```shell
 # 编译仿真
 ./build.sh -e cpu_diff -d -b -s -a "-i inst_diff.bin"
-# 编译仿真，并从CPU上报至difftest的时钟周期0开始输出波形
-./build.sh -e cpu_diff -d -b -s -a "-i inst_diff.bin --dump-wave -b 0" -m "EMU_TRACE=1"
+# 编译仿真，并从CPU上报至difftest的时钟周期0开始输出波形至wave.vcd文件
+./build.sh -e cpu_diff -d -b -s -a "-i inst_diff.bin --wave-path=wave.vcd --dump-wave -b 0" -m "EMU_TRACE=1"
 ```
 
 仿真程序运行后，终端将打印绿色的提示内容`HIT GOOD TRAP at pc = 0x8000000c`。说明程序运行到自定义的`0x6b`指令，并且此时存放错误码的`a0`寄存器的值为0，即程序按照预期结果成功退出。关于`0x6b`自定义指令作用，可参考[讲座-AM运行环境介绍](https://oscpu.github.io/ysyx/events/events.html?EID=2021-07-13_AM_Difftest)。如果指定输出波形，将在`projects/cpu_diff/build/`路径下生成`.vcd`波形文件。
@@ -126,7 +126,7 @@ Enter the test cycle:
 `projects/cpu_diff`目录下存放了通过`AXI总线`接入`香山difftest框架`的`verilog`版本单周期`RISC-V`CPU例程源码，源码实现了`RV64I`指令`addi`和`AXI总线`读逻辑。可以使用下面的命令编译和仿真。
 
 ```shell
-./build.sh -e cpu_axi_diff -d -s -a "-i inst_diff.bin --dump-wave -b 0" -m "EMU_TRACE=1 WITH_DRAMSIM3=1" -b
+./build.sh -e cpu_axi_diff -d -s -a "-i inst_diff.bin --wave-path=wave.vcd --dump-wave -b 0" -m "EMU_TRACE=1 WITH_DRAMSIM3=1" -b
 ```
 
 ### chisel_cpu_diff
@@ -135,6 +135,28 @@ Enter the test cycle:
 
 ```shell
 ./build.sh -e chisel_cpu_diff -d -s -a "-i inst_diff.bin" -m "EMU_TRACE=1" -b
+```
+
+### soc
+
+`projects/soc`目录下存放了接入`ysyxSoC`的示例程序。源码中只有一个占位符，能够通过编译但不能正常运行。
+
+要使用该框架，需要先按照 [ysyx SoC 的 readme](https://github.com/osCPU/ysyxsoc) 完成 `命名规范` 和 `CPU 内部修改` 两个步骤，得到 `ysyx_21xxxx.v`，随后放入 `projects/soc/vsrc/` 中。此后，执行下面的命令将会根据 `myinfo.txt` 中的 ID 自动 对代码进行规范检查、集成到 `soc` 并运行指定的程序。`ysyxSoC` 中附带的例程会被自动软连接至 `build` 目录下，仿真时可以快速使用。
+
+```bash
+./build.sh -e soc -b -s -y -v '--timescale "1ns/1ns" -Wno-fatal --trace' -a "-i ysyxSoC/flash/hello-flash.bin --dump-wave"
+```
+
+由于无法直接使用 `difftest` 框架，暂时只支持少量参数。
+```bash
+$ ./emu -h
+Usage: ./emu [OPTION...]
+
+  -i, --image=FILE           run with this image file
+      --dump-wave            dump waveform when log is enabled
+  -b, --log-begin=NUM        display log from NUM th cycle
+  -e, --log-end=NUM          stop display log at NUM th cycle
+  -h, --help                 print program help info
 ```
 
 ## 查看波形
@@ -164,6 +186,22 @@ Enter the test cycle:
 ```
 
 通过测试的用例，将打印`PASS`。测试失败的用例，打印`FAIL`并生成对应的log文件，可以查看log文件来调试，也可以另外开启波形输出来调试。
+
+# 代码上传
+
+在本框架中接入`ysyxSoC` 并完成所有测试后，可以开始代码上传流程。**上传前请确保所有触发器可复位。** 
+
+1. 每次提交前，确保同步了最新的`oscpu-framework`仓库。
+1. 每次提交前，重新接入总线后的回归测试，并将成功运行的截图文件`reg-testing.png`放置于`submit`目录下，截图中必须包含使用`date`命令输出的当前时间。
+1. 每次提交前，重新运行正常模式的`rtthread-loader.bin`，并将成功运行的截图文件`rtthread-loader.png`放置于`submit`目录下，截图中必须包含使用`date`命令输出的当前时间。
+1. 如果实现了`cache`，填写`doc`目录下的`cache规格.xlsx`并拷贝至`submit`目录下。
+1. 根据[代码规范检查步骤](https://github.com/OSCPU/ysyxSoC/blob/master/ysyx/lint/README.md)填写`Verilator中Warning无法清理说明.xlsx`文件并拷贝至`submit`目录下。
+1. 制作一份带数据流向的处理器架构图，并对图中各模块做简单说明，整理成`ysyx_21xxxx.pdf`文件并放置于`submit`目录下。
+1. 创建自己的`gitee`开源仓库。
+1. 进入`oscpu`目录下，运行`./submit.sh`，根据提示将代码上传至创建的`gitee`开源仓库。
+1. 将自己仓库的`HTTPS`格式的`URL`(例如：`https://gitee.com/oscpu/oscpu-framework.git`)和学号发送给组内助教以完成第一次代码提交。后续提交只需要重新运行`./submit.sh`即可，无需通知助教。
+
+后续提交不可修改cache规格，只能根据report反馈修复bug。SoC和后端团队将定期检查新提交的代码，进行综合和仿真测试，并将结果以日志报告的形式上传至ysyx_submit仓库，具体说明请参考[ysyx_submit仓库](https://github.com/OSCPU/ysyx_submit/)的说明文档。
 
 # 扩展
 
