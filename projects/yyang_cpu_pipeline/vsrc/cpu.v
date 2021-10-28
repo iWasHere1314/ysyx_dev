@@ -897,7 +897,8 @@ module cpu(
       .scFailed           (0),
       .wen                (cmt_wen),
       .wdest              (cmt_wdest),
-      .wdata              (cmt_wdata)
+      .wdata              (cmt_wdata),
+      .special            (0)
     );
 
     DifftestArchIntRegState DifftestArchIntRegState (

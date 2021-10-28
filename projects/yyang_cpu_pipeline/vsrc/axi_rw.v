@@ -163,7 +163,7 @@ module axi_rw # (
                     W_STATE_IDLE:               w_state <= W_STATE_ADDR;
                     W_STATE_ADDR:  if (aw_hs)   w_state <= W_STATE_WRITE;
                     W_STATE_WRITE: if (w_done)  w_state <= W_STATE_RESP;
-                    W_STATE_RESP:  if (b_hs)    w_state <= W_STATE_IDLE;
+                    W_STATE_RESP:  if (b_hs)    w_state <= W_STATE_IDLE; default: w_state <= w_state; 
                 endcase
             end
         end
@@ -180,7 +180,7 @@ module axi_rw # (
                     R_STATE_IDLE:               r_state <= R_STATE_ADDR;
                     R_STATE_ADDR: if (ar_hs)    r_state <= R_STATE_READ;
                     R_STATE_READ: if (r_done)   r_state <= R_STATE_IDLE;
-                    default:;
+                    default: r_state <= r_state;
                 endcase
             end
         end
@@ -332,7 +332,7 @@ module axi_rw # (
         for( i=0; i < MEM_TRANS_LEN; i = i + 1 ) begin: axi_w_for
             always @( posedge clock ) begin
                 if( reset ) begin
-                    mem_axi_w_data_r <= 0;
+                    mem_axi_w_data_r <= 0; mem_axi_w_strb_r <= 0;
                 end
                 else if( ~aligned & overstep ) begin
                     // 这种写法的唯一保障在于接收方接收到后ready立马置低，即写至少需要额外一周期
@@ -356,7 +356,7 @@ module axi_rw # (
 
     always @( posedge clock ) begin
         if( reset ) begin
-            per_axi_w_data_r <= 0;
+            per_axi_w_data_r <= 0; per_axi_w_strb_r <= 0;
         end
         else begin
             per_axi_w_data_r <= data_write_i & per_mask;
