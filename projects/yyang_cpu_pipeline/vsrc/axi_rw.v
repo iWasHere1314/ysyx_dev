@@ -191,15 +191,15 @@ module axi_rw # (
     reg [7:0] len; // 正在写的是第几beat
     wire [7:0] mem_axi_len;
     wire [7:0] axi_len;
-    assign axi_len      = to_mem? mem_axi_len: 8'b1;
+    assign axi_len      = to_mem? mem_axi_len: 8'b0;
     wire len_reset      = reset | (w_trans & w_state_idle) | (r_trans & r_state_idle);
     wire len_incr_en    = (len != axi_len) & (w_hs | r_hs);
     always @(posedge clock) begin
         if (len_reset) begin
-            len <= 0;
+            len <= 8'b0;
         end
         else if (len_incr_en) begin
-            len <= len + 1;
+            len <= len + 8'b1;
         end
     end
     // 此处实现仅支持len为1的读，之所以要设置len时因为单非对齐时，会要求读两次
@@ -231,10 +231,10 @@ module axi_rw # (
                                 ;
     wire [3:0] mem_addr_end     = mem_addr_op1 + mem_addr_op2;// 结束的那个字节的地址
 
-    wire mem_overstep           = mem_addr_end[3:MEM_ALIGNED_WIDTH] != 0;// 最高位未计算前为0，计算之后，出现了进位，说明跨越了一个lane
+    wire mem_overstep           = mem_addr_end[3:MEM_ALIGNED_WIDTH] != {3-MEM_ALIGNED_WIDTH+1{1'b0}};// 最高位未计算前为0，计算之后，出现了进位，说明跨越了一个lane
     wire overstep               = to_mem? mem_overstep: 1'b0;
 
-    assign mem_axi_len      = mem_aligned ? MEM_TRANS_LEN - 1 : {{7{1'b0}}, mem_overstep};// 根据上文，非对齐一定有MEM_TRANS_LEN==1,非对齐且越界，则一定要两次
+    assign mem_axi_len      = mem_aligned ? 8'b0/* MEM_TRANS_LEN - 1 */ : {{7{1'b0}}, mem_overstep};// 根据上文，非对齐一定有MEM_TRANS_LEN==1,非对齐且越界，则一定要两次
     // assign axi_len          = to_mem? mem_axi_len: per_axi_len;
 
     wire [2:0] mem_axi_size     = MEM_AXI_SIZE[2:0];
@@ -272,7 +272,7 @@ module axi_rw # (
         // 之后，master在收到信号之后会关闭valid，握手结束，tans_done无效，而ready还有效，则ready会清零
     always @(posedge clock) begin
         if (reset) begin
-            rw_ready <= 0;
+            rw_ready <= 1'b0;
         end
         else if (rw_ready_en) begin
             rw_ready <= rw_ready_nxt;
@@ -290,7 +290,7 @@ module axi_rw # (
     wire resp_en = trans_done;
     always @(posedge clock) begin
         if (reset) begin
-            rw_resp <= 0;
+            rw_resp <= 2'b0;
         end
         else if (resp_en) begin
             rw_resp <= rw_resp_nxt;
@@ -332,7 +332,7 @@ module axi_rw # (
         for( i=0; i < MEM_TRANS_LEN; i = i + 1 ) begin: axi_w_for
             always @( posedge clock ) begin
                 if( reset ) begin
-                    mem_axi_w_data_r <= 0; mem_axi_w_strb_r <= 0;
+                    mem_axi_w_data_r <= {AXI_DATA_WIDTH{1'b0}}; mem_axi_w_strb_r <= {AXI_DATA_WIDTH/8{1'b0}};
                 end
                 else if( ~aligned & overstep ) begin
                     // 这种写法的唯一保障在于接收方接收到后ready立马置低，即写至少需要额外一周期
@@ -356,7 +356,7 @@ module axi_rw # (
 
     always @( posedge clock ) begin
         if( reset ) begin
-            per_axi_w_data_r <= 0; per_axi_w_strb_r <= 0;
+            per_axi_w_data_r <= {AXI_DATA_WIDTH{1'b0}}; per_axi_w_strb_r <= {AXI_DATA_WIDTH/8{1'b0}};
         end
         else begin
             per_axi_w_data_r <= data_write_i & per_mask;
@@ -404,7 +404,7 @@ module axi_rw # (
             // 
             always @(posedge clock) begin
                 if (reset) begin
-                    mem_read_r[i*AXI_DATA_WIDTH+:AXI_DATA_WIDTH] <= 0;
+                    mem_read_r[i*AXI_DATA_WIDTH+:AXI_DATA_WIDTH] <= {AXI_DATA_WIDTH{1'b0}};
                 end
                     //非对齐且跨越，一定读两次，不用管MEM_TRANS_LEN
                 else if ( r_hs ) begin // 这不就是hs吗？这样浪费一个门啊
@@ -428,7 +428,7 @@ module axi_rw # (
 
     always @(posedge clock) begin
         if (reset) begin
-            per_read_r <= 0;
+            per_read_r <= {AXI_DATA_WIDTH{1'b0}};
         end
         else begin
             per_read_r <= ( axi_r_data_i & per_mask ) >> ( { 3'b0, rw_addr_i[2:0] } << 3 );
